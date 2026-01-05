@@ -197,17 +197,17 @@ export default function EcosystemLogos() {
         <p className="text-center text-[10px] font-mono text-gray-500 uppercase tracking-widest mb-10">
           Orchestrating the AI Ecosystem
         </p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-5">
           {logos.map((logo, index) => (
             <a
               key={index}
               href={logo.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center px-3 py-4 md:px-4 md:py-5 rounded-lg border border-border/30 bg-surface/20 hover:bg-surface/40 hover:border-border/60 transition-all duration-300 group min-h-[80px]"
+              className="flex items-center justify-center px-3 py-4 md:px-4 md:py-5 rounded-lg border border-border/30 bg-surface/20 hover:bg-surface/50 hover:border-border/80 hover:scale-105 transition-all duration-300 group"
               aria-label={logo.name}
             >
-              <div className="flex flex-col items-center justify-center gap-2 text-gray-400 group-hover:text-white transition-colors w-full">
+              <div className="flex items-center justify-center gap-2 text-gray-400 group-hover:text-white transition-colors text-center">
                 {logo.logo}
               </div>
             </a>
