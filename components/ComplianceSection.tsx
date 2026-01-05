@@ -25,7 +25,7 @@ const complianceItems = [
 
 export default function ComplianceSection() {
   return (
-    <section id="compliance" className="py-16 md:py-24 px-4 md:px-6 bg-surface border-b border-border">
+    <section id="compliance" className="py-12 md:py-20 px-4 md:px-6 bg-surface border-b border-border">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
           <div>

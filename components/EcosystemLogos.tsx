@@ -2,7 +2,7 @@
 
 export default function EcosystemLogos() {
   return (
-    <section className="border-b border-border bg-surface/50 py-10 md:py-14 overflow-hidden">
+    <section className="border-b border-border bg-surface/50 py-8 md:py-12 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
         <p className="text-center text-[10px] font-mono text-gray-500 uppercase tracking-widest mb-10">
           Orchestrating the AI Ecosystem

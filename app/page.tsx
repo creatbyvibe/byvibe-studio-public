@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
+import SloganBanner from '@/components/SloganBanner';
 import HeroSection from '@/components/HeroSection';
 import InteractiveConsole from '@/components/InteractiveConsole';
 import FeaturesGrid from '@/components/FeaturesGrid';
@@ -34,6 +35,7 @@ export default function Home() {
       <div className="fixed inset-0 z-0 bg-grid pointer-events-none"></div>
       
       <Navbar onViewChange={setCurrentView} onWaitlistClick={handleWaitlistClick} />
+      <SloganBanner />
 
       {currentView === 'home' ? (
         <div className="transition-opacity duration-300">

@@ -25,7 +25,7 @@ const features = [
 
 export default function FeaturesGrid() {
   return (
-    <section id="features" className="py-16 md:py-24 px-4 md:px-6 border-b border-border bg-background">
+    <section id="features" className="py-12 md:py-20 px-4 md:px-6 border-b border-border bg-background">
       <div className="max-w-7xl mx-auto">
         <div className="mb-12 md:mb-16 border-b border-border pb-8">
           <h2 className="text-2xl font-semibold text-white mb-2">The Vibe AI System</h2>

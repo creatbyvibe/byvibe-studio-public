@@ -76,7 +76,7 @@ export default function InteractiveConsole() {
   };
 
   return (
-    <section className="py-16 md:py-32 px-4 md:px-6 bg-surface border-b border-border">
+    <section className="py-12 md:py-20 px-4 md:px-6 bg-surface border-b border-border">
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row gap-12 items-center">
           <div className="flex-1 space-y-6">

@@ -68,7 +68,7 @@ function WaitlistForm() {
 
 export default function HeroSection() {
   return (
-    <div className="relative z-10 pt-16 md:pt-24 pb-16 px-4 md:px-6 border-b border-border bg-background">
+    <div className="relative z-10 pt-12 md:pt-20 pb-12 md:pb-16 px-4 md:px-6 border-b border-border bg-background">
       <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
         {/* Left Column */}
         <motion.div
@@ -77,16 +77,7 @@ export default function HeroSection() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="space-y-8 max-w-xl"
         >
-          {/* Brand Tag */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4, delay: 0.3 }}
-            className="inline-flex items-center gap-2 px-3 py-1 bg-red-500/10 border border-red-500/20 rounded text-[10px] font-bold text-red-400 uppercase tracking-widest hover:bg-red-500/20 transition-colors cursor-default"
-          >
-            <Heart className="w-3 h-3 fill-current" />
-            Create by Vibe, Share the Joy
-          </motion.div>
+          {/* Brand Tag - Removed, now in SloganBanner */}
 
           {/* Vertical Stacked Headline */}
           <motion.h1
