@@ -9,16 +9,25 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { email, name } = body
 
-    // 验证输入
+    // Validate input
     if (!email || !email.includes('@')) {
       return NextResponse.json(
-        { error: '有效的邮箱地址是必需的' },
+        { error: 'A valid email address is required' },
         { status: 400 }
       )
     }
 
-    // 创建 Supabase 客户端
-    const supabase = createServerClient()
+    // Create Supabase client
+    let supabase;
+    try {
+      supabase = createServerClient();
+    } catch (supabaseError: any) {
+      console.error('Supabase client creation error:', supabaseError);
+      return NextResponse.json(
+        { error: 'Service configuration error. Please contact support.' },
+        { status: 500 }
+      );
+    }
 
     // 插入到 waitlist 表
     const { data, error } = await supabase
@@ -33,17 +42,17 @@ export async function POST(request: NextRequest) {
       .select()
 
     if (error) {
-      // 如果是重复邮箱错误
+      // If duplicate email error
       if (error.code === '23505') {
         return NextResponse.json(
-          { error: '该邮箱已加入等待列表' },
+          { error: 'This email is already on the waitlist' },
           { status: 409 }
         )
       }
 
       console.error('Supabase error:', error)
       return NextResponse.json(
-        { error: '提交失败，请稍后重试' },
+        { error: 'Failed to join waitlist. Please try again later.' },
         { status: 500 }
       )
     }
@@ -114,7 +123,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        message: '成功加入等待列表！我们已发送欢迎邮件到你的邮箱。',
+        message: 'Successfully joined waitlist! We\'ve sent a welcome email to your inbox.',
         data: data[0],
       },
       { status: 201 }
@@ -122,7 +131,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Waitlist API error:', error)
     return NextResponse.json(
-      { error: '服务器错误，请稍后重试' },
+      { error: 'Server error. Please try again later.' },
       { status: 500 }
     )
   }
@@ -136,7 +145,7 @@ export async function GET(request: NextRequest) {
 
     if (!email) {
       return NextResponse.json(
-        { error: '邮箱参数是必需的' },
+        { error: 'Email parameter is required' },
         { status: 400 }
       )
     }
@@ -149,10 +158,10 @@ export async function GET(request: NextRequest) {
       .single()
 
     if (error && error.code !== 'PGRST116') {
-      // PGRST116 是"未找到"错误，这是正常的
+      // PGRST116 is "not found" error, which is normal
       console.error('Supabase error:', error)
       return NextResponse.json(
-        { error: '查询失败' },
+        { error: 'Query failed' },
         { status: 500 }
       )
     }
@@ -163,7 +172,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Waitlist GET API error:', error)
     return NextResponse.json(
-      { error: '服务器错误' },
+      { error: 'Server error' },
       { status: 500 }
     )
   }

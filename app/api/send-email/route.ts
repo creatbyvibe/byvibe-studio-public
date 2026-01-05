@@ -14,10 +14,10 @@ export async function POST(request: NextRequest) {
     const body: EmailData = await request.json();
     const { to, name, subject, html } = body;
 
-    // 验证输入
+    // Validate input
     if (!to || !to.includes('@')) {
       return NextResponse.json(
-        { error: '有效的邮箱地址是必需的' },
+        { error: 'A valid email address is required' },
         { status: 400 }
       );
     }
@@ -26,12 +26,12 @@ export async function POST(request: NextRequest) {
     const resendApiKey = process.env.RESEND_API_KEY;
     
     if (!resendApiKey) {
-      // 如果没有配置 Resend，使用 Supabase Edge Function 或直接返回成功（开发环境）
+      // If Resend is not configured, log and return success (development environment)
       console.log('Email would be sent to:', to);
       return NextResponse.json(
         { 
           success: true, 
-          message: '邮件发送功能需要配置 RESEND_API_KEY',
+          message: 'Email sending requires RESEND_API_KEY configuration',
           sent: false 
         },
         { status: 200 }
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        message: '邮件发送成功',
+        message: 'Email sent successfully',
         data: data,
       },
       { status: 200 }
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error('Send email error:', error);
     return NextResponse.json(
-      { error: error.message || '邮件发送失败，请稍后重试' },
+      { error: error.message || 'Failed to send email. Please try again later.' },
       { status: 500 }
     );
   }
