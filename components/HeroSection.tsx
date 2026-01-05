@@ -68,7 +68,7 @@ function WaitlistForm() {
 
 export default function HeroSection() {
   return (
-    <header className="relative z-10 pt-16 md:pt-24 pb-16 px-4 md:px-6 border-b border-border bg-background">
+    <div className="relative z-10 pt-16 md:pt-24 pb-16 px-4 md:px-6 border-b border-border bg-background">
       <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
         {/* Left Column */}
         <motion.div
@@ -116,7 +116,7 @@ export default function HeroSection() {
               <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
               Batch #3 Enrollment Open
             </p>
-          </motion.div>
+          </div>
         </motion.div>
 
         {/* Right Column: Vertical Video Switcher */}
@@ -128,6 +128,6 @@ export default function HeroSection() {
           <VideoCarousel />
         </motion.div>
       </div>
-    </header>
+    </div>
   );
 }

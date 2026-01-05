@@ -82,3 +82,6 @@ export const toolsData: Tool[] = [
     link: "https://bolt.new" 
   },
 ];
+
+// 兼容旧导入
+export const tools = toolsData;

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { ExternalLink, Star, TrendingUp } from 'lucide-react'
-import { tools } from '@/data/tools'
+import { toolsData } from '@/data/tools'
 
 // 工具数据需要迁移到新的位置
 // 暂时从旧位置导入，后续可以迁移
@@ -10,10 +10,8 @@ import { tools } from '@/data/tools'
 export default function ToolShowcase() {
   const [selectedTool, setSelectedTool] = useState(0)
   
-  // 获取精选工具（featured 或投票数最高的）
-  const featuredTools = tools
-    .filter(tool => tool.featured || tool.votes > 5000)
-    .slice(0, 3)
+  // 获取精选工具（前3个）
+  const featuredTools = toolsData.slice(0, 3)
   
   const currentTool = featuredTools[selectedTool] || featuredTools[0]
 
@@ -49,16 +47,6 @@ export default function ToolShowcase() {
                 <h3 className="text-lg font-semibold text-gray-900">
                   {currentTool.name}
                 </h3>
-                {currentTool.featured && (
-                  <span className="px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-700 rounded">
-                    精选
-                  </span>
-                )}
-                {currentTool.new && (
-                  <span className="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-700 rounded">
-                    新
-                  </span>
-                )}
               </div>
               <p className="text-sm text-gray-500">{currentTool.category}</p>
             </div>
@@ -66,38 +54,14 @@ export default function ToolShowcase() {
 
           {/* Tool Description */}
           <p className="text-sm text-gray-600 leading-relaxed">
-            {currentTool.description}
+            {currentTool.desc}
           </p>
 
           {/* Tool Stats */}
           <div className="flex items-center gap-4 pt-2 border-t border-gray-200">
-            {currentTool.rating && (
-              <div className="flex items-center gap-1">
-                <Star size={14} className="text-yellow-500 fill-yellow-500" />
-                <span className="text-sm font-medium text-gray-700">
-                  {currentTool.rating}
-                </span>
-              </div>
-            )}
-            <div className="flex items-center gap-1 text-sm text-gray-600">
-              <span>👍</span>
-              <span className="font-medium">{currentTool.votes.toLocaleString()}</span>
-            </div>
             <div className="text-sm text-gray-500">
-              {currentTool.pricing}
+              {currentTool.bestFor}
             </div>
-          </div>
-
-          {/* Tool Tags */}
-          <div className="flex flex-wrap gap-2">
-            {currentTool.tags.slice(0, 3).map((tag, index) => (
-              <span
-                key={index}
-                className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded"
-              >
-                {tag}
-              </span>
-            ))}
           </div>
 
           {/* Tool Link */}
