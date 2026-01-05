@@ -10,6 +10,9 @@ import { Project, Artifact, ProjectPhase } from '@/types/supabase';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import AuthModal from '@/components/AuthModal';
+import ChatConsole from '@/components/studio/ChatConsole';
+import ScopePhase from '@/components/studio/ScopePhase';
+import StackPhase from '@/components/studio/StackPhase';
 
 const phases: { id: ProjectPhase; label: string; description: string }[] = [
   { id: 'scope', label: 'Scope', description: '定义项目范围' },
@@ -175,19 +178,17 @@ export default function StudioWorkspace() {
                 </div>
               </div>
 
-              {/* Chat Console Placeholder */}
-              <div className="border border-border bg-surface rounded-lg p-4">
+              {/* Chat Console */}
+              <div className="border border-border bg-surface rounded-lg p-4 h-[400px] flex flex-col">
                 <h3 className="text-sm font-bold text-white mb-3">对话</h3>
-                <div className="space-y-2 mb-4">
-                  <div className="p-2 bg-background rounded text-xs text-text-muted">
-                    与 Gemini 对话功能即将上线...
-                  </div>
-                </div>
-                <input
-                  type="text"
-                  placeholder="输入消息..."
-                  disabled
-                  className="w-full bg-background border border-border rounded px-3 py-2 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-blue-500/50 disabled:opacity-50"
+                <ChatConsole
+                  projectId={projectId}
+                  phase={currentPhase}
+                  context={{
+                    project: project,
+                    scope: getArtifactForPhase('scope')?.content,
+                    stack: getArtifactForPhase('stack')?.content,
+                  }}
                 />
               </div>
             </div>
@@ -204,20 +205,42 @@ export default function StudioWorkspace() {
                   </p>
                 </div>
 
-                {/* Phase-specific content placeholder */}
-                <div className="py-16 text-center">
-                  <div className="inline-block p-8 bg-background border border-border rounded-lg">
-                    <p className="text-text-muted mb-2">
-                      {currentPhase === 'scope' && '📝 项目范围定义'}
-                      {currentPhase === 'stack' && '⚙️ 技术栈选择'}
-                      {currentPhase === 'design' && '📐 架构设计'}
-                      {currentPhase === 'build' && '💻 代码生成'}
-                    </p>
-                    <p className="text-xs text-text-dim">
-                      此功能正在开发中...
-                    </p>
+                {/* Phase-specific content */}
+                {currentPhase === 'scope' && (
+                  <ScopePhase
+                    projectId={projectId}
+                    artifact={getArtifactForPhase('scope')}
+                    onArtifactUpdate={fetchArtifacts}
+                  />
+                )}
+                {currentPhase === 'stack' && (
+                  <StackPhase
+                    projectId={projectId}
+                    artifact={getArtifactForPhase('stack')}
+                    scopeContext={getArtifactForPhase('scope')?.content}
+                    onArtifactUpdate={fetchArtifacts}
+                  />
+                )}
+                {currentPhase === 'design' && (
+                  <div className="py-16 text-center">
+                    <div className="inline-block p-8 bg-background border border-border rounded-lg">
+                      <p className="text-text-muted mb-2">📐 架构设计</p>
+                      <p className="text-xs text-text-dim">
+                        此功能正在开发中...
+                      </p>
+                    </div>
                   </div>
-                </div>
+                )}
+                {currentPhase === 'build' && (
+                  <div className="py-16 text-center">
+                    <div className="inline-block p-8 bg-background border border-border rounded-lg">
+                      <p className="text-text-muted mb-2">💻 代码生成</p>
+                      <p className="text-xs text-text-dim">
+                        此功能正在开发中...
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
