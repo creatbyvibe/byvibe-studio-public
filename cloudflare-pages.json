@@ -3,5 +3,5 @@
   "outputDirectory": "out",
   "rootDirectory": "/",
   "framework": "nextjs",
-  "nodeVersion": "18"
+  "nodeVersion": "20"
 }
