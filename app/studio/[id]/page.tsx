@@ -13,6 +13,8 @@ import AuthModal from '@/components/AuthModal';
 import ChatConsole from '@/components/studio/ChatConsole';
 import ScopePhase from '@/components/studio/ScopePhase';
 import StackPhase from '@/components/studio/StackPhase';
+import DesignPhase from '@/components/studio/DesignPhase';
+import BuildPhase from '@/components/studio/BuildPhase';
 
 const phases: { id: ProjectPhase; label: string; description: string }[] = [
   { id: 'scope', label: 'Scope', description: '定义项目范围' },
@@ -222,24 +224,23 @@ export default function StudioWorkspace() {
                   />
                 )}
                 {currentPhase === 'design' && (
-                  <div className="py-16 text-center">
-                    <div className="inline-block p-8 bg-background border border-border rounded-lg">
-                      <p className="text-text-muted mb-2">📐 架构设计</p>
-                      <p className="text-xs text-text-dim">
-                        此功能正在开发中...
-                      </p>
-                    </div>
-                  </div>
+                  <DesignPhase
+                    projectId={projectId}
+                    artifact={getArtifactForPhase('design')}
+                    scopeContext={getArtifactForPhase('scope')?.content}
+                    stackContext={getArtifactForPhase('stack')?.content}
+                    onArtifactUpdate={fetchArtifacts}
+                  />
                 )}
                 {currentPhase === 'build' && (
-                  <div className="py-16 text-center">
-                    <div className="inline-block p-8 bg-background border border-border rounded-lg">
-                      <p className="text-text-muted mb-2">💻 代码生成</p>
-                      <p className="text-xs text-text-dim">
-                        此功能正在开发中...
-                      </p>
-                    </div>
-                  </div>
+                  <BuildPhase
+                    projectId={projectId}
+                    artifact={getArtifactForPhase('build')}
+                    scopeContext={getArtifactForPhase('scope')?.content}
+                    stackContext={getArtifactForPhase('stack')?.content}
+                    designContext={getArtifactForPhase('design')?.content}
+                    onArtifactUpdate={fetchArtifacts}
+                  />
                 )}
               </div>
             </div>
