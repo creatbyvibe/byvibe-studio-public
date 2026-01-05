@@ -23,7 +23,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://byvibe.ai'),
   title: {
-    default: 'ByVibe - The AI Engineering Brain',
+    default: 'ByVibe',
     template: '%s | ByVibe',
   },
   description: 'An orchestration layer for Vibe Coding. We inject engineering rigor into AI workflows, ensuring your natural language compiles into scalable products.',

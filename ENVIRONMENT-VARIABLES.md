@@ -36,6 +36,19 @@
 - 添加变量值：`sb_publishable_rMqAnJxp6DWT9SsowLTNcw_ucR4BqEk`
 - **重要**：需要在 Production 和 Preview 环境都设置
 
+### 4. ADMIN_EMAIL（可选）
+**用途**：接收 waitlist 通知邮件的管理员邮箱
+
+**设置位置**：
+- Cloudflare Dashboard → Pages → 你的项目 → Settings → Environment variables
+- 添加变量名：`ADMIN_EMAIL` 或 `NOTIFICATION_EMAIL`
+- 添加变量值：你的邮箱地址（例如：`your-email@example.com`）
+- **重要**：需要在 Production 和 Preview 环境都设置（如果需要在预览环境也接收通知）
+
+**说明**：
+- 当有人加入 waitlist 时，系统会自动发送通知邮件到这个邮箱
+- 如果不设置此变量，系统会跳过发送通知邮件（不影响用户收到欢迎邮件）
+
 ## 📋 完整配置清单
 
 在 Cloudflare Dashboard 中应该设置：
@@ -45,6 +58,8 @@
 | `GEMINI_API_KEY` | 你的 API Key | Gemini API 调用 | ✅ |
 | `NEXT_PUBLIC_SUPABASE_URL` | `https://xejrdjqsuloecdeviopx.supabase.co` | Supabase 连接 | ✅ |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `sb_publishable_rMqAnJxp6DWT9SsowLTNcw_ucR4BqEk` | Supabase 认证 | ✅ |
+| `RESEND_API_KEY` | 你的 Resend API Key | 邮件发送 | ✅ |
+| `ADMIN_EMAIL` | 你的邮箱地址 | 接收 waitlist 通知 | ⚪ 可选 |
 
 ## 🚀 设置步骤
 
