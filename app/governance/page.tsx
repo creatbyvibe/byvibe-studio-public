@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ExternalLink, FileText, Scale, BookOpen, Shield, Globe } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import StructuredData from '@/components/StructuredData';
 
 // 法规与政策
 const regulations = [
@@ -176,9 +177,40 @@ type TabType = 'regulations' | 'ethics' | 'research' | 'journals';
 export default function GovernancePage() {
   const [activeTab, setActiveTab] = useState<TabType>('regulations');
 
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://byvibe.ai';
+
+  const collectionPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'AI Governance & Legislation',
+    description: 'Comprehensive collection of AI governance regulations, ethical guidelines, and research papers.',
+    url: `${baseUrl}/governance`,
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: [
+        ...regulations.map((reg, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          item: {
+            '@type': 'Article',
+            headline: reg.title,
+            description: reg.description,
+            url: reg.link,
+          },
+        })),
+      ],
+    },
+  };
+
   return (
-    <div className="min-h-screen flex flex-col relative overflow-x-hidden">
-      <div className="fixed inset-0 z-0 bg-grid pointer-events-none"></div>
+    <>
+      <StructuredData />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageSchema) }}
+      />
+      <div className="min-h-screen flex flex-col relative overflow-x-hidden">
+        <div className="fixed inset-0 z-0 bg-grid pointer-events-none"></div>
       
       <Navbar 
         onViewChange={(view) => {
@@ -464,7 +496,8 @@ export default function GovernancePage() {
         </div>
       </section>
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </>
   );
 }

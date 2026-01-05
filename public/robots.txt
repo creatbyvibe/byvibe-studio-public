@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /studio/
+Disallow: /auth/callback
+Disallow: /auth/orcid/callback
+
+# Sitemap
+Sitemap: https://byvibe.ai/sitemap.xml

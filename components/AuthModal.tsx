@@ -62,12 +62,19 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
         if (error) throw error;
 
         if (data.user) {
-          setError('');
-          setMessage('注册成功！');
-          setTimeout(() => {
-            onSuccess?.();
-            onClose();
-          }, 1500);
+          // 检查是否需要邮箱验证
+          if (data.user.email_confirmed_at) {
+            setError('');
+            setMessage('注册成功！');
+            setTimeout(() => {
+              onSuccess?.();
+              onClose();
+            }, 1500);
+          } else {
+            setError('');
+            setMessage('注册成功！请检查邮箱并点击验证链接以激活账户。');
+            // 不自动关闭，让用户看到提示
+          }
         }
       }
     } catch (err: any) {

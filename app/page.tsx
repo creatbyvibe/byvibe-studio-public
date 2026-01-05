@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
-import SloganBanner from '@/components/SloganBanner';
 import HeroSection from '@/components/HeroSection';
 import InteractiveConsole from '@/components/InteractiveConsole';
 import FeaturesGrid from '@/components/FeaturesGrid';
@@ -10,6 +9,7 @@ import EcosystemLogos from '@/components/EcosystemLogos';
 import ComplianceSection from '@/components/ComplianceSection';
 import ToolDirectory from '@/components/ToolDirectory';
 import Footer from '@/components/Footer';
+import StructuredData from '@/components/StructuredData';
 
 export default function Home() {
   const [currentView, setCurrentView] = useState<'home' | 'directory'>('home');
@@ -31,10 +31,12 @@ export default function Home() {
   }, [currentView]);
 
   return (
-    <div className="min-h-screen flex flex-col relative overflow-x-hidden">
-      <div className="fixed inset-0 z-0 bg-grid pointer-events-none"></div>
-      
-      <Navbar onViewChange={setCurrentView} onWaitlistClick={handleWaitlistClick} />
+    <>
+      <StructuredData />
+      <div className="min-h-screen flex flex-col relative overflow-x-hidden">
+        <div className="fixed inset-0 z-0 bg-grid pointer-events-none"></div>
+        
+        <Navbar onViewChange={setCurrentView} onWaitlistClick={handleWaitlistClick} />
 
       {currentView === 'home' ? (
         <div className="transition-opacity duration-300">
@@ -52,12 +54,13 @@ export default function Home() {
       <EcosystemLogos />
       <Footer />
       
-      {/* Watermark */}
-      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-10 pointer-events-none">
-        <p className="text-xs md:text-sm text-red-400/30 font-medium tracking-wide">
-          Create by Vibe, Share the Joy
-        </p>
+        {/* Watermark */}
+        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-10 pointer-events-none">
+          <p className="text-xs md:text-sm text-red-400/30 font-medium tracking-wide">
+            Create by Vibe, Share the Joy
+          </p>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

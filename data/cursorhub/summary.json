@@ -1,12 +1,30 @@
 {
-  "totalPages": 1,
-  "crawledAt": "2026-01-05T22:36:45.312Z",
+  "totalPages": 4,
+  "crawledAt": "2026-01-05T22:37:49.686Z",
   "pages": [
     {
       "url": "https://cursorhub.org/",
       "title": "Cursor Hub - 最全面的免费中文Cursor教程",
       "sectionCount": 31,
       "linkCount": 78
+    },
+    {
+      "url": "https://cursorhub.org/tutorials",
+      "title": "CursorHub教程",
+      "sectionCount": 25,
+      "linkCount": 12
+    },
+    {
+      "url": "https://cursorhub.org/roadmap",
+      "title": "Cursor Hub - 最全面的免费中文Cursor教程",
+      "sectionCount": 12,
+      "linkCount": 73
+    },
+    {
+      "url": "https://cursorhub.org/tutorials/projects/introduction",
+      "title": "实战项目大全 | CursorHub教程",
+      "sectionCount": 14,
+      "linkCount": 1
     }
   ]
 }

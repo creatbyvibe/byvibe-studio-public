@@ -15,8 +15,70 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'ByVibe - The AI Engineering Brain',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://byvibe.ai'),
+  title: {
+    default: 'ByVibe - The AI Engineering Brain',
+    template: '%s | ByVibe',
+  },
   description: 'An orchestration layer for Vibe Coding. We inject engineering rigor into AI workflows, ensuring your natural language compiles into scalable products.',
+  keywords: [
+    'AI coding',
+    'Vibe Coding',
+    'AI engineering',
+    'AI orchestration',
+    'code generation',
+    'AI workflow',
+    'software architecture',
+    'AI development',
+    'natural language programming',
+    'AI tools',
+  ],
+  authors: [{ name: 'ByVibe Team' }],
+  creator: 'ByVibe',
+  publisher: 'ByVibe',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: '/',
+    siteName: 'ByVibe',
+    title: 'ByVibe - The AI Engineering Brain',
+    description: 'An orchestration layer for Vibe Coding. We inject engineering rigor into AI workflows, ensuring your natural language compiles into scalable products.',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'ByVibe - The AI Engineering Brain',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'ByVibe - The AI Engineering Brain',
+    description: 'An orchestration layer for Vibe Coding. We inject engineering rigor into AI workflows.',
+    images: ['/og-image.png'],
+    creator: '@byvibe',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    // 可以添加 Google Search Console 验证
+    // google: 'your-google-verification-code',
+  },
 }
 
 export default function RootLayout({

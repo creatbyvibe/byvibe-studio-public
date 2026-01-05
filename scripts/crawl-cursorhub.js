@@ -168,9 +168,29 @@ async function main() {
 
     // 从主页提取的其他页面链接（限制数量）
     const otherPages = new Set();
+    const baseUrlObj = new URL(baseUrl);
+    
     homePage.links.forEach(link => {
-      if (link.url.includes('cursorhub.org') && link.url !== baseUrl) {
-        otherPages.add(link.url);
+      let fullUrl = link.url;
+      
+      // 处理相对路径
+      if (link.url.startsWith('/')) {
+        fullUrl = baseUrlObj.origin + link.url;
+      } else if (!link.url.startsWith('http')) {
+        fullUrl = baseUrl + link.url;
+      }
+      
+      // 只添加同域名的链接
+      try {
+        const urlObj = new URL(fullUrl);
+        if (urlObj.hostname === baseUrlObj.hostname && fullUrl !== baseUrl) {
+          // 排除锚点链接和特殊链接
+          if (!fullUrl.includes('#') && !fullUrl.includes('mailto:') && !fullUrl.includes('tel:')) {
+            otherPages.add(fullUrl);
+          }
+        }
+      } catch (e) {
+        // 忽略无效 URL
       }
     });
 

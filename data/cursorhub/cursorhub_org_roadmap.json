@@ -1,14 +1,10 @@
 {
-  "url": "https://cursorhub.org/",
+  "url": "https://cursorhub.org/roadmap",
   "title": "Cursor Hub - 最全面的免费中文Cursor教程",
   "description": "学习使用 Cursor，提升你的编程效率。我们提供最全面的 Cursor 教程，帮助你掌握 AI 辅助编程。",
   "sections": [
     {
-      "title": "我的出海创业之路",
-      "content": ""
-    },
-    {
-      "title": "探索起步",
+      "title": "教程目录",
       "content": ""
     },
     {
@@ -44,78 +40,6 @@
       "content": ""
     },
     {
-      "title": "选择适合你的计划",
-      "content": ""
-    },
-    {
-      "title": "免费版",
-      "content": ""
-    },
-    {
-      "title": "年费会员",
-      "content": ""
-    },
-    {
-      "title": "终身会员",
-      "content": ""
-    },
-    {
-      "title": "为什么选择 Cursor Hub？",
-      "content": ""
-    },
-    {
-      "title": "详细教程",
-      "content": ""
-    },
-    {
-      "title": "AI 编码技巧",
-      "content": ""
-    },
-    {
-      "title": "项目实战案例",
-      "content": ""
-    },
-    {
-      "title": "需求与变现",
-      "content": ""
-    },
-    {
-      "title": "持续更新",
-      "content": ""
-    },
-    {
-      "title": "社区互动",
-      "content": ""
-    },
-    {
-      "title": "关于 Cursor 的常见疑问",
-      "content": ""
-    },
-    {
-      "title": "Cursor 是什么，它与普通编辑器有什么不同？",
-      "content": ""
-    },
-    {
-      "title": "初学者如何快速上手 Cursor？",
-      "content": ""
-    },
-    {
-      "title": "如何有效利用 Cursor 的 AI 功能提高开发效率？",
-      "content": ""
-    },
-    {
-      "title": "Cursor 适合哪些编程语言和开发场景？",
-      "content": ""
-    },
-    {
-      "title": "Cursor 是否会替代传统编程技能的学习？",
-      "content": ""
-    },
-    {
-      "title": "如何解决使用 Cursor 时遇到的常见问题？",
-      "content": ""
-    },
-    {
       "title": "课程内容",
       "content": ""
     },
@@ -129,18 +53,6 @@
     }
   ],
   "links": [
-    {
-      "text": "开始学习",
-      "url": "/tutorials"
-    },
-    {
-      "text": "学习路线图",
-      "url": "/roadmap"
-    },
-    {
-      "text": "实战项目",
-      "url": "/tutorials/projects/introduction"
-    },
     {
       "text": "开始使用Cursor",
       "url": "/tutorials/basics/getting-started/introduction"
@@ -432,15 +344,7 @@
     {
       "text": "对接支付平台",
       "url": "/tutorials/software-platforms/payment-platforms"
-    },
-    {
-      "text": "开始学习之旅",
-      "url": "/tutorials"
-    },
-    {
-      "text": "联系我们",
-      "url": "/contact"
     }
   ],
-  "timestamp": "2026-01-05T22:37:41.324Z"
+  "timestamp": "2026-01-05T22:37:46.981Z"
 }
