@@ -1,5 +1,13 @@
 # 可选：GitHub Actions 工作流（如果不想使用 Cloudflare 的自动构建）
 # 注意：Cloudflare Pages 通常会自动检测 GitHub 仓库并构建，此文件为可选
+# 
+# 如果你已经在 Cloudflare Dashboard 中连接了 GitHub 仓库，
+# 那么 Cloudflare 会自动处理部署，这个工作流不是必需的。
+# 
+# 只有在以下情况才需要这个工作流：
+# 1. 想要在 GitHub Actions 中构建（而不是 Cloudflare 构建）
+# 2. 需要更复杂的构建流程
+# 3. 想要在部署前运行测试
 
 name: Deploy to Cloudflare Pages
 
@@ -10,6 +18,7 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch: # 允许手动触发
 
 jobs:
   deploy:
@@ -21,7 +30,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
