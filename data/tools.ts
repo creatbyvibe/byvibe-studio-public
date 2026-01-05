@@ -1,127 +1,84 @@
-// 工具数据 - 从旧项目迁移并转换为 TypeScript
-
 export interface Tool {
-  id: number
-  name: string
-  category: string
-  description: string
-  pricing: string
-  votes: number
-  rating: number | null
-  ratingSource: string | null
-  tags: string[]
-  featured?: boolean
-  new?: boolean
-  imageUrl: string | null
-  link: string
+  id: number;
+  name: string;
+  category: string;
+  icon: string;
+  desc: string;
+  bestFor: string;
+  link: string;
 }
 
-export const tools: Tool[] = [
-  {
-    id: 1,
-    name: "Hostinger AI Hub",
-    category: "Website & Business Tools",
-    description: "AI-powered website creation and content tools to help anyone build and grow online faster.",
-    pricing: "Included with all Hostinger plans",
-    votes: 158,
-    rating: 4.7,
-    ratingSource: "Trustpilot",
-    tags: ["AI Website Builder", "Content Generation", "Vibe Coding"],
-    featured: true,
-    imageUrl: "https://vibecoding.app/_next/image?url=%2Fhostinger-logo-square.png&w=3840&q=75",
-    link: "https://vibecoding.app/tools/hostinger-ai-hub"
+export const toolsData: Tool[] = [
+  { 
+    id: 1, 
+    name: "Cursor", 
+    category: "AI IDE", 
+    icon: "code-2", 
+    desc: "The AI-first code editor. ByVibe generates `.cursorrules` to keep context clean.", 
+    bestFor: "Full-stack AI Dev", 
+    link: "https://cursor.sh" 
   },
-  {
-    id: 2,
-    name: "LingGuang",
-    category: "Vibe / No-Code Builders",
-    description: "Ant Group's multimodal vibe-coding assistant that ships Flash Apps, 3D visuals, and real-time scene insights from a single prompt.",
-    pricing: "Free early access in China (pricing TBA)",
-    votes: 132,
-    rating: 4.6,
-    ratingSource: "Apple App Store",
-    tags: ["Vibe Coding", "Multimodal AI", "Flash Apps"],
-    new: true,
-    imageUrl: null,
-    link: "https://vibecoding.app/tools/lingguang-vibe-coding-app"
+  { 
+    id: 2, 
+    name: "v0.dev", 
+    category: "AI UI", 
+    icon: "layout", 
+    desc: "Vercel's generative UI system. ByVibe provides structural prompts for Shadcn components.", 
+    bestFor: "AI Prototyping", 
+    link: "https://v0.dev" 
   },
-  {
-    id: 3,
-    name: "Google AntiGravity",
-    category: "Developer IDEs & Agents",
-    description: "Google's agent-first IDE with mission control, multi-agent workflows, and a built-in browser for testing complex coding tasks end-to-end.",
-    pricing: "Free public preview with generous rate limits; paid tiers TBA",
-    votes: 7000,
-    rating: null,
-    ratingSource: null,
-    tags: ["Agentic IDE", "Multi-Agent Coding", "Built-in Browser"],
-    new: true,
-    imageUrl: "https://vibecoding.app/_next/image?url=https%3A%2F%2Fwww.google.com%2Fimages%2Fbranding%2Fgooglelogo%2F2x%2Fgooglelogo_color_92x30dp.png&w=3840&q=75",
-    link: "https://vibecoding.app/tools/google-antigravity"
+  { 
+    id: 3, 
+    name: "Windsurf", 
+    category: "AI IDE", 
+    icon: "wind", 
+    desc: "Flow-state editor by Codeium. ByVibe feeds it architecture diagrams.", 
+    bestFor: "Deep AI Context", 
+    link: "https://codeium.com/windsurf" 
   },
-  {
-    id: 4,
-    name: "Windsurf (formerly Codeium)",
-    category: "Developer IDEs & Agents",
-    description: "Windsurf (formerly Codeium) rebranded to spotlight its agentic IDE and plugin suite: Cascade handles multi-step coding, Tab/Supercomplete keeps completions fast, and the team highlights admin-grade security plus cloud, hybrid, or self-hosted deployment options.",
-    pricing: "Free + Pro $15/mo + Teams $30/user/mo + Enterprise $60/user/mo (credits model)",
-    votes: 8000,
-    rating: null,
-    ratingSource: null,
-    tags: ["AI IDE", "Autonomous Coding", "Context Memory"],
-    imageUrl: "https://vibecoding.app/_next/image?url=%2Flogos%2Fwindsurf.ico&w=3840&q=75",
-    link: "https://vibecoding.app/tools/windsurf"
+  { 
+    id: 4, 
+    name: "Manus", 
+    category: "AI Agent", 
+    icon: "bot", 
+    desc: "Autonomous AI agent for executing complex coding tasks. ByVibe provides the master plan.", 
+    bestFor: "Autonomous Dev", 
+    link: "https://manus.ai" 
   },
-  {
-    id: 5,
-    name: "Claude Code CLI",
-    category: "AI Assistants & Code Review",
-    description: "Command-line interface for Anthropic's Claude AI, designed for developers who prefer terminal-based workflows. Provides intelligent code analysis, generation, and review capabilities directly from the command line.",
-    pricing: "Free with Claude API key, Usage-based pricing",
-    votes: 6000,
-    rating: null,
-    ratingSource: null,
-    tags: ["CLI Tool", "Claude AI", "Terminal"],
-    imageUrl: "https://vibecoding.app/_next/image?url=%2Flogos%2Fclaude-code-cli.ico&w=3840&q=75",
-    link: "https://vibecoding.app/tools/claude-code-cli"
+  { 
+    id: 5, 
+    name: "Gemini 3.0", 
+    category: "AI Model", 
+    icon: "sparkles", 
+    desc: "Google's next-gen multimodal model. Excellent for ingesting ByVibe's massive AI PRDs.", 
+    bestFor: "Vibe Reasoning", 
+    link: "https://deepmind.google/technologies/gemini/" 
   },
-  {
-    id: 6,
-    name: "Gemini Code Assist",
-    category: "AI Assistants & Code Review",
-    description: "Google's AI coding assistant for supported IDEs and Google Cloud workflows.",
-    pricing: "Free and paid tiers (varies by edition)",
-    votes: 5500,
-    rating: null,
-    ratingSource: null,
-    tags: ["Google", "Gemini", "IDE"],
-    imageUrl: "https://vibecoding.app/_next/image?url=https%3A%2F%2Fwww.google.com%2Fimages%2Fbranding%2Fgooglelogo%2F2x%2Fgooglelogo_color_92x30dp.png&w=3840&q=75",
-    link: "https://vibecoding.app/tools/gemini-code-assist"
+  { 
+    id: 6, 
+    name: "Cloudflare", 
+    category: "AI Infra", 
+    icon: "cloud", 
+    desc: "Edge AI and Worker platform. ByVibe generates deployment configurations.", 
+    bestFor: "AI Deployment", 
+    link: "https://cloudflare.com" 
   },
-  {
-    id: 7,
-    name: "v0",
-    category: "Vibe / No-Code Builders",
-    description: "AI-powered design-to-code tool from Vercel. Focuses on generating beautiful UIs and frontend components. Works with Figma imports and allows element-level editing. Best for UI-first web projects.",
-    pricing: "Free tier, Pro and Enterprise available",
-    votes: 4500,
-    rating: null,
-    ratingSource: null,
-    tags: ["UI Generation", "Figma Integration", "Frontend"],
-    imageUrl: "https://vibecoding.app/_next/image?url=%2Flogos%2Fv0-vercel.ico&w=3840&q=75",
-    link: "https://vibecoding.app/tools/v0-vercel"
+  { 
+    id: 7, 
+    name: "Lovable", 
+    category: "AI No-Code", 
+    icon: "heart", 
+    desc: "Generate full-stack web apps from text. ByVibe refines the initial Vibe spec.", 
+    bestFor: "MVP building", 
+    link: "https://lovable.dev" 
   },
-  {
-    id: 8,
-    name: "Bolt.new",
-    category: "Cloud Platforms & Prototyping",
-    description: "Part of StackBlitz ecosystem. AI-driven full-stack builder with Supabase integration. Raised $105M in funding. Works for coders, nocoders, and marketers to spin up web apps quickly.",
-    pricing: "Free tier available, Team & Enterprise plans",
-    votes: 4000,
-    rating: null,
-    ratingSource: null,
-    tags: ["Full-Stack", "Supabase Integration", "StackBlitz"],
-    imageUrl: "https://vibecoding.app/_next/image?url=%2Flogos%2Fbolt-new.ico&w=3840&q=75",
-    link: "https://vibecoding.app/tools/bolt-new"
-  }
-]
+  { 
+    id: 8, 
+    name: "Bolt.new", 
+    category: "AI Web Container", 
+    icon: "zap", 
+    desc: "Browser-based environment. ByVibe sets up the initial file tree.", 
+    bestFor: "Quick Demos", 
+    link: "https://bolt.new" 
+  },
+];

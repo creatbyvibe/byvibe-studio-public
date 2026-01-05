@@ -1,0 +1,211 @@
+'use client';
+
+import { useState } from 'react';
+import { Terminal, Play, AlertTriangle, FileCode, Shield, Code } from 'lucide-react';
+
+interface PlanResult {
+  difficulty: string;
+  time_est: string;
+  tech_stack: string;
+  risks?: string;
+  file_tree?: string;
+  cursor_prompt: string;
+}
+
+export default function InteractiveConsole() {
+  const [vibeInput, setVibeInput] = useState('');
+  const [isPolishing, setIsPolishing] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [plan, setPlan] = useState<PlanResult | null>(null);
+  const [showContent, setShowContent] = useState(false);
+
+  const polishVibe = async () => {
+    if (!vibeInput || vibeInput.trim().length < 2) {
+      alert('Please input some ideas first.');
+      return;
+    }
+
+    setIsPolishing(true);
+    try {
+      const response = await fetch('/api/polish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ input: vibeInput }),
+      });
+
+      if (!response.ok) throw new Error('Polishing failed');
+
+      const data = await response.json();
+      setVibeInput(data.refined || vibeInput);
+    } catch (error) {
+      console.error(error);
+      alert('System Error: Polishing failed.');
+    } finally {
+      setIsPolishing(false);
+    }
+  };
+
+  const generatePlan = async () => {
+    if (!vibeInput || vibeInput.trim().length < 2) {
+      alert('Please input system requirements.');
+      return;
+    }
+
+    setIsGenerating(true);
+    setShowContent(false);
+
+    try {
+      const response = await fetch('/api/orchestrate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ input: vibeInput }),
+      });
+
+      if (!response.ok) throw new Error('Orchestration failed');
+
+      const data = await response.json();
+      setPlan(data);
+      setShowContent(true);
+    } catch (error) {
+      console.error('Orchestration Error:', error);
+      alert('System Error: Orchestration failed.');
+      setShowContent(false);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  return (
+    <section className="py-16 md:py-32 px-4 md:px-6 bg-surface border-b border-border">
+      <div className="max-w-6xl mx-auto">
+        <div className="flex flex-col md:flex-row gap-12 items-center">
+          <div className="flex-1 space-y-6">
+            <div className="inline-flex items-center gap-2 px-2 py-1 bg-blue-500/10 border border-blue-500/20 rounded text-[10px] font-mono text-blue-400">
+              <Code className="w-3 h-3" /> AI ENGINE v1.0
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white">
+              Hands-on with<br />
+              the Architect.
+            </h2>
+            <p className="text-text-muted text-sm leading-relaxed">
+              Don't just watch videos. Experience how ByVibe breaks down complex ideas into executable engineering tasks.
+            </p>
+            <div className="flex gap-4 text-xs font-mono text-text-dim">
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Auto-PRD
+              </div>
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Risk Analysis
+              </div>
+            </div>
+          </div>
+
+          {/* Console */}
+          <div className="flex-1 w-full relative bg-background border border-border rounded-lg shadow-2xl overflow-hidden min-h-[450px] flex flex-col ring-1 ring-white/5">
+            <div className="bg-black border-b border-border px-4 py-3 flex items-center justify-between">
+              <div className="flex items-center gap-2 text-[10px] font-mono text-gray-400">
+                <Terminal className="w-3 h-3" />
+                <span>byvibe-cli</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                <span className="text-[10px] font-mono text-green-500">READY</span>
+              </div>
+            </div>
+
+            <div className="flex-1 p-0 flex flex-col font-mono text-sm">
+              <div className="p-4 border-b border-border bg-surface/50">
+                <div className="flex justify-between items-center mb-3">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                    Input Vibe
+                  </label>
+                  <button
+                    onClick={polishVibe}
+                    disabled={isPolishing}
+                    className="text-[10px] text-blue-400 hover:text-white transition-colors flex items-center gap-1 disabled:opacity-50"
+                  >
+                    [Refine]
+                  </button>
+                </div>
+                <div className="relative">
+                  <textarea
+                    id="vibeInput"
+                    value={vibeInput}
+                    onChange={(e) => setVibeInput(e.target.value)}
+                    className="w-full bg-black border border-border rounded p-3 text-gray-300 resize-none focus:outline-none focus:border-gray-600 transition-colors min-h-[80px] placeholder:text-gray-600 placeholder:italic text-sm"
+                    placeholder="// E.g., A minimalist habit tracker that roasts me via AI..."
+                  />
+                  {isPolishing && (
+                    <div className="absolute inset-0 bg-black flex items-center justify-center">
+                      <span className="text-xs text-blue-400 animate-pulse">&gt; Optimizing...</span>
+                    </div>
+                  )}
+                </div>
+                <button
+                  onClick={generatePlan}
+                  disabled={isGenerating}
+                  className="mt-3 w-full py-2 bg-white/5 border border-white/10 text-gray-300 text-xs hover:bg-white/10 hover:text-white transition-colors flex items-center justify-center gap-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Play className="w-3 h-3" /> Generate Plan
+                </button>
+              </div>
+
+              <div className="flex-1 bg-black p-4 relative overflow-hidden flex flex-col">
+                <div className="flex-1 relative">
+                  {!showContent && !isGenerating && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-600">
+                      <span className="opacity-50 text-center text-xs">&gt; Awaiting Input...</span>
+                    </div>
+                  )}
+                  {isGenerating && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black z-20">
+                      <span className="text-xs text-blue-400 font-mono thinking-dots">
+                        &gt; Processing
+                      </span>
+                    </div>
+                  )}
+                  {showContent && plan && (
+                    <div className="h-full flex flex-col overflow-y-auto custom-scrollbar pb-2">
+                      <div className="grid grid-cols-3 border border-border mb-4 text-[10px] bg-surface/50">
+                        <div className="p-2 border-r border-border">
+                          <div className="text-gray-500 uppercase">Diff</div>
+                          <div className="text-white font-semibold">{plan.difficulty || '-'}</div>
+                        </div>
+                        <div className="p-2 border-r border-border">
+                          <div className="text-gray-500 uppercase">Time</div>
+                          <div className="text-white font-semibold">{plan.time_est || '-'}</div>
+                        </div>
+                        <div className="p-2">
+                          <div className="text-gray-500 uppercase">Stack</div>
+                          <div className="text-blue-400 truncate">{plan.tech_stack || '-'}</div>
+                        </div>
+                      </div>
+                      {plan.risks && (
+                        <div className="mb-4 p-2 border border-red-900/30 bg-red-900/10 text-red-400 text-xs flex gap-2 items-start rounded">
+                          <AlertTriangle className="w-3 h-3 mt-0.5 shrink-0" />
+                          <span>{plan.risks}</span>
+                        </div>
+                      )}
+                      <div className="flex-1 border border-border bg-[#050505] p-3 relative group/code rounded">
+                        <div className="text-blue-500/70 text-[10px] mb-2"># Generated Context</div>
+                        <div className="text-gray-400 text-[10px] whitespace-pre-wrap leading-relaxed h-32 overflow-y-auto custom-scrollbar">
+                          {plan.cursor_prompt || '-'}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

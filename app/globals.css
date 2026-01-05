@@ -7,7 +7,86 @@
   --vibe-purple: #7c3aed;
 }
 
+* {
+  @apply selection:bg-blue-500/30 selection:text-white;
+}
+
 body {
-  background-color: var(--background);
-  color: #ffffff;
+  @apply bg-background text-text-muted antialiased min-h-screen font-sans;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Grid Background */
+.bg-grid {
+  background-size: 40px 40px;
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
+}
+
+/* Thinking Dots Animation */
+.thinking-dots::after {
+  content: ' .';
+  animation: dots 1s steps(5, end) infinite;
+}
+
+@keyframes dots {
+  0%, 20% { content: ' .'; }
+  40% { content: ' ..'; }
+  60% { content: ' ...'; }
+  80%, 100% { content: ''; }
+}
+
+/* Tool Card Hover */
+.tool-card:hover {
+  border-color: #52525b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.5);
+}
+
+/* Button Highlight */
+.btn-highlight {
+  background: linear-gradient(110deg, #3b82f6 40%, #60a5fa 50%, #3b82f6 60%);
+  background-size: 200% 100%;
+  color: white;
+  border: 1px solid #60a5fa;
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+.btn-highlight:hover {
+  animation: shimmer 1.5s infinite;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.7);
+}
+
+/* Carousel Track */
+.carousel-track {
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Custom Scrollbar for code blocks */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 2px;
 }

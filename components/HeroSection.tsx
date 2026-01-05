@@ -1,171 +1,133 @@
-'use client'
+'use client';
 
-import React, { useState } from 'react'
-import { ArrowRight, CheckCircle, Shield, Loader2 } from 'lucide-react'
-import { supabase } from '@/lib/supabaseClient'
-import ToolShowcase from '@/components/ToolShowcase'
+import { useState } from 'react';
+import { Heart } from 'lucide-react';
+import { motion } from 'framer-motion';
+import VideoCarousel from './VideoCarousel';
 
-type Status = 'idle' | 'loading' | 'success' | 'error'
+function WaitlistForm() {
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState('');
 
-const HeroSection = () => {
-  const [email, setEmail] = useState('')
-  const [status, setStatus] = useState<Status>('idle')
-  const [errorMessage, setErrorMessage] = useState('')
-
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    if (!email || !email.includes('@')) {
-      setStatus('error')
-      setErrorMessage('Please enter a valid email address')
-      return
-    }
-
-    setStatus('loading')
-    setErrorMessage('')
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setMessage('');
 
     try {
-      const { error } = await supabase
-        .from('waitlist')
-        .insert([{ email: email.toLowerCase().trim() }])
+      const response = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
 
-      if (error) {
-        if (error.code === '23505') {
-          setStatus('error')
-          setErrorMessage('This email is already subscribed')
-        } else {
-          setStatus('error')
-          setErrorMessage('Subscription failed, please try again later')
-        }
-        return
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage('Successfully joined waitlist!');
+        setEmail('');
+      } else {
+        setMessage(data.error || 'Failed to join waitlist');
       }
-
-      setStatus('success')
-      setEmail('')
-      
-      setTimeout(() => {
-        setStatus('idle')
-      }, 3000)
-    } catch (err) {
-      setStatus('error')
-      setErrorMessage('Subscription failed, please try again later')
+    } catch (error) {
+      setMessage('Network error. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
-    <section className="relative w-full overflow-hidden bg-white pt-20 pb-32 lg:pt-32 lg:pb-40">
-      {/* 背景装饰：细微的网格，增加工程感 */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-
-      <div className="container relative mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-8 items-center">
-          
-          {/* Left Column: Copywriting & CTA */}
-          <div className="flex flex-col justify-center">
-            <div className="mb-6 inline-flex items-center rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-sm text-gray-600">
-              <span className="flex h-2 w-2 rounded-full bg-green-500 mr-2 animate-pulse"></span>
-              Build in Public: v0.1.0 Live
-            </div>
-            
-            <h1 className="mb-6 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl leading-[1.1]">
-              Stop AI Anxiety,<br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-                Start Real Collaboration.
-              </span>
-            </h1>
-            
-            <p className="mb-8 text-lg text-gray-600 leading-relaxed max-w-lg">
-              byvibe.ai is building the optimal division of labor between humans and AI.
-              We don't stream coding sessions. We ship usable productivity tools.
-              <br/>
-              <span className="text-sm text-gray-400 mt-2 block">
-                * Subscribe only for version updates. Zero spam, guaranteed.
-              </span>
-            </p>
-
-            {/* Email Form */}
-            <div className="w-full max-w-md">
-              <form onSubmit={handleSubscribe} className="flex flex-col gap-3 sm:flex-row">
-                <input
-                  type="email"
-                  required
-                  placeholder="Enter your email for updates..."
-                  className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition disabled:opacity-50"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={status === 'loading' || status === 'success'}
-                />
-                <button
-                  type="submit"
-                  disabled={status === 'loading' || status === 'success'}
-                  className={`inline-flex items-center justify-center rounded-lg px-6 py-3 font-medium text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed
-                    ${status === 'success' ? 'bg-green-600' : 'bg-gray-900 hover:bg-gray-800'}
-                  `}
-                >
-                  {status === 'loading' ? (
-                    <span className="flex items-center gap-2">
-                      <Loader2 size={18} className="animate-spin" />
-                      Submitting...
-                    </span>
-                  ) : status === 'success' ? (
-                    <span className="flex items-center gap-2">
-                      <CheckCircle size={18} />
-                      Subscribed
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-2">
-                      Get Updates
-                      <ArrowRight size={18} />
-                    </span>
-                  )}
-                </button>
-              </form>
-              
-              {/* Error Message */}
-              {status === 'error' && errorMessage && (
-                <p className="mt-2 text-sm text-red-600">{errorMessage}</p>
-              )}
-              
-              {/* Success Message */}
-              {status === 'success' && (
-                <p className="mt-2 text-sm text-green-600">Successfully subscribed! We'll notify you when new versions are released.</p>
-              )}
-              
-              <p className="mt-4 flex items-center text-xs text-gray-500">
-                <Shield size={12} className="mr-1 text-gray-400" />
-                Your data is secure. Unsubscribe anytime with one click.
-              </p>
-            </div>
-          </div>
-
-          {/* Right Column: Visual / Tool Placeholder */}
-          <div className="relative mx-auto w-full max-w-[600px] lg:max-w-none">
-            {/* 装饰性光晕 */}
-            <div className="absolute -inset-1 rounded-2xl bg-gradient-to-tr from-blue-500 to-indigo-500 opacity-20 blur-lg"></div>
-            
-            <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl">
-              {/* Browser Header Simulation */}
-              <div className="flex items-center border-b border-gray-100 bg-gray-50/50 px-4 py-3">
-                <div className="flex space-x-1.5">
-                  <div className="h-3 w-3 rounded-full bg-red-400"></div>
-                  <div className="h-3 w-3 rounded-full bg-yellow-400"></div>
-                  <div className="h-3 w-3 rounded-full bg-green-400"></div>
-                </div>
-                <div className="mx-4 flex-1 rounded bg-white px-3 py-1 text-xs text-gray-400 text-center border border-gray-100">
-                  byvibe.ai/tool-preview
-                </div>
-              </div>
-
-              {/* Content Area - 工具展示组件 */}
-              <div className="aspect-[4/3] bg-white">
-                <ToolShowcase />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
+    <>
+      <form onSubmit={handleSubmit} className="flex gap-2">
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="work@email.com"
+          required
+          disabled={isSubmitting}
+          className="flex-1 bg-surface border border-border rounded-md px-4 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:border-white/40 focus:ring-0 transition-colors text-sm disabled:opacity-50"
+        />
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="px-6 py-3 rounded-md text-sm whitespace-nowrap btn-highlight font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isSubmitting ? '...' : 'Request Access'}
+        </button>
+      </form>
+      {message && (
+        <p className={`mt-2 text-xs ${message.includes('Success') ? 'text-green-400' : 'text-red-400'}`}>
+          {message}
+        </p>
+      )}
+    </>
+  );
 }
 
-export default HeroSection
+export default function HeroSection() {
+  return (
+    <header className="relative z-10 pt-16 md:pt-24 pb-16 px-4 md:px-6 border-b border-border bg-background">
+      <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+        {/* Left Column */}
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="space-y-8 max-w-xl"
+        >
+          {/* Brand Tag */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
+            className="inline-flex items-center gap-2 px-3 py-1 bg-red-500/10 border border-red-500/20 rounded text-[10px] font-bold text-red-400 uppercase tracking-widest hover:bg-red-500/20 transition-colors cursor-default"
+          >
+            <Heart className="w-3 h-3 fill-current" />
+            Create by Vibe, Share the Joy
+          </motion.div>
+
+          {/* Vertical Stacked Headline */}
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.1]"
+          >
+            The<br />
+            Engineering<br />
+            <span className="text-gray-600">Brain.</span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="text-lg text-text-muted leading-relaxed font-light border-l-2 border-white/10 pl-6"
+          >
+            An orchestration layer for <strong>Vibe Coding</strong>.<br />
+            We inject engineering rigor into AI workflows, ensuring your natural language compiles into scalable products.
+          </motion.p>
+
+          <div id="waitlist-form" className="pt-6 max-w-sm">
+            <WaitlistForm />
+            <p className="mt-4 text-[10px] text-text-dim font-mono uppercase tracking-wide flex items-center gap-2">
+              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+              Batch #3 Enrollment Open
+            </p>
+          </motion.div>
+        </motion.div>
+
+        {/* Right Column: Vertical Video Switcher */}
+        <motion.div
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
+          <VideoCarousel />
+        </motion.div>
+      </div>
+    </header>
+  );
+}

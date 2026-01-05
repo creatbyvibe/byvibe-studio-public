@@ -1,22 +1,55 @@
-import HeroSection from '@/components/HeroSection'
-import BuildLog from '@/components/landing/BuildLog'
-import MakeTrust from '@/components/MakeTrust'
+'use client';
+
+import { useState, useEffect } from 'react';
+import Navbar from '@/components/Navbar';
+import HeroSection from '@/components/HeroSection';
+import InteractiveConsole from '@/components/InteractiveConsole';
+import FeaturesGrid from '@/components/FeaturesGrid';
+import EcosystemLogos from '@/components/EcosystemLogos';
+import ComplianceSection from '@/components/ComplianceSection';
+import ToolDirectory from '@/components/ToolDirectory';
+import Footer from '@/components/Footer';
 
 export default function Home() {
-  return (
-    <main className="min-h-screen bg-white">
-      {/* Hero Section - Clean tech design */}
-      <HeroSection />
-      
-      {/* BuildLog 区域 - Building in Public timeline */}
-      <section className="bg-gray-50 py-20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <BuildLog />
-        </div>
-      </section>
+  const [currentView, setCurrentView] = useState<'home' | 'directory'>('home');
 
-      {/* MakeTrust 区域 - Tools we use */}
-      <MakeTrust />
-    </main>
-  )
+  const handleWaitlistClick = () => {
+    setCurrentView('home');
+    setTimeout(() => {
+      const waitlistForm = document.getElementById('waitlist-form');
+      if (waitlistForm) {
+        waitlistForm.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+  };
+
+  useEffect(() => {
+    if (currentView === 'home') {
+      window.scrollTo(0, 0);
+    }
+  }, [currentView]);
+
+  return (
+    <div className="min-h-screen flex flex-col relative overflow-x-hidden">
+      <div className="fixed inset-0 z-0 bg-grid pointer-events-none"></div>
+      
+      <Navbar onViewChange={setCurrentView} onWaitlistClick={handleWaitlistClick} />
+
+      {currentView === 'home' ? (
+        <div className="transition-opacity duration-300">
+          <HeroSection />
+          <InteractiveConsole />
+          <FeaturesGrid />
+          <EcosystemLogos />
+          <ComplianceSection />
+        </div>
+      ) : (
+        <div className="transition-opacity duration-300">
+          <ToolDirectory />
+        </div>
+      )}
+
+      <Footer />
+    </div>
+  );
 }
