@@ -75,6 +75,25 @@ export default function ToolModal({ tool, onClose }: ToolModalProps) {
             </div>
           </div>
 
+          {/* Tags */}
+          {tool.tags && tool.tags.length > 0 && (
+            <div className="mt-6 pt-6 border-t border-border">
+              <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 block">
+                Tags
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {tool.tags.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="px-2 py-1 bg-black/50 text-gray-400 text-[10px] rounded border border-border"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* ByVibe Capabilities (Payloads) */}
           <div className="mt-6 pt-6 border-t border-border">
             <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 block">

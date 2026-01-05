@@ -2,6 +2,7 @@
 
 import { Mail } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { toolsData } from '@/data/tools';
 
 interface NavbarProps {
   onViewChange: (view: 'home' | 'directory') => void;
@@ -47,12 +48,13 @@ export default function Navbar({ onViewChange, onWaitlistClick }: NavbarProps) {
           </button>
           <button
             onClick={() => onViewChange('directory')}
-            className="hover:text-white transition-colors flex items-center gap-1.5 group uppercase"
+            className="hover:text-white transition-colors flex items-center gap-1.5 group uppercase relative"
           >
             Integrations
             <span className="bg-blue-500/10 text-blue-400 text-[9px] px-1.5 py-0.5 rounded border border-blue-500/20 group-hover:border-blue-500/50 transition-colors font-mono">
-              LIB
+              {toolsData.length}+
             </span>
+            <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
           </button>
           <a
             href="#compliance"
