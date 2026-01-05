@@ -132,17 +132,17 @@ export default function HeroSection() {
             transition={{ duration: 0.6, delay: 0.6 }}
             className="text-base md:text-lg text-text-muted leading-relaxed font-light border-l-2 border-white/10 pl-6"
           >
-            An orchestration layer for <strong>Vibe Coding</strong>.<br className="hidden md:block" />
+            An orchestration layer for <strong className="text-white">Vibe Coding</strong>.<br className="hidden md:block" />
             <span className="md:inline hidden"> </span>
             We inject engineering rigor into AI workflows, ensuring your natural language compiles into scalable products.
           </motion.p>
 
-          <div id="waitlist-form" className="pt-6 max-w-sm space-y-4">
+          <div id="waitlist-form" className="pt-8 max-w-sm space-y-4">
             <WaitlistForm />
             <StartBuildingButton />
-            <p className="mt-4 text-[10px] text-text-dim font-mono uppercase tracking-wide flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-              Batch #3 Enrollment Open
+            <p className="mt-6 text-[10px] text-text-dim font-mono uppercase tracking-wide flex items-center gap-2">
+              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse flex-shrink-0"></span>
+              <span>Batch #3 Enrollment Open</span>
             </p>
           </div>
         </motion.div>

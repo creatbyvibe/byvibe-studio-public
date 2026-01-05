@@ -28,8 +28,8 @@ export default function FeaturesGrid() {
     <section id="features" className="py-12 md:py-20 px-4 md:px-6 border-b border-border bg-background">
       <div className="max-w-7xl mx-auto">
         <div className="mb-12 md:mb-16 border-b border-border pb-8">
-          <h2 className="text-2xl font-semibold text-white mb-2">The Vibe AI System</h2>
-          <p className="text-text-muted text-sm">
+          <h2 className="text-2xl md:text-3xl font-semibold text-white mb-3 leading-tight">The Vibe AI System</h2>
+          <p className="text-text-muted text-sm md:text-base leading-relaxed">
             ByVibe structures your raw Vibe into a deployable AI Architecture.
           </p>
         </div>

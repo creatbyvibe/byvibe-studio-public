@@ -12,28 +12,6 @@
   display: none;
 }
 
-/* 工具图标横向滚动动画 */
-.tool-scroll-container {
-  display: flex;
-  will-change: transform;
-}
-
-.tool-scroll-container:not(.pause-scroll) {
-  animation: scroll-horizontal 80s linear infinite;
-}
-
-.tool-scroll-container.pause-scroll {
-  animation-play-state: paused;
-}
-
-@keyframes scroll-horizontal {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(calc(-100% / 3));
-  }
-}
 
 :root {
   --background: #050505;

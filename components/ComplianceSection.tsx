@@ -29,19 +29,19 @@ export default function ComplianceSection() {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
           <div>
-            <span className="text-[10px] font-mono text-blue-400 uppercase tracking-widest mb-2 block">
+            <span className="text-[10px] font-mono text-blue-400 uppercase tracking-widest mb-3 block">
               Global Standards
             </span>
-            <h2 className="text-2xl md:text-3xl font-bold text-white">AI Governance & Legislation</h2>
-            <p className="text-text-muted text-sm mt-2 max-w-lg">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3 leading-tight">AI Governance & Legislation</h2>
+            <p className="text-text-muted text-sm md:text-base mt-2 max-w-lg leading-relaxed">
               ByVibe architecture is built to align with emerging global AI safety standards.
             </p>
           </div>
           <a
             href="/governance"
-            className="text-xs text-white border-b border-white/20 hover:border-white pb-0.5 transition-colors"
+            className="text-xs md:text-sm text-white border-b border-white/20 hover:border-white pb-0.5 transition-colors whitespace-nowrap"
           >
-            View Full Governance Page -&gt;
+            View Full Governance Page →
           </a>
         </div>
 
