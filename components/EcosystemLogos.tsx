@@ -191,25 +191,35 @@ export default function EcosystemLogos() {
     },
   ];
 
+  // 计算响应式列数，确保最后一行对齐
+  // 15个logo，在不同屏幕尺寸下的最佳排列
+  // 移动端: 2列 (7行，最后一行1个) -> 改为3列 (5行，最后一行0个)
+  // 平板: 3列 (5行，最后一行0个) -> 改为4列 (4行，最后一行3个)
+  // 桌面: 5列 (3行，最后一行0个) -> 改为6列 (3行，最后一行3个)
+  // 大屏: 6列 (3行，最后一行3个) -> 保持
+
   return (
-    <section className="border-b border-border bg-surface/50 py-8 md:py-12 overflow-hidden">
+    <section className="border-b border-border bg-surface/50 py-12 md:py-16 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
-        <p className="text-center text-[10px] md:text-xs font-mono text-gray-500 uppercase tracking-widest mb-8 md:mb-10">
+        <p className="text-center text-sm md:text-base font-mono text-gray-500 uppercase tracking-widest mb-10 md:mb-12">
           Orchestrating the AI Ecosystem
         </p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-6 gap-4 md:gap-5 justify-items-center">
           {logos.map((logo, index) => (
             <a
               key={index}
               href={logo.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center px-3 py-3 md:px-4 md:py-4 rounded-lg border border-border/30 bg-surface/20 hover:bg-surface/50 hover:border-border/80 hover:scale-105 transition-all duration-300 group min-h-[80px]"
+              className="flex flex-col items-center justify-center px-4 py-4 md:px-5 md:py-5 rounded-lg border border-border/30 bg-surface/20 hover:bg-surface/50 hover:border-border/80 hover:scale-110 transition-all duration-300 group w-full max-w-[140px] min-h-[100px] md:min-h-[120px]"
               aria-label={logo.name}
             >
-              <div className="flex items-center justify-center gap-2 text-gray-400 group-hover:text-white transition-colors text-center">
+              <div className="flex items-center justify-center mb-2 text-gray-400 group-hover:text-white transition-colors scale-110">
                 {logo.logo}
               </div>
+              <span className="text-xs md:text-sm font-medium text-gray-500 group-hover:text-white transition-colors text-center">
+                {logo.name}
+              </span>
             </a>
           ))}
         </div>

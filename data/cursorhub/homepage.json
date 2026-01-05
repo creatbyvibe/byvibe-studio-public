@@ -1,0 +1,446 @@
+{
+  "url": "https://cursorhub.org/",
+  "title": "Cursor Hub - 最全面的免费中文Cursor教程",
+  "description": "学习使用 Cursor，提升你的编程效率。我们提供最全面的 Cursor 教程，帮助你掌握 AI 辅助编程。",
+  "sections": [
+    {
+      "title": "我的出海创业之路",
+      "content": ""
+    },
+    {
+      "title": "探索起步",
+      "content": ""
+    },
+    {
+      "title": "探索学习路径",
+      "content": ""
+    },
+    {
+      "title": "Cursor入门基础",
+      "content": ""
+    },
+    {
+      "title": "Cursor进阶",
+      "content": ""
+    },
+    {
+      "title": "Cursor常见问题 (FAQ)",
+      "content": ""
+    },
+    {
+      "title": "全栈开发指南",
+      "content": ""
+    },
+    {
+      "title": "实战项目",
+      "content": ""
+    },
+    {
+      "title": "SEO 基础教程",
+      "content": ""
+    },
+    {
+      "title": "常用软件/平台清单",
+      "content": ""
+    },
+    {
+      "title": "选择适合你的计划",
+      "content": ""
+    },
+    {
+      "title": "免费版",
+      "content": ""
+    },
+    {
+      "title": "年费会员",
+      "content": ""
+    },
+    {
+      "title": "终身会员",
+      "content": ""
+    },
+    {
+      "title": "为什么选择 Cursor Hub？",
+      "content": ""
+    },
+    {
+      "title": "详细教程",
+      "content": ""
+    },
+    {
+      "title": "AI 编码技巧",
+      "content": ""
+    },
+    {
+      "title": "项目实战案例",
+      "content": ""
+    },
+    {
+      "title": "需求与变现",
+      "content": ""
+    },
+    {
+      "title": "持续更新",
+      "content": ""
+    },
+    {
+      "title": "社区互动",
+      "content": ""
+    },
+    {
+      "title": "关于 Cursor 的常见疑问",
+      "content": ""
+    },
+    {
+      "title": "Cursor 是什么，它与普通编辑器有什么不同？",
+      "content": ""
+    },
+    {
+      "title": "初学者如何快速上手 Cursor？",
+      "content": ""
+    },
+    {
+      "title": "如何有效利用 Cursor 的 AI 功能提高开发效率？",
+      "content": ""
+    },
+    {
+      "title": "Cursor 适合哪些编程语言和开发场景？",
+      "content": ""
+    },
+    {
+      "title": "Cursor 是否会替代传统编程技能的学习？",
+      "content": ""
+    },
+    {
+      "title": "如何解决使用 Cursor 时遇到的常见问题？",
+      "content": ""
+    },
+    {
+      "title": "课程内容",
+      "content": ""
+    },
+    {
+      "title": "快速导航",
+      "content": ""
+    },
+    {
+      "title": "联系方式",
+      "content": ""
+    }
+  ],
+  "links": [
+    {
+      "text": "开始学习",
+      "url": "/tutorials"
+    },
+    {
+      "text": "学习路线图",
+      "url": "/roadmap"
+    },
+    {
+      "text": "实战项目",
+      "url": "/tutorials/projects/introduction"
+    },
+    {
+      "text": "开始使用Cursor",
+      "url": "/tutorials/basics/getting-started/introduction"
+    },
+    {
+      "text": "介绍",
+      "url": "/tutorials/basics/getting-started/introduction"
+    },
+    {
+      "text": "安装/配置初始设置",
+      "url": "/tutorials/basics/getting-started/installation"
+    },
+    {
+      "text": "Cursor常用功能",
+      "url": "/tutorials/basics/common-features/tab-completion"
+    },
+    {
+      "text": "tab自动补全代码",
+      "url": "/tutorials/basics/common-features/tab-completion"
+    },
+    {
+      "text": "Cursor Rules",
+      "url": "/tutorials/basics/cursor-rules/global-rules"
+    },
+    {
+      "text": "全局Rule",
+      "url": "/tutorials/basics/cursor-rules/global-rules"
+    },
+    {
+      "text": "根目录下的.cursorrules",
+      "url": "/tutorials/basics/cursor-rules/root-cursorrules"
+    },
+    {
+      "text": "与Cursor开始对话",
+      "url": "/tutorials/basics/chat-modes/introduction"
+    },
+    {
+      "text": "介绍",
+      "url": "/tutorials/basics/chat-modes/introduction"
+    },
+    {
+      "text": "模型选择",
+      "url": "/tutorials/basics/chat-modes/model-selection"
+    },
+    {
+      "text": "模式选择(Agent/Ask/Manual)",
+      "url": "/tutorials/basics/chat-modes/mode-selection"
+    },
+    {
+      "text": "Cursor安装和配置",
+      "url": "/tutorials/premium-videos/cursor-videos/cursor-installation"
+    },
+    {
+      "text": "Cursor界面导览与快捷键",
+      "url": "/tutorials/premium-videos/cursor-videos/cursor-interface"
+    },
+    {
+      "text": "Cursor插件安装与管理",
+      "url": "/tutorials/premium-videos/cursor-videos/cursor-plugins"
+    },
+    {
+      "text": "Cursor AI模型选择",
+      "url": "/tutorials/premium-videos/cursor-videos/cursor-models"
+    },
+    {
+      "text": "Cursor Rules",
+      "url": "/tutorials/premium-videos/cursor-videos/cursor-rules"
+    },
+    {
+      "text": "Cursor AI对话（Chat）",
+      "url": "/tutorials/premium-videos/cursor-videos/cursor-chat"
+    },
+    {
+      "text": "Cursor自动代码补全（Tab）",
+      "url": "/tutorials/premium-videos/cursor-videos/cursor-tab"
+    },
+    {
+      "text": "提升技巧",
+      "url": "/tutorials/cursor-advanced/code-control"
+    },
+    {
+      "text": "如何让Cursor写的代码更听话",
+      "url": "/tutorials/cursor-advanced/code-control"
+    },
+    {
+      "text": "常见问题解答",
+      "url": "/tutorials/cursor-faq/broken-functionality"
+    },
+    {
+      "text": "原有功能被意外改坏怎么办",
+      "url": "/tutorials/cursor-faq/broken-functionality"
+    },
+    {
+      "text": "上来就直接写代码怎么办",
+      "url": "/tutorials/cursor-faq/premature-coding"
+    },
+    {
+      "text": "代码过长出错多怎么办",
+      "url": "/tutorials/cursor-faq/long-code-errors"
+    },
+    {
+      "text": "代码报错解决思路",
+      "url": "/tutorials/cursor-faq/error-solving"
+    },
+    {
+      "text": "开发环境搭建",
+      "url": "/tutorials/fullstack-guide/dev-environment-setup/terminal-tools"
+    },
+    {
+      "text": "终端工具",
+      "url": "/tutorials/fullstack-guide/dev-environment-setup/terminal-tools"
+    },
+    {
+      "text": "VS Code 插件",
+      "url": "/tutorials/fullstack-guide/dev-environment-setup/vscode-plugins"
+    },
+    {
+      "text": "配置终端工具",
+      "url": "/tutorials/fullstack-guide/dev-environment-setup/terminal-config"
+    },
+    {
+      "text": "Github desktop",
+      "url": "/tutorials/fullstack-guide/dev-environment-setup/github-desktop"
+    },
+    {
+      "text": "安装依赖工具",
+      "url": "/tutorials/fullstack-guide/dev-environment-setup/install-dependencies"
+    },
+    {
+      "text": "网站基础设施",
+      "url": "/tutorials/fullstack-guide/domain-management/domain-purchase"
+    },
+    {
+      "text": "购买域名",
+      "url": "/tutorials/fullstack-guide/domain-management/domain-purchase"
+    },
+    {
+      "text": "域名解析",
+      "url": "/tutorials/fullstack-guide/domain-management/domain-dns"
+    },
+    {
+      "text": "Vercel部署",
+      "url": "/tutorials/fullstack-guide/server-deployment/vercel-deployment"
+    },
+    {
+      "text": "Cloudflare部署",
+      "url": "/tutorials/fullstack-guide/server-deployment/cloudflare-deployment"
+    },
+    {
+      "text": "网站数据分析",
+      "url": "/tutorials/fullstack-guide/website-analytics/analytics-tools"
+    },
+    {
+      "text": "数据分析工具",
+      "url": "/tutorials/fullstack-guide/website-analytics/analytics-tools"
+    },
+    {
+      "text": "Github（开发工具）",
+      "url": "/tutorials/premium-videos/fullstack-guide-videos/github-tools"
+    },
+    {
+      "text": "Vercel（服务器部署）",
+      "url": "/tutorials/premium-videos/fullstack-guide-videos/vercel-deployment"
+    },
+    {
+      "text": "Cloudflare（服务器部署）",
+      "url": "/tutorials/premium-videos/fullstack-guide-videos/cloudflare-deployment"
+    },
+    {
+      "text": "Supabase（数据库）",
+      "url": "/tutorials/premium-videos/fullstack-guide-videos/supabase-database"
+    },
+    {
+      "text": "Google Analytics",
+      "url": "/tutorials/premium-videos/fullstack-guide-videos/google-analytics"
+    },
+    {
+      "text": "Stripe（收款工具）",
+      "url": "/tutorials/premium-videos/fullstack-guide-videos/stripe-payment"
+    },
+    {
+      "text": "入门项目",
+      "url": "/tutorials/projects/entry-level-project/personal-blog"
+    },
+    {
+      "text": "个人博客网站搭建",
+      "url": "/tutorials/projects/entry-level-project/personal-blog"
+    },
+    {
+      "text": "3D网页前端项目",
+      "url": "/tutorials/projects/entry-level-project/3d-web-project"
+    },
+    {
+      "text": "谷歌浏览器插件实战项目",
+      "url": "/tutorials/projects/entry-level-project/chrome-extension-project"
+    },
+    {
+      "text": "HTML代码生成网页工具站",
+      "url": "/tutorials/projects/advanced-projects/html-generator"
+    },
+    {
+      "text": "AI图片背景移除工具",
+      "url": "/tutorials/projects/advanced-projects/bg-removal-tool"
+    },
+    {
+      "text": "AI图片生成工具站",
+      "url": "/tutorials/premium-videos/project-videos/ai-image-generator"
+    },
+    {
+      "text": "AI播客生成工具站",
+      "url": "/tutorials/premium-videos/project-videos/ai-podcast-generator"
+    },
+    {
+      "text": "出海小游戏站",
+      "url": "/tutorials/premium-videos/project-videos/mini-games-site"
+    },
+    {
+      "text": "外贸网站开发",
+      "url": "/tutorials/premium-videos/project-videos/international-trade-site"
+    },
+    {
+      "text": "关键词 &amp; 竞品",
+      "url": "/tutorials/seo-basics/keyword-research"
+    },
+    {
+      "text": "如何挖掘新词",
+      "url": "/tutorials/seo-basics/keyword-research"
+    },
+    {
+      "text": "如何挖掘长尾词",
+      "url": "/tutorials/seo-basics/long-tail-keywords"
+    },
+    {
+      "text": "网站优化",
+      "url": "/tutorials/seo-basics/content-optimization"
+    },
+    {
+      "text": "如何优化网站内容",
+      "url": "/tutorials/seo-basics/content-optimization"
+    },
+    {
+      "text": "如何获取外链",
+      "url": "/tutorials/seo-basics/backlink-building"
+    },
+    {
+      "text": "利用Github做SEO",
+      "url": "/tutorials/seo-basics/github-seo"
+    },
+    {
+      "text": "利用Github拿到搜索引擎排名",
+      "url": "/tutorials/seo-basics/github-seo"
+    },
+    {
+      "text": "出海找需求常用工具用法",
+      "url": "/tutorials/premium-videos/seo-videos/overseas-tools"
+    },
+    {
+      "text": "开发 &amp; AI",
+      "url": "/tutorials/software-platforms/api-providers"
+    },
+    {
+      "text": "API提供商",
+      "url": "/tutorials/software-platforms/api-providers"
+    },
+    {
+      "text": "数据库提供商",
+      "url": "/tutorials/software-platforms/database-providers"
+    },
+    {
+      "text": "AI编程工具",
+      "url": "/tutorials/software-platforms/ai-coding-tools"
+    },
+    {
+      "text": "UI设计平台",
+      "url": "/tutorials/software-platforms/ui-design-platforms"
+    },
+    {
+      "text": "分析 &amp; 商业化",
+      "url": "/tutorials/software-platforms/analytics-providers"
+    },
+    {
+      "text": "网站数据分析提供商",
+      "url": "/tutorials/software-platforms/analytics-providers"
+    },
+    {
+      "text": "对接广告平台",
+      "url": "/tutorials/software-platforms/ad-platforms"
+    },
+    {
+      "text": "对接支付平台",
+      "url": "/tutorials/software-platforms/payment-platforms"
+    },
+    {
+      "text": "开始学习之旅",
+      "url": "/tutorials"
+    },
+    {
+      "text": "联系我们",
+      "url": "/contact"
+    }
+  ],
+  "timestamp": "2026-01-05T22:36:45.308Z"
+}

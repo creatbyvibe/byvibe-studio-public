@@ -61,9 +61,9 @@ export default function Navbar({ onViewChange, onWaitlistClick }: NavbarProps) {
 
           <a
             href="mailto:make@byvibe.ai"
-            className="hidden sm:flex items-center gap-2 text-[11px] font-mono text-gray-500 hover:text-white transition-colors border-l border-white/10 pl-6 group"
+            className="hidden sm:flex items-center gap-2 text-sm font-mono text-gray-500 hover:text-white transition-colors border-l border-white/10 pl-6 group"
           >
-            <Mail className="w-3 h-3 group-hover:text-blue-400 transition-colors" />
+            <Mail className="w-4 h-4 group-hover:text-blue-400 transition-colors" />
             <span>make@byvibe.ai</span>
           </a>
         </div>

@@ -35,14 +35,12 @@ export default function Home() {
       <div className="fixed inset-0 z-0 bg-grid pointer-events-none"></div>
       
       <Navbar onViewChange={setCurrentView} onWaitlistClick={handleWaitlistClick} />
-      <SloganBanner />
 
       {currentView === 'home' ? (
         <div className="transition-opacity duration-300">
           <HeroSection />
           <InteractiveConsole />
           <FeaturesGrid />
-          <EcosystemLogos />
           <ComplianceSection />
         </div>
       ) : (
@@ -51,7 +49,15 @@ export default function Home() {
         </div>
       )}
 
+      <EcosystemLogos />
       <Footer />
+      
+      {/* Watermark */}
+      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-10 pointer-events-none">
+        <p className="text-xs md:text-sm text-red-400/30 font-medium tracking-wide">
+          Create by Vibe, Share the Joy
+        </p>
+      </div>
     </div>
   );
 }
