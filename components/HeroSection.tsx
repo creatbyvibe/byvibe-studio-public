@@ -25,7 +25,7 @@ function WaitlistForm() {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage('Successfully joined waitlist!');
+        setMessage(data.message || 'Successfully joined waitlist! Check your email for a welcome message.');
         setEmail('');
       } else {
         setMessage(data.error || 'Failed to join waitlist');

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
+import { getWelcomeEmailTemplate } from '@/lib/email/templates'
 
 export const runtime = 'edge';
 
@@ -47,10 +48,40 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // 发送欢迎邮件（异步，不阻塞响应）
+    try {
+      const emailTemplate = getWelcomeEmailTemplate(name, email);
+      
+      // 获取 origin（支持 Edge Runtime）
+      const origin = request.headers.get('origin') || 
+                    request.headers.get('host') ? `https://${request.headers.get('host')}` : 
+                    'https://byvibe-studio-public.pages.dev';
+      
+      // 调用邮件发送 API
+      const emailResponse = await fetch(`${origin}/api/send-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: email.toLowerCase().trim(),
+          name: name?.trim(),
+          subject: emailTemplate.subject,
+          html: emailTemplate.html,
+        }),
+      });
+
+      if (!emailResponse.ok) {
+        console.error('Failed to send welcome email:', await emailResponse.text());
+        // 邮件发送失败不影响主流程
+      }
+    } catch (emailError) {
+      console.error('Error sending welcome email:', emailError);
+      // 邮件发送失败不影响主流程
+    }
+
     return NextResponse.json(
       {
         success: true,
-        message: '成功加入等待列表！',
+        message: '成功加入等待列表！我们已发送欢迎邮件到你的邮箱。',
         data: data[0],
       },
       { status: 201 }
