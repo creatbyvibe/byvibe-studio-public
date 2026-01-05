@@ -50,14 +50,14 @@ export default function Navbar({ onViewChange, onWaitlistClick }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-4 md:px-6 h-16 flex justify-between items-center">
         {/* Left Side: Brand & Contact */}
         <div className="flex items-center gap-6">
-          <button
-            onClick={() => onViewChange('home')}
+          <a
+            href="/"
             className="cursor-pointer select-none group flex items-center"
           >
             <span className="text-xl font-bold tracking-tighter text-white group-hover:text-blue-400 transition-colors">
               byvibe<span className="text-gray-500 font-normal group-hover:text-blue-400/50">.ai</span>
             </span>
-          </button>
+          </a>
 
           <a
             href="mailto:make@byvibe.ai"
@@ -70,12 +70,12 @@ export default function Navbar({ onViewChange, onWaitlistClick }: NavbarProps) {
 
         {/* Center Links */}
         <div className="hidden md:flex gap-10 text-[13px] font-medium text-text-muted tracking-wide">
-          <button
-            onClick={() => onViewChange('home')}
+          <a
+            href="/"
             className="hover:text-white transition-colors uppercase"
           >
             Product
-          </button>
+          </a>
           <button
             onClick={() => onViewChange('directory')}
             className="hover:text-white transition-colors flex items-center gap-1.5 group uppercase relative"

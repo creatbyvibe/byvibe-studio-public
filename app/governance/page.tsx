@@ -181,8 +181,16 @@ export default function GovernancePage() {
       <div className="fixed inset-0 z-0 bg-grid pointer-events-none"></div>
       
       <Navbar 
-        onViewChange={() => {}} 
-        onWaitlistClick={() => {}} 
+        onViewChange={(view) => {
+          if (view === 'home') {
+            window.location.href = '/';
+          } else if (view === 'directory') {
+            window.location.href = '/?view=directory';
+          }
+        }} 
+        onWaitlistClick={() => {
+          window.location.href = '/#waitlist-form';
+        }} 
       />
 
       {/* Hero Section */}
@@ -262,33 +270,40 @@ export default function GovernancePage() {
           {activeTab === 'regulations' && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {regulations.map((regulation, index) => (
-                <motion.a
+                <motion.div
                   key={regulation.id}
-                  href={regulation.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.1 }}
-                  className="p-6 border border-border bg-surface rounded hover:border-blue-500/30 transition-all group"
+                  className="p-6 border border-border bg-surface rounded hover:border-blue-500/30 transition-all group flex flex-col"
                 >
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-xs font-mono text-gray-500 group-hover:text-gray-400 transition-colors">
                       {regulation.region}
                     </span>
-                    <ExternalLink className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors" />
                   </div>
-                  <div className="flex items-center gap-2 mb-2">
+                  <div className="flex items-center gap-2 mb-3">
                     <span className="text-[10px] px-2 py-0.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded">
                       {regulation.category}
                     </span>
                     <span className="text-[10px] text-gray-600">{regulation.date}</span>
                   </div>
-                  <h3 className="text-white font-bold mb-2 group-hover:text-blue-400 transition-colors">
+                  <h3 className="text-white font-bold mb-3 group-hover:text-blue-400 transition-colors">
                     {regulation.title}
                   </h3>
-                  <p className="text-xs text-text-muted leading-relaxed">{regulation.description}</p>
-                </motion.a>
+                  <p className="text-xs text-text-muted leading-relaxed mb-4 flex-1">
+                    {regulation.description}
+                  </p>
+                  <a
+                    href={regulation.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-xs text-blue-400 hover:text-blue-300 transition-colors mt-auto pt-3 border-t border-border"
+                  >
+                    <span>查看原文</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </motion.div>
               ))}
             </div>
           )}
@@ -297,27 +312,25 @@ export default function GovernancePage() {
           {activeTab === 'ethics' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {ethicsPrinciples.map((principle, index) => (
-                <motion.a
+                <motion.div
                   key={principle.id}
-                  href={principle.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.1 }}
-                  className="p-6 border border-border bg-surface rounded hover:border-blue-500/30 transition-all group"
+                  className="p-6 border border-border bg-surface rounded hover:border-blue-500/30 transition-all group flex flex-col"
                 >
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-xs font-mono text-gray-500 group-hover:text-gray-400 transition-colors">
                       {principle.organization}
                     </span>
-                    <ExternalLink className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors" />
                   </div>
-                  <h3 className="text-white font-bold mb-2 group-hover:text-blue-400 transition-colors">
+                  <h3 className="text-white font-bold mb-3 group-hover:text-blue-400 transition-colors">
                     {principle.title}
                   </h3>
-                  <p className="text-xs text-text-muted leading-relaxed mb-4">{principle.description}</p>
-                  <div className="flex flex-wrap gap-2">
+                  <p className="text-xs text-text-muted leading-relaxed mb-4 flex-1">
+                    {principle.description}
+                  </p>
+                  <div className="flex flex-wrap gap-2 mb-4">
                     {principle.principles.map((p, i) => (
                       <span
                         key={i}
@@ -327,7 +340,16 @@ export default function GovernancePage() {
                       </span>
                     ))}
                   </div>
-                </motion.a>
+                  <a
+                    href={principle.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-xs text-blue-400 hover:text-blue-300 transition-colors mt-auto pt-3 border-t border-border"
+                  >
+                    <span>查看原文</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </motion.div>
               ))}
             </div>
           )}
@@ -336,19 +358,16 @@ export default function GovernancePage() {
           {activeTab === 'research' && (
             <div className="space-y-6">
               {researchPapers.map((paper, index) => (
-                <motion.a
+                <motion.div
                   key={paper.id}
-                  href={paper.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.1 }}
-                  className="block p-6 border border-border bg-surface rounded hover:border-blue-500/30 transition-all group"
+                  className="p-6 border border-border bg-surface rounded hover:border-blue-500/30 transition-all group"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
+                      <div className="flex items-center gap-2 mb-3">
                         <span className="text-[10px] px-2 py-0.5 bg-green-500/10 text-green-400 border border-green-500/20 rounded">
                           {paper.category}
                         </span>
@@ -360,14 +379,24 @@ export default function GovernancePage() {
                       <h3 className="text-white font-bold mb-2 group-hover:text-blue-400 transition-colors">
                         {paper.title}
                       </h3>
-                      <p className="text-xs text-gray-500 mb-2">
+                      <p className="text-xs text-gray-500 mb-3">
                         {paper.authors} · {paper.journal}
                       </p>
-                      <p className="text-sm text-text-muted leading-relaxed">{paper.description}</p>
+                      <p className="text-sm text-text-muted leading-relaxed mb-4">
+                        {paper.description}
+                      </p>
                     </div>
-                    <ExternalLink className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors ml-4 flex-shrink-0" />
                   </div>
-                </motion.a>
+                  <a
+                    href={paper.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-xs text-blue-400 hover:text-blue-300 transition-colors pt-3 border-t border-border"
+                  >
+                    <span>查看原文</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </motion.div>
               ))}
             </div>
           )}
@@ -376,27 +405,34 @@ export default function GovernancePage() {
           {activeTab === 'journals' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {openAccessJournals.map((journal, index) => (
-                <motion.a
+                <motion.div
                   key={journal.id}
-                  href={journal.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.1 }}
-                  className="p-6 border border-border bg-surface rounded hover:border-blue-500/30 transition-all group"
+                  className="p-6 border border-border bg-surface rounded hover:border-blue-500/30 transition-all group flex flex-col"
                 >
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-xs font-mono text-gray-500 group-hover:text-gray-400 transition-colors">
                       {journal.focus}
                     </span>
-                    <ExternalLink className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors" />
                   </div>
-                  <h3 className="text-white font-bold mb-2 group-hover:text-blue-400 transition-colors">
+                  <h3 className="text-white font-bold mb-3 group-hover:text-blue-400 transition-colors">
                     {journal.name}
                   </h3>
-                  <p className="text-xs text-text-muted leading-relaxed">{journal.description}</p>
-                </motion.a>
+                  <p className="text-xs text-text-muted leading-relaxed mb-4 flex-1">
+                    {journal.description}
+                  </p>
+                  <a
+                    href={journal.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-xs text-blue-400 hover:text-blue-300 transition-colors mt-auto pt-3 border-t border-border"
+                  >
+                    <span>访问期刊</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </motion.div>
               ))}
             </div>
           )}

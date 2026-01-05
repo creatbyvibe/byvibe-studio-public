@@ -49,19 +49,19 @@ export default function ComplianceSection() {
           {complianceItems.map((item, index) => (
             <a
               key={index}
-              href={item.link}
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/governance"
               className="p-6 border border-border bg-background rounded hover:border-blue-500/30 transition-colors group"
             >
               <div className="flex items-center justify-between mb-4">
                 <span className="text-xs font-mono text-gray-500 group-hover:text-gray-400 transition-colors">
                   {item.region}
                 </span>
-                <ExternalLink className="w-3 h-3 text-gray-600 group-hover:text-white transition-colors" />
               </div>
-              <h3 className="text-white font-bold mb-1">{item.title}</h3>
-              <p className="text-xs text-text-muted">{item.description}</p>
+              <h3 className="text-white font-bold mb-2 group-hover:text-blue-400 transition-colors">{item.title}</h3>
+              <p className="text-xs text-text-muted leading-relaxed">{item.description}</p>
+              <p className="text-[10px] text-blue-400 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                查看详情 →
+              </p>
             </a>
           ))}
         </div>
