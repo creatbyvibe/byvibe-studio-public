@@ -7,92 +7,92 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import StructuredData from '@/components/StructuredData';
 
-// 法规与政策
+// Regulations & Policies
 const regulations = [
   {
     id: 1,
     region: 'EUROPEAN UNION',
     title: 'EU AI Act',
-    description: '欧盟人工智能法案，全面规范人工智能的开发和使用，是全球首个全面的AI法规框架。',
+    description: 'The EU AI Act comprehensively regulates the development and use of artificial intelligence, representing the world\'s first comprehensive AI regulatory framework.',
     link: 'https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai',
-    date: '2024年3月',
-    category: '法规',
+    date: 'March 2024',
+    category: 'Regulation',
   },
   {
     id: 2,
     region: 'UNITED STATES',
     title: 'AI Executive Order',
-    description: '美国人工智能行政命令，旨在确保AI的安全、可靠和可信发展。',
+    description: 'The U.S. AI Executive Order aims to ensure the safe, secure, and trustworthy development of AI.',
     link: 'https://www.whitehouse.gov/briefing-room/presidential-actions/2023/10/30/executive-order-on-the-safe-secure-and-trustworthy-development-and-use-of-artificial-intelligence/',
-    date: '2023年10月',
-    category: '行政命令',
+    date: 'October 2023',
+    category: 'Executive Order',
   },
   {
     id: 3,
     region: 'CHINA',
-    title: '生成式人工智能服务管理暂行办法',
-    description: '中国对生成式人工智能服务的监管措施，要求AI服务提供者履行安全评估、内容审核等义务。',
+    title: 'Interim Measures for the Management of Generative Artificial Intelligence Services',
+    description: 'China\'s regulatory measures for generative AI services require AI service providers to fulfill obligations such as security assessments and content review.',
     link: 'http://www.cac.gov.cn/2023-07/13/c_1690898327029107.htm',
-    date: '2023年7月',
-    category: '部门规章',
+    date: 'July 2023',
+    category: 'Departmental Regulation',
   },
   {
     id: 4,
     region: 'CHINA',
-    title: '人工智能伦理治理指引（上海）',
-    description: '上海首创"伦理影响评估"制度，要求AI企业在产品上线前提交伦理风险报告，重点评估数据隐私、算法偏见和内容安全等风险。',
+    title: 'AI Ethics Governance Guidelines (Shanghai)',
+    description: 'Shanghai pioneered the "Ethical Impact Assessment" system, requiring AI enterprises to submit ethical risk reports before product launch, focusing on assessing risks such as data privacy, algorithmic bias, and content security.',
     link: 'https://www.umcn.cc/home/article/detail/id/46.html',
-    date: '2025年7月',
-    category: '地方性指引',
+    date: 'July 2025',
+    category: 'Local Guideline',
   },
   {
     id: 5,
     region: 'UNITED STATES',
     title: 'Algorithmic Accountability Act',
-    description: '算法问责法案，要求公司评估其自动化系统的影响，确保公平性和透明度。',
+    description: 'The Algorithmic Accountability Act requires companies to assess the impact of their automated systems to ensure fairness and transparency.',
     link: 'https://www.congress.gov/bill/116th-congress/house-bill/2231',
-    date: '2019年',
-    category: '法案',
+    date: '2019',
+    category: 'Act',
   },
 ];
 
-// 伦理准则
+// Ethical Guidelines
 const ethicsPrinciples = [
   {
     id: 1,
     organization: 'UNESCO',
-    title: '人工智能伦理建议书',
-    description: '联合国教科文组织发布的AI伦理建议书，强调透明性、责任制和隐私保护等核心原则。',
+    title: 'Recommendation on the Ethics of Artificial Intelligence',
+    description: 'UNESCO\'s AI ethics recommendation emphasizes core principles such as transparency, accountability, and privacy protection.',
     link: 'https://www.unesco.org/en/artificial-intelligence/recommendation-ethics',
-    principles: ['透明性', '责任制', '隐私保护', '公平性', '人类尊严'],
+    principles: ['Transparency', 'Accountability', 'Privacy Protection', 'Fairness', 'Human Dignity'],
   },
   {
     id: 2,
     organization: 'IEEE',
     title: 'Ethically Aligned Design',
-    description: 'IEEE发布的人工智能伦理设计标准和指南，为AI系统的伦理设计提供框架。',
+    description: 'IEEE\'s ethical design standards and guidelines for AI systems provide a framework for ethical AI design.',
     link: 'https://ethicsinaction.ieee.org/',
-    principles: ['人类福祉', '责任', '透明度', '教育和意识'],
+    principles: ['Human Well-being', 'Accountability', 'Transparency', 'Education & Awareness'],
   },
   {
     id: 3,
     organization: 'Montreal Declaration',
-    title: '蒙特利尔人工智能伦理宣言',
-    description: '提出了人工智能开发和使用的伦理原则，强调负责任的发展。',
+    title: 'Montreal Declaration for Responsible AI',
+    description: 'Proposes ethical principles for the development and use of artificial intelligence, emphasizing responsible development.',
     link: 'https://www.montrealdeclaration-responsibleai.com/',
-    principles: ['福祉', '自主性', '正义', '隐私', '知识'],
+    principles: ['Well-being', 'Autonomy', 'Justice', 'Privacy', 'Knowledge'],
   },
   {
     id: 4,
     organization: 'China',
-    title: '新一代人工智能治理原则',
-    description: '中国国家新一代人工智能治理专业委员会发布的治理原则和框架。',
+    title: 'Governance Principles for New Generation Artificial Intelligence',
+    description: 'Governance principles and framework released by China\'s National Governance Committee for New Generation Artificial Intelligence.',
     link: 'https://www.most.gov.cn/kjbgz/201906/t20190617_147107.html',
-    principles: ['和谐友好', '公平公正', '包容共享', '尊重隐私', '安全可控'],
+    principles: ['Harmony & Friendliness', 'Fairness & Justice', 'Inclusiveness & Sharing', 'Privacy Respect', 'Safety & Controllability'],
   },
 ];
 
-// 开源期刊研究
+// Research Papers
 const researchPapers = [
   {
     id: 1,
@@ -100,9 +100,9 @@ const researchPapers = [
     authors: 'Anna Jobin, Marcello Ienca, Effy Vayena',
     journal: 'arXiv',
     year: '2022',
-    description: '对全球200份AI治理政策和伦理指南的元分析，识别了17项普遍认可的原则。',
+    description: 'A meta-analysis of 200 AI governance policies and ethical guidelines worldwide, identifying 17 commonly recognized principles.',
     link: 'https://arxiv.org/abs/2206.11922',
-    category: '元分析',
+    category: 'Meta-Analysis',
     license: 'CC BY 4.0',
   },
   {
@@ -111,64 +111,64 @@ const researchPapers = [
     authors: 'Various Authors',
     journal: 'arXiv',
     year: '2022',
-    description: '调查99位来自20个国家的AI从业者和立法者的研究，探讨了AI伦理原则和相关挑战。',
+    description: 'A study surveying 99 AI practitioners and lawmakers from 20 countries, exploring AI ethics principles and related challenges.',
     link: 'https://arxiv.org/abs/2207.01493',
-    category: '实证研究',
+    category: 'Empirical Study',
     license: 'CC BY 4.0',
   },
   {
     id: 3,
-    title: '开源人工智能"伦理－技术共构"的治理范式演进',
-    authors: '华东师范大学研究团队',
-    journal: '华东师范大学学报（哲学社会科学版）',
+    title: 'The Evolution of Governance Paradigms for Open-Source AI: Ethics-Technology Co-Construction',
+    authors: 'East China Normal University Research Team',
+    journal: 'Journal of East China Normal University (Philosophy and Social Sciences)',
     year: '2025',
-    description: '探讨了开源AI在伦理与技术共构方面的治理范式演进。',
+    description: 'Explores the evolution of governance paradigms for open-source AI in terms of ethics-technology co-construction.',
     link: 'https://xbzs.ecnu.edu.cn/CN/10.16382/j.cnki.1000-5579.2025.04.002',
-    category: '理论研究',
-    license: '学术期刊',
+    category: 'Theoretical Research',
+    license: 'Academic Journal',
   },
   {
     id: 4,
-    title: '中国人工智能伦理原则及治理技术发展',
-    authors: '中国工程院',
+    title: 'Development of AI Ethics Principles and Governance Technologies in China',
+    authors: 'Chinese Academy of Engineering',
     journal: 'Engineering',
     year: '2024',
-    description: '探讨了中国在人工智能伦理原则和治理技术发展方面的现状和挑战。',
+    description: 'Explores the current state and challenges of AI ethics principles and governance technology development in China.',
     link: 'https://www.engineering.org.cn/engi/CN/1159917544754700874',
-    category: '综述',
-    license: '学术期刊',
+    category: 'Review',
+    license: 'Academic Journal',
   },
 ];
 
-// 优质开源期刊
+// Open Access Journals
 const openAccessJournals = [
   {
     id: 1,
     name: 'Journal of Artificial Intelligence Research (JAIR)',
-    description: '由AI Access Foundation出版的开放获取同行评审期刊，涵盖人工智能各领域的研究。',
+    description: 'An open-access peer-reviewed journal published by AI Access Foundation, covering research across all areas of artificial intelligence.',
     link: 'https://www.jair.org/',
-    focus: 'AI研究',
+    focus: 'AI Research',
   },
   {
     id: 2,
     name: 'Journal of Machine Learning Research (JMLR)',
-    description: '涵盖机器学习领域的最新研究，完全开放获取。',
+    description: 'Covers the latest research in machine learning, fully open access.',
     link: 'https://www.jmlr.org/',
-    focus: '机器学习',
+    focus: 'Machine Learning',
   },
   {
     id: 3,
     name: 'AI & Society',
-    description: '由Springer出版的季刊，涵盖人工智能及其对社会影响的各个方面。',
+    description: 'A quarterly journal published by Springer, covering all aspects of artificial intelligence and its impact on society.',
     link: 'https://link.springer.com/journal/146',
-    focus: 'AI与社会',
+    focus: 'AI & Society',
   },
   {
     id: 4,
     name: 'arXiv AI Ethics',
-    description: 'arXiv上的AI伦理相关预印本论文集合，开放获取。',
+    description: 'A collection of AI ethics-related preprint papers on arXiv, open access.',
     link: 'https://arxiv.org/list/cs.AI/recent',
-    focus: 'AI伦理',
+    focus: 'AI Ethics',
   },
 ];
 
@@ -241,7 +241,7 @@ export default function GovernancePage() {
               AI Governance & Legislation
             </h1>
             <p className="text-lg md:text-xl text-text-muted max-w-2xl mx-auto mb-6">
-              汇集全球AI治理法规、伦理准则和优质开源研究，促进负责任的人工智能发展。
+              A comprehensive collection of global AI governance regulations, ethical guidelines, and high-quality open-access research to promote responsible artificial intelligence development.
             </p>
           </motion.div>
         </div>
@@ -261,7 +261,7 @@ export default function GovernancePage() {
               }`}
             >
               <Scale className="w-4 h-4" />
-              法规与政策
+              Regulations & Policies
             </button>
             <button
               onClick={() => setActiveTab('ethics')}
@@ -272,7 +272,7 @@ export default function GovernancePage() {
               }`}
             >
               <Shield className="w-4 h-4" />
-              伦理准则
+              Ethical Guidelines
             </button>
             <button
               onClick={() => setActiveTab('research')}
@@ -283,7 +283,7 @@ export default function GovernancePage() {
               }`}
             >
               <FileText className="w-4 h-4" />
-              研究论文
+              Research Papers
             </button>
             <button
               onClick={() => setActiveTab('journals')}
@@ -294,7 +294,7 @@ export default function GovernancePage() {
               }`}
             >
               <BookOpen className="w-4 h-4" />
-              开源期刊
+              Open Access Journals
             </button>
           </div>
 
@@ -332,7 +332,7 @@ export default function GovernancePage() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-xs text-blue-400 hover:text-blue-300 transition-colors mt-auto pt-3 border-t border-border"
                   >
-                    <span>查看原文</span>
+                    <span>View Original</span>
                     <ExternalLink className="w-3 h-3" />
                   </a>
                 </motion.div>
@@ -378,7 +378,7 @@ export default function GovernancePage() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-xs text-blue-400 hover:text-blue-300 transition-colors mt-auto pt-3 border-t border-border"
                   >
-                    <span>查看原文</span>
+                    <span>View Original</span>
                     <ExternalLink className="w-3 h-3" />
                   </a>
                 </motion.div>
@@ -461,7 +461,7 @@ export default function GovernancePage() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-xs text-blue-400 hover:text-blue-300 transition-colors mt-auto pt-3 border-t border-border"
                   >
-                    <span>访问期刊</span>
+                    <span>Visit Journal</span>
                     <ExternalLink className="w-3 h-3" />
                   </a>
                 </motion.div>
@@ -477,19 +477,19 @@ export default function GovernancePage() {
           <div className="flex items-start gap-3 p-4 bg-black/50 border border-border rounded">
             <Globe className="w-5 h-5 text-gray-500 flex-shrink-0 mt-0.5" />
             <div className="text-xs text-text-muted leading-relaxed">
-              <p className="font-semibold text-white mb-2">版权声明与合理使用</p>
+              <p className="font-semibold text-white mb-2">Copyright Notice & Fair Use</p>
               <p className="mb-2">
-                本页面收集的内容均来自公开可访问的官方来源、学术期刊和开放获取研究平台。所有转载内容均遵循以下原则：
+                All content collected on this page comes from publicly accessible official sources, academic journals, and open-access research platforms. All republished content follows these principles:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-2 mb-2">
-                <li>所有法规和政策文件均链接至官方发布源，尊重原始版权</li>
-                <li>学术论文和研究均来自开放获取（Open Access）期刊或预印本平台（如arXiv），遵循CC BY等开放许可协议</li>
-                <li>所有内容均明确标注来源、作者和发布日期</li>
-                <li>本页面仅用于教育和信息传播目的，不用于商业用途</li>
-                <li>如对任何内容的版权有疑问，请联系我们：make@byvibe.ai</li>
+                <li>All regulations and policy documents are linked to official sources, respecting original copyright</li>
+                <li>Academic papers and research come from open-access journals or preprint platforms (such as arXiv), following open licenses such as CC BY</li>
+                <li>All content clearly indicates source, author, and publication date</li>
+                <li>This page is for educational and information dissemination purposes only, not for commercial use</li>
+                <li>If you have any copyright questions about any content, please contact us: make@byvibe.ai</li>
               </ul>
               <p className="text-[10px] text-gray-600 mt-3">
-                最后更新：2025年1月 | ByVibe.ai 致力于促进负责任的人工智能发展
+                Last updated: January 2025 | ByVibe.ai is committed to promoting responsible artificial intelligence development
               </p>
             </div>
           </div>
