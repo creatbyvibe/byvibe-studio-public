@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
 import VideoCarousel from './VideoCarousel';
