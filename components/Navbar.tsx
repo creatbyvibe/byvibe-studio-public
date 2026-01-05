@@ -1,8 +1,11 @@
 'use client';
 
-import { Mail } from 'lucide-react';
+import { Mail, User, LogOut } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toolsData } from '@/data/tools';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface NavbarProps {
   onViewChange: (view: 'home' | 'directory') => void;
@@ -10,6 +13,33 @@ interface NavbarProps {
 }
 
 export default function Navbar({ onViewChange, onWaitlistClick }: NavbarProps) {
+  const { user, signOut } = useAuth();
+  const router = useRouter();
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowUserMenu(false);
+      }
+    };
+
+    if (showUserMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showUserMenu]);
+
+  const handleSignOut = async () => {
+    await signOut();
+    setShowUserMenu(false);
+    router.refresh();
+  };
+
   return (
     <motion.nav
       initial={{ y: -100, opacity: 0 }}
@@ -64,13 +94,45 @@ export default function Navbar({ onViewChange, onWaitlistClick }: NavbarProps) {
           </a>
         </div>
 
-        {/* Right CTA */}
-        <button
-          onClick={onWaitlistClick}
-          className="text-xs md:text-sm px-6 py-2 rounded-full btn-highlight transition-all transform hover:scale-105"
-        >
-          Join Waitlist
-        </button>
+        {/* Right CTA / User Menu */}
+        {user ? (
+          <div className="relative" ref={menuRef}>
+            <button
+              onClick={() => setShowUserMenu(!showUserMenu)}
+              className="flex items-center gap-2 text-xs md:text-sm px-4 py-2 rounded-full bg-surface border border-border hover:bg-surface/80 transition-colors"
+            >
+              <User className="w-4 h-4" />
+              <span className="hidden sm:inline">
+                {user.email?.split('@')[0] || 'User'}
+              </span>
+            </button>
+            {showUserMenu && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="absolute right-0 mt-2 w-48 bg-surface border border-border rounded-lg shadow-lg overflow-hidden z-50"
+              >
+                <div className="p-3 border-b border-border">
+                  <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                </div>
+                <button
+                  onClick={handleSignOut}
+                  className="w-full flex items-center gap-2 px-4 py-2 text-xs text-gray-400 hover:text-white hover:bg-black transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>退出登录</span>
+                </button>
+              </motion.div>
+            )}
+          </div>
+        ) : (
+          <button
+            onClick={onWaitlistClick}
+            className="text-xs md:text-sm px-6 py-2 rounded-full btn-highlight transition-all transform hover:scale-105"
+          >
+            Join Waitlist
+          </button>
+        )}
       </div>
     </motion.nav>
   );

@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { Terminal, Play, AlertTriangle, FileCode, Shield, Code } from 'lucide-react';
+import { useUsageLimit } from '@/lib/hooks/useUsageLimit';
+import AuthModal from './AuthModal';
 
 interface PlanResult {
   difficulty: string;
@@ -18,6 +20,9 @@ export default function InteractiveConsole() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [plan, setPlan] = useState<PlanResult | null>(null);
   const [showContent, setShowContent] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  
+  const { hasReachedLimit, remainingUsage, incrementUsage } = useUsageLimit();
 
   const polishVibe = async () => {
     if (!vibeInput || vibeInput.trim().length < 2) {
@@ -51,6 +56,12 @@ export default function InteractiveConsole() {
       return;
     }
 
+    // 检查使用限制
+    if (hasReachedLimit) {
+      setShowAuthModal(true);
+      return;
+    }
+
     setIsGenerating(true);
     setShowContent(false);
 
@@ -66,6 +77,9 @@ export default function InteractiveConsole() {
       const data = await response.json();
       setPlan(data);
       setShowContent(true);
+      
+      // 增加使用次数
+      incrementUsage();
     } catch (error) {
       console.error('Orchestration Error:', error);
       alert('System Error: Orchestration failed.');
@@ -147,13 +161,25 @@ export default function InteractiveConsole() {
                     </div>
                   )}
                 </div>
-                <button
-                  onClick={generatePlan}
-                  disabled={isGenerating}
-                  className="mt-3 w-full py-2 bg-white/5 border border-white/10 text-gray-300 text-xs hover:bg-white/10 hover:text-white transition-colors flex items-center justify-center gap-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <Play className="w-3 h-3" /> Generate Plan
-                </button>
+                <div className="mt-3 space-y-2">
+                  {hasReachedLimit && (
+                    <div className="p-2 bg-yellow-900/20 border border-yellow-500/30 rounded text-yellow-400 text-[10px] text-center">
+                      ⚠️ 免费试用已用完，请登录继续使用
+                    </div>
+                  )}
+                  {!hasReachedLimit && remainingUsage > 0 && (
+                    <div className="text-[9px] text-gray-600 text-center">
+                      剩余免费次数: {remainingUsage}
+                    </div>
+                  )}
+                  <button
+                    onClick={generatePlan}
+                    disabled={isGenerating}
+                    className="w-full py-2 bg-white/5 border border-white/10 text-gray-300 text-xs hover:bg-white/10 hover:text-white transition-colors flex items-center justify-center gap-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Play className="w-3 h-3" /> Generate Plan
+                  </button>
+                </div>
               </div>
 
               <div className="flex-1 bg-black p-4 relative overflow-hidden flex flex-col">
@@ -206,6 +232,16 @@ export default function InteractiveConsole() {
           </div>
         </div>
       </div>
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onSuccess={() => {
+          setShowAuthModal(false);
+          // 登录成功后可以继续使用
+        }}
+      />
     </section>
   );
 }
