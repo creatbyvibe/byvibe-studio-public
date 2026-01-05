@@ -19,10 +19,10 @@ import DesignPhase from '@/components/studio/DesignPhase';
 import BuildPhase from '@/components/studio/BuildPhase';
 
 const phases: { id: ProjectPhase; label: string; description: string }[] = [
-  { id: 'scope', label: 'Scope', description: '定义项目范围' },
-  { id: 'stack', label: 'Stack', description: '选择技术栈' },
-  { id: 'design', label: 'Design', description: '设计架构' },
-  { id: 'build', label: 'Build', description: '生成代码' },
+  { id: 'scope', label: 'Scope', description: 'Define project scope' },
+  { id: 'stack', label: 'Stack', description: 'Choose technology stack' },
+  { id: 'design', label: 'Design', description: 'Design architecture' },
+  { id: 'build', label: 'Build', description: 'Generate code' },
 ];
 
 export default function StudioWorkspace() {
@@ -91,7 +91,7 @@ export default function StudioWorkspace() {
   if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-text-muted">加载中...</div>
+        <div className="text-text-muted">Loading...</div>
       </div>
     );
   }
@@ -168,15 +168,15 @@ export default function StudioWorkspace() {
             {/* Left Sidebar */}
             <div className="lg:sticky lg:top-32 h-fit">
               <div className="border border-border bg-surface rounded-lg p-4 mb-4">
-                <h3 className="text-sm font-bold text-white mb-3">AI 助手</h3>
+                <h3 className="text-sm font-bold text-white mb-3">AI Assistant</h3>
                 <div className="space-y-3">
                   <div className="p-3 bg-background border border-border rounded text-sm text-text-muted">
-                    <p className="mb-2">💡 <strong>Gemini 建议：</strong></p>
+                    <p className="mb-2">💡 <strong>Gemini Suggestions:</strong></p>
                     <p>
-                      {currentPhase === 'scope' && '请描述你的项目想法，包括核心功能、目标用户和使用场景。'}
-                      {currentPhase === 'stack' && '根据项目需求，选择合适的技术栈。我会根据你的选择提供建议。'}
-                      {currentPhase === 'design' && '让我为你生成项目架构图。你可以查看并调整架构设计。'}
-                      {currentPhase === 'build' && '准备生成代码！我会根据前面的设计创建完整的项目结构。'}
+                      {currentPhase === 'scope' && 'Describe your project idea, including core features, target users, and use cases.'}
+                      {currentPhase === 'stack' && 'Choose the appropriate technology stack based on your project requirements. I\'ll provide suggestions based on your choices.'}
+                      {currentPhase === 'design' && 'Let me generate the project architecture diagram for you. You can review and adjust the architecture design.'}
+                      {currentPhase === 'build' && 'Ready to generate code! I\'ll create a complete project structure based on the previous design.'}
                     </p>
                   </div>
                 </div>
@@ -184,7 +184,7 @@ export default function StudioWorkspace() {
 
               {/* Chat Console */}
               <div className="border border-border bg-surface rounded-lg p-4 h-[400px] flex flex-col">
-                <h3 className="text-sm font-bold text-white mb-3">对话</h3>
+                <h3 className="text-sm font-bold text-white mb-3">Chat</h3>
                 <ChatConsole
                   projectId={projectId}
                   phase={currentPhase}

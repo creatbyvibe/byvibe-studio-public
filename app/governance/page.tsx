@@ -425,7 +425,7 @@ export default function GovernancePage() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-xs text-blue-400 hover:text-blue-300 transition-colors pt-3 border-t border-border"
                   >
-                    <span>查看原文</span>
+                    <span>View Original</span>
                     <ExternalLink className="w-3 h-3" />
                   </a>
                 </motion.div>

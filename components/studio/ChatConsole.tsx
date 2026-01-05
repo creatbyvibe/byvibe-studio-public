@@ -76,7 +76,7 @@ export default function ChatConsole({ projectId, phase, context }: ChatConsolePr
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: `错误: ${error.message || '无法连接到 AI 助手'}`,
+        content: `Error: ${error.message || 'Failed to connect to AI assistant'}`,
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
@@ -99,8 +99,8 @@ export default function ChatConsole({ projectId, phase, context }: ChatConsolePr
       <div className="flex-1 overflow-y-auto space-y-3 mb-4 min-h-[200px] max-h-[400px]">
         {messages.length === 0 ? (
           <div className="text-center py-8 text-sm text-text-muted">
-            <p>开始与 Gemini 对话...</p>
-            <p className="text-xs mt-2 text-text-dim">输入你的问题或想法</p>
+            <p>Start chatting with Gemini...</p>
+            <p className="text-xs mt-2 text-text-dim">Enter your questions or ideas</p>
           </div>
         ) : (
           <AnimatePresence>
@@ -121,7 +121,7 @@ export default function ChatConsole({ projectId, phase, context }: ChatConsolePr
                 >
                   <p className="whitespace-pre-wrap break-words">{message.content}</p>
                   <p className="text-[10px] text-text-dim mt-1">
-                    {message.timestamp.toLocaleTimeString('zh-CN', {
+                    {message.timestamp.toLocaleTimeString('en-US', {
                       hour: '2-digit',
                       minute: '2-digit',
                     })}
@@ -149,7 +149,7 @@ export default function ChatConsole({ projectId, phase, context }: ChatConsolePr
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="输入消息..."
+          placeholder="Type a message..."
           disabled={isLoading}
           className="flex-1 bg-background border border-border rounded px-3 py-2 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-blue-500/50 disabled:opacity-50"
         />

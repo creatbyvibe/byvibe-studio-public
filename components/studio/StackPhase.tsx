@@ -102,7 +102,7 @@ export default function StackPhase({ projectId, artifact, scopeContext, onArtifa
       onArtifactUpdate();
     } catch (error) {
       console.error('Error saving stack:', error);
-      alert('保存失败，请重试');
+      alert('Failed to save. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -110,11 +110,11 @@ export default function StackPhase({ projectId, artifact, scopeContext, onArtifa
 
   const handleLock = async () => {
     if (!artifact) {
-      alert('请先保存技术栈选择');
+      alert('Please save the technology stack selection first.');
       return;
     }
 
-    if (!confirm('锁定后此阶段将无法编辑，确定要继续吗？')) return;
+    if (!confirm('This phase will be locked and cannot be edited. Are you sure you want to continue?')) return;
 
     try {
       setLocking(true);
@@ -128,7 +128,7 @@ export default function StackPhase({ projectId, artifact, scopeContext, onArtifa
       onArtifactUpdate();
     } catch (error) {
       console.error('Error locking stack:', error);
-      alert('锁定失败，请重试');
+      alert('Failed to lock. Please try again.');
     } finally {
       setLocking(false);
     }
@@ -141,7 +141,7 @@ export default function StackPhase({ projectId, artifact, scopeContext, onArtifa
       {/* Frontend */}
       <div>
         <label className="block text-sm font-bold text-white mb-3">
-          前端框架
+          Frontend Framework
         </label>
         <div className="flex flex-wrap gap-2">
           {techOptions.frontend.map((tech) => {
@@ -168,7 +168,7 @@ export default function StackPhase({ projectId, artifact, scopeContext, onArtifa
       {/* Backend */}
       <div>
         <label className="block text-sm font-bold text-white mb-3">
-          后端框架
+          Backend Framework
         </label>
         <div className="flex flex-wrap gap-2">
           {techOptions.backend.map((tech) => {
@@ -195,7 +195,7 @@ export default function StackPhase({ projectId, artifact, scopeContext, onArtifa
       {/* Database */}
       <div>
         <label className="block text-sm font-bold text-white mb-3">
-          数据库
+          Database
         </label>
         <div className="flex flex-wrap gap-2">
           {techOptions.database.map((tech) => {
@@ -222,7 +222,7 @@ export default function StackPhase({ projectId, artifact, scopeContext, onArtifa
       {/* Deployment */}
       <div>
         <label className="block text-sm font-bold text-white mb-3">
-          部署平台
+          Deployment Platform
         </label>
         <div className="flex flex-wrap gap-2">
           {techOptions.deployment.map((tech) => {
@@ -249,7 +249,7 @@ export default function StackPhase({ projectId, artifact, scopeContext, onArtifa
       {/* Additional */}
       <div>
         <label className="block text-sm font-bold text-white mb-3">
-          其他工具
+          Additional Tools
         </label>
         <div className="flex flex-wrap gap-2">
           {techOptions.additional.map((tech) => {
@@ -284,12 +284,12 @@ export default function StackPhase({ projectId, artifact, scopeContext, onArtifa
             {saving ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                保存中...
+                Saving...
               </>
             ) : (
               <>
                 <Save className="w-4 h-4" />
-                保存
+                Save
               </>
             )}
           </button>
@@ -302,12 +302,12 @@ export default function StackPhase({ projectId, artifact, scopeContext, onArtifa
               {locking ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  锁定中...
+                  Locking...
                 </>
               ) : (
                 <>
                   <Lock className="w-4 h-4" />
-                  锁定并进入下一阶段
+                  Lock & Proceed to Next Phase
                 </>
               )}
             </button>
@@ -319,10 +319,10 @@ export default function StackPhase({ projectId, artifact, scopeContext, onArtifa
         <div className="p-4 bg-green-500/10 border border-green-500/30 rounded">
           <div className="flex items-center gap-2 text-green-400">
             <Lock className="w-4 h-4" />
-            <span className="text-sm font-medium">此阶段已锁定</span>
+            <span className="text-sm font-medium">Phase Locked</span>
           </div>
           <p className="text-xs text-text-muted mt-2">
-            技术栈已确定，可以进入下一阶段设计架构。
+            Technology stack is finalized. You can proceed to the next phase to design the architecture.
           </p>
         </div>
       )}

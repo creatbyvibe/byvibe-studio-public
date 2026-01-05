@@ -68,7 +68,7 @@ export default function ScopePhase({ projectId, artifact, onArtifactUpdate }: Sc
       onArtifactUpdate();
     } catch (error) {
       console.error('Error saving scope:', error);
-      alert('保存失败，请重试');
+      alert('Failed to save. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -76,11 +76,11 @@ export default function ScopePhase({ projectId, artifact, onArtifactUpdate }: Sc
 
   const handleLock = async () => {
     if (!artifact) {
-      alert('请先保存项目范围');
+      alert('Please save the project scope first.');
       return;
     }
 
-    if (!confirm('锁定后此阶段将无法编辑，确定要继续吗？')) return;
+    if (!confirm('This phase will be locked and cannot be edited. Are you sure you want to continue?')) return;
 
     try {
       setLocking(true);
@@ -100,7 +100,7 @@ export default function ScopePhase({ projectId, artifact, onArtifactUpdate }: Sc
       onArtifactUpdate();
     } catch (error) {
       console.error('Error locking scope:', error);
-      alert('锁定失败，请重试');
+      alert('Failed to lock. Please try again.');
     } finally {
       setLocking(false);
     }
@@ -143,24 +143,24 @@ export default function ScopePhase({ projectId, artifact, onArtifactUpdate }: Sc
       {/* Description */}
       <div>
         <label className="block text-sm font-bold text-white mb-2">
-          项目描述 <span className="text-red-400">*</span>
+          Project Description <span className="text-red-400">*</span>
         </label>
         <textarea
           value={content.description}
           onChange={(e) => setContent({ ...content, description: e.target.value })}
           disabled={isLocked}
-          placeholder="描述你的项目想法...例如：一个帮助用户养成好习惯的应用，通过 AI 提醒和激励用户..."
+          placeholder="Describe your project idea... e.g., A habit tracker app that uses AI to remind and motivate users..."
           className="w-full h-32 bg-background border border-border rounded px-4 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:border-blue-500/50 disabled:opacity-50 resize-none"
         />
         <p className="text-xs text-text-dim mt-1">
-          详细描述项目的核心概念、目标和价值主张
+          Describe the core concept, goals, and value proposition of the project
         </p>
       </div>
 
       {/* Core Features */}
       <div>
         <label className="block text-sm font-bold text-white mb-2">
-          核心功能
+          Core Features
         </label>
         <div className="space-y-2">
           {content.coreFeatures.map((feature, index) => (
@@ -170,7 +170,7 @@ export default function ScopePhase({ projectId, artifact, onArtifactUpdate }: Sc
                 value={feature}
                 onChange={(e) => updateFeature(index, e.target.value)}
                 disabled={isLocked}
-                placeholder={`功能 ${index + 1}...`}
+                placeholder={`Feature ${index + 1}...`}
                 className="flex-1 bg-background border border-border rounded px-4 py-2 text-white placeholder:text-gray-600 focus:outline-none focus:border-blue-500/50 disabled:opacity-50"
               />
               {!isLocked && content.coreFeatures.length > 1 && (
@@ -178,7 +178,7 @@ export default function ScopePhase({ projectId, artifact, onArtifactUpdate }: Sc
                   onClick={() => removeFeature(index)}
                   className="px-3 py-2 bg-red-500/10 border border-red-500/30 rounded text-red-400 hover:bg-red-500/20 transition-colors"
                 >
-                  删除
+                  Delete
                 </button>
               )}
             </div>
@@ -188,7 +188,7 @@ export default function ScopePhase({ projectId, artifact, onArtifactUpdate }: Sc
               onClick={addFeature}
               className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
             >
-              + 添加功能
+              + Add Feature
             </button>
           )}
         </div>
@@ -197,14 +197,14 @@ export default function ScopePhase({ projectId, artifact, onArtifactUpdate }: Sc
       {/* Target Users */}
       <div>
         <label className="block text-sm font-bold text-white mb-2">
-          目标用户
+          Target Users
         </label>
         <input
           type="text"
           value={content.targetUsers}
           onChange={(e) => setContent({ ...content, targetUsers: e.target.value })}
           disabled={isLocked}
-          placeholder="例如：想要养成好习惯的年轻人、需要时间管理的职场人士..."
+          placeholder="e.g., Young people who want to build good habits, professionals who need time management..."
           className="w-full bg-background border border-border rounded px-4 py-2 text-white placeholder:text-gray-600 focus:outline-none focus:border-blue-500/50 disabled:opacity-50"
         />
       </div>
@@ -212,7 +212,7 @@ export default function ScopePhase({ projectId, artifact, onArtifactUpdate }: Sc
       {/* Use Cases */}
       <div>
         <label className="block text-sm font-bold text-white mb-2">
-          使用场景
+          Use Cases
         </label>
         <div className="space-y-2">
           {content.useCases.map((useCase, index) => (
@@ -222,7 +222,7 @@ export default function ScopePhase({ projectId, artifact, onArtifactUpdate }: Sc
                 value={useCase}
                 onChange={(e) => updateUseCase(index, e.target.value)}
                 disabled={isLocked}
-                placeholder={`场景 ${index + 1}...`}
+                placeholder={`Use case ${index + 1}...`}
                 className="flex-1 bg-background border border-border rounded px-4 py-2 text-white placeholder:text-gray-600 focus:outline-none focus:border-blue-500/50 disabled:opacity-50"
               />
               {!isLocked && content.useCases.length > 1 && (
@@ -230,7 +230,7 @@ export default function ScopePhase({ projectId, artifact, onArtifactUpdate }: Sc
                   onClick={() => removeUseCase(index)}
                   className="px-3 py-2 bg-red-500/10 border border-red-500/30 rounded text-red-400 hover:bg-red-500/20 transition-colors"
                 >
-                  删除
+                  Delete
                 </button>
               )}
             </div>
@@ -240,7 +240,7 @@ export default function ScopePhase({ projectId, artifact, onArtifactUpdate }: Sc
               onClick={addUseCase}
               className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
             >
-              + 添加场景
+              + Add Use Case
             </button>
           )}
         </div>
@@ -249,13 +249,13 @@ export default function ScopePhase({ projectId, artifact, onArtifactUpdate }: Sc
       {/* Success Criteria */}
       <div>
         <label className="block text-sm font-bold text-white mb-2">
-          成功标准
+          Success Criteria
         </label>
         <textarea
           value={content.successCriteria}
           onChange={(e) => setContent({ ...content, successCriteria: e.target.value })}
           disabled={isLocked}
-          placeholder="例如：用户能够持续使用应用超过 30 天，完成至少 80% 的设定目标..."
+          placeholder="e.g., Users can consistently use the app for more than 30 days, completing at least 80% of set goals..."
           className="w-full h-24 bg-background border border-border rounded px-4 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:border-blue-500/50 disabled:opacity-50 resize-none"
         />
       </div>
@@ -271,12 +271,12 @@ export default function ScopePhase({ projectId, artifact, onArtifactUpdate }: Sc
             {saving ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                保存中...
+                Saving...
               </>
             ) : (
               <>
                 <Save className="w-4 h-4" />
-                保存
+                Save
               </>
             )}
           </button>
@@ -289,12 +289,12 @@ export default function ScopePhase({ projectId, artifact, onArtifactUpdate }: Sc
               {locking ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  锁定中...
+                  Locking...
                 </>
               ) : (
                 <>
                   <Lock className="w-4 h-4" />
-                  锁定并进入下一阶段
+                  Lock & Proceed to Next Phase
                 </>
               )}
             </button>
@@ -306,10 +306,10 @@ export default function ScopePhase({ projectId, artifact, onArtifactUpdate }: Sc
         <div className="p-4 bg-green-500/10 border border-green-500/30 rounded">
           <div className="flex items-center gap-2 text-green-400">
             <Lock className="w-4 h-4" />
-            <span className="text-sm font-medium">此阶段已锁定</span>
+            <span className="text-sm font-medium">Phase Locked</span>
           </div>
           <p className="text-xs text-text-muted mt-2">
-            项目范围已确定，可以进入下一阶段选择技术栈。
+            Project scope is finalized. You can proceed to the next phase to choose the technology stack.
           </p>
         </div>
       )}

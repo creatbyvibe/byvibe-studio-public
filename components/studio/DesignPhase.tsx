@@ -41,7 +41,7 @@ export default function DesignPhase({ projectId, artifact, scopeContext, stackCo
 
   const handleGenerate = async () => {
     if (!scopeContext || !stackContext) {
-      alert('请先完成 Scope 和 Stack 阶段');
+      alert('Please complete the Scope and Stack phases first.');
       return;
     }
 
@@ -60,7 +60,7 @@ export default function DesignPhase({ projectId, artifact, scopeContext, stackCo
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || '生成失败');
+        throw new Error(data.error || 'Generation failed');
       }
 
       setContent((prev) => ({
@@ -69,7 +69,7 @@ export default function DesignPhase({ projectId, artifact, scopeContext, stackCo
       }));
     } catch (error: any) {
       console.error('Error generating design:', error);
-      alert(`生成架构图失败: ${error.message}`);
+      alert(`Failed to generate architecture diagram: ${error.message}`);
     } finally {
       setGenerating(false);
     }
@@ -103,7 +103,7 @@ export default function DesignPhase({ projectId, artifact, scopeContext, stackCo
       onArtifactUpdate();
     } catch (error) {
       console.error('Error saving design:', error);
-      alert('保存失败，请重试');
+      alert('Failed to save. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -111,11 +111,11 @@ export default function DesignPhase({ projectId, artifact, scopeContext, stackCo
 
   const handleLock = async () => {
     if (!artifact || !content.diagram) {
-      alert('请先生成并保存架构图');
+      alert('Please generate and save the architecture diagram first.');
       return;
     }
 
-    if (!confirm('锁定后此阶段将无法编辑，确定要继续吗？')) return;
+    if (!confirm('This phase will be locked and cannot be edited. Are you sure you want to continue?')) return;
 
     try {
       setLocking(true);
@@ -129,7 +129,7 @@ export default function DesignPhase({ projectId, artifact, scopeContext, stackCo
       onArtifactUpdate();
     } catch (error) {
       console.error('Error locking design:', error);
-      alert('锁定失败，请重试');
+      alert('Failed to lock. Please try again.');
     } finally {
       setLocking(false);
     }
@@ -150,12 +150,12 @@ export default function DesignPhase({ projectId, artifact, scopeContext, stackCo
             {generating ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                生成中...
+                Generating...
               </>
             ) : (
               <>
                 <RefreshCw className="w-4 h-4" />
-                生成架构图
+                Generate Architecture Diagram
               </>
             )}
           </button>
@@ -166,7 +166,7 @@ export default function DesignPhase({ projectId, artifact, scopeContext, stackCo
       {content.diagram && (
         <div>
           <label className="block text-sm font-bold text-white mb-2">
-            架构图 (Mermaid)
+            Architecture Diagram (Mermaid)
           </label>
           <div className="bg-background border border-border rounded p-4">
             <pre className="text-xs text-text-muted font-mono whitespace-pre-wrap overflow-x-auto">
@@ -174,7 +174,7 @@ export default function DesignPhase({ projectId, artifact, scopeContext, stackCo
             </pre>
           </div>
           <p className="text-xs text-text-dim mt-2">
-            此 Mermaid 图表可以在支持 Mermaid 的编辑器中渲染（如 GitHub、Notion 等）
+            This Mermaid diagram can be rendered in editors that support Mermaid (such as GitHub, Notion, etc.)
           </p>
         </div>
       )}
@@ -182,13 +182,13 @@ export default function DesignPhase({ projectId, artifact, scopeContext, stackCo
       {/* Description */}
       <div>
         <label className="block text-sm font-bold text-white mb-2">
-          架构说明
+          Architecture Notes
         </label>
         <textarea
           value={content.description}
           onChange={(e) => setContent({ ...content, description: e.target.value })}
           disabled={isLocked}
-          placeholder="描述架构设计的关键决策和设计思路..."
+          placeholder="Describe key architectural decisions and design rationale..."
           className="w-full h-32 bg-background border border-border rounded px-4 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:border-blue-500/50 disabled:opacity-50 resize-none"
         />
       </div>
@@ -204,12 +204,12 @@ export default function DesignPhase({ projectId, artifact, scopeContext, stackCo
             {saving ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                保存中...
+                Saving...
               </>
             ) : (
               <>
                 <Save className="w-4 h-4" />
-                保存
+                Save
               </>
             )}
           </button>
@@ -222,12 +222,12 @@ export default function DesignPhase({ projectId, artifact, scopeContext, stackCo
               {locking ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  锁定中...
+                  Locking...
                 </>
               ) : (
                 <>
                   <Lock className="w-4 h-4" />
-                  锁定并进入下一阶段
+                  Lock & Proceed to Next Phase
                 </>
               )}
             </button>
@@ -239,10 +239,10 @@ export default function DesignPhase({ projectId, artifact, scopeContext, stackCo
         <div className="p-4 bg-green-500/10 border border-green-500/30 rounded">
           <div className="flex items-center gap-2 text-green-400">
             <Lock className="w-4 h-4" />
-            <span className="text-sm font-medium">此阶段已锁定</span>
+            <span className="text-sm font-medium">Phase Locked</span>
           </div>
           <p className="text-xs text-text-muted mt-2">
-            架构设计已确定，可以进入下一阶段生成代码。
+            Architecture design is finalized. You can proceed to the next phase to generate code.
           </p>
         </div>
       )}

@@ -60,7 +60,7 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
 
   const handleGenerate = async () => {
     if (!scopeContext || !stackContext) {
-      alert('请先完成 Scope 和 Stack 阶段');
+      alert('Please complete the Scope and Stack phases first.');
       return;
     }
 
@@ -80,7 +80,7 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || '生成失败');
+        throw new Error(data.error || 'Generation failed');
       }
 
       setContent({
@@ -103,7 +103,7 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
       }
     } catch (error: any) {
       console.error('Error generating code:', error);
-      alert(`生成代码失败: ${error.message}`);
+      alert(`Failed to generate code: ${error.message}`);
     } finally {
       setGenerating(false);
     }
@@ -143,7 +143,7 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
       onArtifactUpdate();
     } catch (error) {
       console.error('Error saving build:', error);
-      alert('保存失败，请重试');
+      alert('Failed to save. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -151,11 +151,11 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
 
   const handleLock = async () => {
     if (!artifact || !content.files || content.files.length === 0) {
-      alert('请先生成并保存代码');
+      alert('Please generate and save the code first.');
       return;
     }
 
-    if (!confirm('锁定后此阶段将无法编辑，确定要继续吗？')) return;
+    if (!confirm('This phase will be locked and cannot be edited. Are you sure you want to continue?')) return;
 
     try {
       setLocking(true);
@@ -169,7 +169,7 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
       onArtifactUpdate();
     } catch (error) {
       console.error('Error locking build:', error);
-      alert('锁定失败，请重试');
+      alert('Failed to lock. Please try again.');
     } finally {
       setLocking(false);
     }
@@ -243,7 +243,7 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
 
   const handleExport = () => {
     if (!content.files || content.files.length === 0) {
-      alert('没有可导出的文件');
+      alert('No files to export');
       return;
     }
 
@@ -279,12 +279,12 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
             {generating ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                生成中...
+                Generating...
               </>
             ) : (
               <>
                 <RefreshCw className="w-4 h-4" />
-                生成代码
+                Generate Code
               </>
             )}
           </button>
@@ -294,7 +294,7 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
               className="flex items-center gap-2 px-4 py-2 bg-green-500/20 border border-green-500/30 rounded text-green-400 hover:bg-green-500/30 transition-colors"
             >
               <Download className="w-4 h-4" />
-              导出项目
+              Export Project
             </button>
           )}
         </div>
@@ -304,7 +304,7 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
         <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-4">
           {/* File Tree */}
           <div className="bg-background border border-border rounded p-4 max-h-[600px] overflow-y-auto">
-            <h3 className="text-sm font-bold text-white mb-3">文件结构</h3>
+            <h3 className="text-sm font-bold text-white mb-3">File Structure</h3>
             <div className="space-y-1">
               {renderFileTree(content.fileTree)}
             </div>
@@ -335,7 +335,7 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
       {content.instructions && (
         <div>
           <label className="block text-sm font-bold text-white mb-2">
-            设置说明
+            Setup Instructions
           </label>
           <div className="bg-background border border-border rounded p-4">
             <pre className="text-sm text-text-muted whitespace-pre-wrap">
@@ -356,12 +356,12 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
             {saving ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                保存中...
+                Saving...
               </>
             ) : (
               <>
                 <Save className="w-4 h-4" />
-                保存
+                Save
               </>
             )}
           </button>
@@ -374,12 +374,12 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
               {locking ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  锁定中...
+                  Locking...
                 </>
               ) : (
                 <>
                   <Lock className="w-4 h-4" />
-                  锁定项目
+                  Lock Project
                 </>
               )}
             </button>
@@ -391,10 +391,10 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
         <div className="p-4 bg-green-500/10 border border-green-500/30 rounded">
           <div className="flex items-center gap-2 text-green-400">
             <Lock className="w-4 h-4" />
-            <span className="text-sm font-medium">项目已完成</span>
+            <span className="text-sm font-medium">Project Completed</span>
           </div>
           <p className="text-xs text-text-muted mt-2">
-            代码已生成并锁定，可以导出项目开始开发。
+            Code has been generated and locked. You can export the project to start development.
           </p>
         </div>
       )}

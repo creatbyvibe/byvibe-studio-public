@@ -84,7 +84,7 @@ export default function StudioDashboard() {
 
   const handleDeleteProject = async (projectId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!confirm('确定要删除这个项目吗？此操作不可恢复。')) return;
+    if (!confirm('Are you sure you want to delete this project? This action cannot be undone.')) return;
 
     try {
       const { error } = await supabase
@@ -96,7 +96,7 @@ export default function StudioDashboard() {
       fetchProjects();
     } catch (error) {
       console.error('Error deleting project:', error);
-      alert('删除项目失败，请重试');
+      alert('Failed to delete project. Please try again.');
     }
   };
 
@@ -106,16 +106,16 @@ export default function StudioDashboard() {
     const diff = now.getTime() - date.getTime();
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-    if (days === 0) return '今天';
-    if (days === 1) return '昨天';
-    if (days < 7) return `${days} 天前`;
-    return date.toLocaleDateString('zh-CN');
+    if (days === 0) return 'Today';
+    if (days === 1) return 'Yesterday';
+    if (days < 7) return `${days} days ago`;
+    return date.toLocaleDateString('en-US');
   };
 
   if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-text-muted">加载中...</div>
+        <div className="text-text-muted">Loading...</div>
       </div>
     );
   }
@@ -138,7 +138,7 @@ export default function StudioDashboard() {
               My Projects
             </h1>
             <p className="text-text-muted">
-              从 Vibe 到可部署架构，开始你的下一个项目
+              From Vibe to deployable architecture, start your next project
             </p>
           </motion.div>
 
@@ -157,7 +157,7 @@ export default function StudioDashboard() {
                 <Plus className="w-6 h-6 text-blue-400" />
               </div>
               <span className="text-sm font-medium text-text-muted group-hover:text-white transition-colors">
-                创建新项目
+                Create New Project
               </span>
             </motion.button>
 
@@ -200,7 +200,7 @@ export default function StudioDashboard() {
                       ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
                       : 'bg-gray-500/10 text-gray-400 border border-gray-500/20'
                   }`}>
-                    {project.status === 'completed' ? '已完成' : project.status === 'in_progress' ? '进行中' : '草稿'}
+                    {project.status === 'completed' ? 'Completed' : project.status === 'in_progress' ? 'In Progress' : 'Draft'}
                   </span>
                   <div className="flex items-center gap-1 text-[10px] text-text-dim">
                     <Clock className="w-3 h-3" />
@@ -217,8 +217,8 @@ export default function StudioDashboard() {
               animate={{ opacity: 1 }}
               className="text-center py-16"
             >
-              <p className="text-text-muted mb-4">还没有项目</p>
-              <p className="text-sm text-text-dim">点击上方卡片创建你的第一个项目</p>
+              <p className="text-text-muted mb-4">No projects yet</p>
+              <p className="text-sm text-text-dim">Click the card above to create your first project</p>
             </motion.div>
           )}
         </div>
@@ -234,7 +234,7 @@ export default function StudioDashboard() {
             animate={{ opacity: 1, scale: 1 }}
             className="bg-surface border border-border rounded-lg p-6 w-full max-w-md"
           >
-            <h2 className="text-xl font-bold text-white mb-4">创建新项目</h2>
+            <h2 className="text-xl font-bold text-white mb-4">Create New Project</h2>
             <input
               type="text"
               value={newProjectName}
@@ -247,7 +247,7 @@ export default function StudioDashboard() {
                   setShowNewProjectModal(false);
                 }
               }}
-              placeholder="输入项目名称..."
+              placeholder="Enter project name..."
               className="w-full bg-background border border-border rounded px-4 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:border-blue-500/50 mb-4"
               autoFocus
             />
@@ -259,14 +259,14 @@ export default function StudioDashboard() {
                 }}
                 className="px-4 py-2 text-sm text-text-muted hover:text-white transition-colors"
               >
-                取消
+                Cancel
               </button>
               <button
                 onClick={handleCreateProject}
                 disabled={!newProjectName.trim() || creating}
                 className="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {creating ? '创建中...' : '创建'}
+                {creating ? 'Creating...' : 'Create'}
               </button>
             </div>
           </motion.div>
