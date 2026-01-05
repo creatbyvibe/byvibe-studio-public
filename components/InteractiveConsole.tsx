@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Terminal, Play, AlertTriangle, FileCode, Shield, Code } from 'lucide-react';
 import { useUsageLimit } from '@/lib/hooks/useUsageLimit';
 import AuthModal from './AuthModal';
+import ErrorModal from './ErrorModal';
 
 interface PlanResult {
   difficulty: string;
@@ -21,12 +22,16 @@ export default function InteractiveConsole() {
   const [plan, setPlan] = useState<PlanResult | null>(null);
   const [showContent, setShowContent] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [errorModal, setErrorModal] = useState<{ isOpen: boolean; message: string }>({
+    isOpen: false,
+    message: '',
+  });
   
   const { hasReachedLimit, remainingUsage, incrementUsage } = useUsageLimit();
 
   const polishVibe = async () => {
     if (!vibeInput || vibeInput.trim().length < 2) {
-      alert('Please input some ideas first.');
+      setErrorModal({ isOpen: true, message: 'Please input some ideas first.' });
       return;
     }
 
@@ -44,7 +49,7 @@ export default function InteractiveConsole() {
       setVibeInput(data.refined || vibeInput);
     } catch (error) {
       console.error(error);
-      alert('System Error: Polishing failed.');
+      setErrorModal({ isOpen: true, message: 'System Error: Polishing failed.' });
     } finally {
       setIsPolishing(false);
     }
@@ -52,11 +57,11 @@ export default function InteractiveConsole() {
 
   const generatePlan = async () => {
     if (!vibeInput || vibeInput.trim().length < 2) {
-      alert('Please input system requirements.');
+      setErrorModal({ isOpen: true, message: 'Please input system requirements.' });
       return;
     }
 
-    // 检查使用限制
+    // Check usage limit
     if (hasReachedLimit) {
       setShowAuthModal(true);
       return;
@@ -90,7 +95,7 @@ export default function InteractiveConsole() {
       incrementUsage();
     } catch (error: any) {
       console.error('Orchestration Error:', error);
-      alert(error.message || 'System Error: Orchestration failed.');
+      setErrorModal({ isOpen: true, message: error.message || 'System Error: Orchestration failed.' });
       setShowContent(false);
     } finally {
       setIsGenerating(false);
@@ -258,8 +263,15 @@ export default function InteractiveConsole() {
         onClose={() => setShowAuthModal(false)}
         onSuccess={() => {
           setShowAuthModal(false);
-          // 登录成功后可以继续使用
+          // User can continue after successful login
         }}
+      />
+
+      {/* Error Modal */}
+      <ErrorModal
+        isOpen={errorModal.isOpen}
+        onClose={() => setErrorModal({ isOpen: false, message: '' })}
+        message={errorModal.message}
       />
     </section>
   );
