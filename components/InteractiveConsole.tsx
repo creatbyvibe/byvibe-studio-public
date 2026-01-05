@@ -98,7 +98,7 @@ export default function InteractiveConsole() {
               <Code className="w-3 h-3" /> AI ENGINE v1.0
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-white">
-              Hands-on with<br />
+              Hands-on with<br className="block" />
               the Architect.
             </h2>
             <p className="text-text-muted text-sm leading-relaxed">

@@ -1,67 +1,27 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Heart } from 'lucide-react';
 import { toolsData, Tool } from '@/data/tools';
 import ToolModal from './ToolModal';
-import * as LucideIcons from 'lucide-react';
-
-const slogans = [
-  'Create by Vibe, Share the Joy',
-  'Engineering Rigor Meets AI Creativity',
-  'From Vibe to Deployable Architecture',
-];
+import { getIconComponent } from '@/lib/utils/icon-utils';
 
 export default function SloganBanner() {
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedTool, setSelectedTool] = useState<Tool | null>(null);
   const [isHovered, setIsHovered] = useState(false);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % slogans.length);
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const getIcon = (iconName: string) => {
-    const IconComponent = (LucideIcons as any)[iconName] || LucideIcons.Code;
-    return IconComponent;
-  };
 
   return (
     <>
       <div className="relative w-full border-b border-border bg-background/40 backdrop-blur-sm overflow-hidden">
-        {/* Slogan 部分 */}
-        <div className="max-w-7xl mx-auto px-4 md:px-6 py-2 md:py-3">
-          <div className="flex items-center justify-center gap-2 mb-3">
-            <Heart className="w-3 h-3 md:w-4 md:h-4 text-red-400 fill-current animate-pulse" />
-            <div className="relative h-5 md:h-6 w-full max-w-md overflow-hidden">
-              <AnimatePresence mode="wait">
-                <motion.span
-                  key={currentIndex}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5, ease: 'easeInOut' }}
-                  className="absolute inset-0 flex items-center justify-center text-[10px] md:text-xs font-bold text-red-400 uppercase tracking-widest whitespace-nowrap"
-                >
-                  {slogans[currentIndex]}
-                </motion.span>
-              </AnimatePresence>
-            </div>
-            <div className="flex gap-1">
-              {slogans.map((_, index) => (
-                <div
-                  key={index}
-                  className={`h-1 w-1 rounded-full transition-all duration-300 ${
-                    index === currentIndex ? 'bg-red-400 w-3' : 'bg-gray-600'
-                  }`}
-                />
-              ))}
-            </div>
+        {/* 主品牌 Slogan - 固定显示 */}
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4">
+          <div className="flex items-center justify-center gap-2">
+            <Heart className="w-4 h-4 text-red-400 fill-current animate-pulse" />
+            <span className="text-brand-slogan md:text-brand-slogan-md font-medium text-red-400 tracking-wide">
+              Create by Vibe, Share the Joy
+            </span>
           </div>
         </div>
 
@@ -78,7 +38,7 @@ export default function SloganBanner() {
           >
             {/* 重复工具列表以实现无缝循环 */}
             {[...toolsData, ...toolsData, ...toolsData].map((tool, index) => {
-              const IconComponent = getIcon(tool.icon);
+              const IconComponent = getIconComponent(tool.icon);
               return (
                 <motion.button
                   key={`${tool.id}-${index}`}

@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { X, ExternalLink, FileCode, Terminal, Shield } from 'lucide-react';
 import { Tool } from '@/data/tools';
-import * as LucideIcons from 'lucide-react';
+import { getIconComponent } from '@/lib/utils/icon-utils';
 
 interface ToolModalProps {
   tool: Tool;
@@ -19,12 +19,7 @@ export default function ToolModal({ tool, onClose }: ToolModalProps) {
     return () => document.removeEventListener('keydown', handleEscape);
   }, [onClose]);
 
-  const getIcon = (iconName: string) => {
-    const IconComponent = (LucideIcons as any)[iconName] || LucideIcons.Code;
-    return IconComponent;
-  };
-
-  const IconComponent = getIcon(tool.icon);
+  const IconComponent = getIconComponent(tool.icon);
 
   return (
     <div

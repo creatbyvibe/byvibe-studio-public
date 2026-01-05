@@ -79,15 +79,15 @@ export default function HeroSection() {
         >
           {/* Brand Tag - Removed, now in SloganBanner */}
 
-          {/* Vertical Stacked Headline */}
+          {/* 产品 Slogan - 产品标题 */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.1]"
+            className="text-product-slogan md:text-product-slogan-md lg:text-product-slogan-lg xl:text-product-slogan-xl font-bold text-white"
           >
-            The<br />
-            Engineering<br />
+            The<br className="block" />
+            Engineering<br className="block" />
             <span className="text-gray-600">Brain.</span>
           </motion.h1>
 
@@ -95,9 +95,10 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="text-lg text-text-muted leading-relaxed font-light border-l-2 border-white/10 pl-6"
+            className="text-base md:text-lg text-text-muted leading-relaxed font-light border-l-2 border-white/10 pl-6"
           >
-            An orchestration layer for <strong>Vibe Coding</strong>.<br />
+            An orchestration layer for <strong>Vibe Coding</strong>.<br className="hidden md:block" />
+            <span className="md:inline hidden"> </span>
             We inject engineering rigor into AI workflows, ensuring your natural language compiles into scalable products.
           </motion.p>
 

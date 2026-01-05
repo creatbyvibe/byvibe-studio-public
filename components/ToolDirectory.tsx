@@ -5,7 +5,7 @@ import { Search, Filter, X, Star, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toolsData, Tool } from '@/data/tools';
 import ToolModal from './ToolModal';
-import * as LucideIcons from 'lucide-react';
+import { getIconComponent } from '@/lib/utils/icon-utils';
 
 type SortOption = 'name' | 'category' | 'featured';
 
@@ -52,10 +52,6 @@ export default function ToolDirectory() {
     return filtered;
   }, [searchTerm, activeCategory, sortBy, showFeaturedOnly, showNewOnly]);
 
-  const getIcon = (iconName: string) => {
-    const IconComponent = (LucideIcons as any)[iconName] || LucideIcons.Code;
-    return IconComponent;
-  };
 
   return (
     <>
@@ -215,7 +211,7 @@ export default function ToolDirectory() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <AnimatePresence mode="wait">
             {filteredTools.map((tool, index) => {
-              const IconComponent = getIcon(tool.icon);
+              const IconComponent = getIconComponent(tool.icon);
               return (
                 <motion.div
                   key={tool.id}
