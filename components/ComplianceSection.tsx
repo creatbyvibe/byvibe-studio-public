@@ -32,7 +32,7 @@ export default function ComplianceSection() {
             <span className="text-[10px] font-mono text-blue-400 uppercase tracking-widest mb-3 block">
               Global Standards
             </span>
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3 leading-tight">AI Governance & Legislation</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3 leading-tight font-display">AI Governance & Legislation</h2>
             <p className="text-text-muted text-sm md:text-base mt-2 max-w-lg leading-relaxed">
               ByVibe architecture is built to align with emerging global AI safety standards.
             </p>

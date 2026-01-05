@@ -67,7 +67,7 @@ export default function ToolDirectory() {
               <Sparkles className="w-3 h-3" />
               {toolsData.length} AI Tools Integrated
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 font-display">
               AI Integrations Library
             </h1>
             <p className="text-lg md:text-xl text-text-muted max-w-2xl mx-auto mb-6">

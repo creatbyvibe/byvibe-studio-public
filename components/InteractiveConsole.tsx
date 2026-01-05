@@ -111,7 +111,7 @@ export default function InteractiveConsole() {
             <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded text-xs font-mono text-blue-400">
               <Code className="w-4 h-4" /> AI ENGINE v1.0
             </div>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight font-display">
               Hands-on with<br className="block" />
               the Architect.
             </h2>

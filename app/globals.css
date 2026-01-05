@@ -101,3 +101,8 @@ body {
   background: #333;
   border-radius: 2px;
 }
+
+/* Radial Gradient Utility */
+.bg-gradient-radial {
+  background: radial-gradient(circle, var(--tw-gradient-stops));
+}
