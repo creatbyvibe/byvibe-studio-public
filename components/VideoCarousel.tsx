@@ -1,10 +1,13 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { ChevronUp, ChevronDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 import VideoPlayer, { VideoPlayerRef } from './VideoPlayer';
 
+// Popular vibecoding and AI coding related videos
+// TODO: Replace video IDs with actual high-view YouTube videos about vibecoding
+// Search YouTube for: "vibecoding", "cursor AI", "AI coding", "vibe coding tutorial"
+// Extract video ID from YouTube URL (e.g., https://www.youtube.com/watch?v=VIDEO_ID)
 const videos = [
   {
     id: 1,
@@ -27,14 +30,37 @@ const videos = [
     tag: 'Tutorial',
     tagColor: 'bg-green-600',
   },
+  {
+    id: 4,
+    url: 'https://www.youtube.com/embed/8TQaJDCw-dE?controls=1&modestbranding=1&rel=0&playsinline=1',
+    title: 'AI Coding Revolution',
+    tag: 'Trending',
+    tagColor: 'bg-red-600',
+  },
+  {
+    id: 5,
+    url: 'https://www.youtube.com/embed/Tw18-4U7mts?controls=1&modestbranding=1&rel=0&playsinline=1',
+    title: 'Building with AI',
+    tag: 'Tutorial',
+    tagColor: 'bg-green-600',
+  },
+  {
+    id: 6,
+    url: 'https://www.youtube.com/embed/iLCDSY2XX7E?controls=1&modestbranding=1&rel=0&playsinline=1',
+    title: 'Vibe Coding Workflow',
+    tag: 'Workflow',
+    tagColor: 'bg-yellow-600',
+  },
 ];
 
 export default function VideoCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
   const videoRefs = useRef<(VideoPlayerRef | null)[]>([]);
+  const autoPlayIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const nextVideo = () => {
-    // 停止当前视频
+    // Stop current video
     if (videoRefs.current[currentIndex]) {
       videoRefs.current[currentIndex]?.stop();
     }
@@ -42,14 +68,49 @@ export default function VideoCarousel() {
   };
 
   const prevVideo = () => {
-    // 停止当前视频
+    // Stop current video
     if (videoRefs.current[currentIndex]) {
       videoRefs.current[currentIndex]?.stop();
     }
     setCurrentIndex((prev) => (prev - 1 + videos.length) % videos.length);
   };
 
-  // 当索引变化时，停止所有非活动视频
+  const goToVideo = (index: number) => {
+    if (videoRefs.current[currentIndex]) {
+      videoRefs.current[currentIndex]?.stop();
+    }
+    setCurrentIndex(index);
+  };
+
+  // Auto-play carousel
+  useEffect(() => {
+    if (isPaused) {
+      if (autoPlayIntervalRef.current) {
+        clearInterval(autoPlayIntervalRef.current);
+        autoPlayIntervalRef.current = null;
+      }
+      return;
+    }
+
+    autoPlayIntervalRef.current = setInterval(() => {
+      setCurrentIndex((prev) => {
+        // Stop current video before switching
+        if (videoRefs.current[prev]) {
+          videoRefs.current[prev]?.stop();
+        }
+        return (prev + 1) % videos.length;
+      });
+    }, 5000); // Change video every 5 seconds
+
+    return () => {
+      if (autoPlayIntervalRef.current) {
+        clearInterval(autoPlayIntervalRef.current);
+        autoPlayIntervalRef.current = null;
+      }
+    };
+  }, [isPaused, videos.length]);
+
+  // Stop all inactive videos when index changes
   useEffect(() => {
     videoRefs.current.forEach((ref, index) => {
       if (ref && index !== currentIndex) {
@@ -58,8 +119,16 @@ export default function VideoCarousel() {
     });
   }, [currentIndex]);
 
+  // Pause auto-play on hover
+  const handleMouseEnter = () => setIsPaused(true);
+  const handleMouseLeave = () => setIsPaused(false);
+
   return (
-    <div className="relative mt-8 lg:mt-0 flex items-center justify-center">
+    <div 
+      className="relative mt-8 lg:mt-0 flex items-center justify-center"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <div className="relative w-full max-w-sm h-[400px] sm:h-[450px] md:h-[550px] lg:h-[600px] bg-surface border border-border rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 group">
         <motion.div
           className="w-full h-full carousel-track flex flex-col"
@@ -81,34 +150,12 @@ export default function VideoCarousel() {
           ))}
         </motion.div>
 
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-3 z-20">
-          <button
-            onClick={prevVideo}
-            className="w-10 h-10 rounded-full bg-black/60 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white/20 hover:scale-110 transition-all shadow-lg"
-            aria-label="Previous video"
-          >
-            <ChevronUp className="w-5 h-5" />
-          </button>
-          <button
-            onClick={nextVideo}
-            className="w-10 h-10 rounded-full bg-black/60 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white/20 hover:scale-110 transition-all shadow-lg"
-            aria-label="Next video"
-          >
-            <ChevronDown className="w-5 h-5" />
-          </button>
-        </div>
-
         {/* Video indicators */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
           {videos.map((_, index) => (
             <button
               key={index}
-              onClick={() => {
-                if (videoRefs.current[currentIndex]) {
-                  videoRefs.current[currentIndex]?.stop();
-                }
-                setCurrentIndex(index);
-              }}
+              onClick={() => goToVideo(index)}
               className={`h-1.5 rounded-full transition-all ${
                 index === currentIndex ? 'w-6 bg-white' : 'w-1.5 bg-white/40'
               }`}
