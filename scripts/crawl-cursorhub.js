@@ -181,7 +181,7 @@ async function crawlPage(url) {
       description: parsed.description,
       sections: parsed.sections.map(s => ({
         title: s.title,
-        content: s.content,
+        content: s.content || '', // 确保 content 字段存在
       })),
       links: parsed.links,
       timestamp: new Date().toISOString(),

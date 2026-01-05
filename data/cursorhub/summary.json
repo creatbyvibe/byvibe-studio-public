@@ -1,6 +1,6 @@
 {
   "totalPages": 4,
-  "crawledAt": "2026-01-05T22:37:49.686Z",
+  "crawledAt": "2026-01-05T22:47:26.569Z",
   "pages": [
     {
       "url": "https://cursorhub.org/",
@@ -11,7 +11,7 @@
     {
       "url": "https://cursorhub.org/tutorials",
       "title": "CursorHub教程",
-      "sectionCount": 25,
+      "sectionCount": 26,
       "linkCount": 12
     },
     {
@@ -23,7 +23,7 @@
     {
       "url": "https://cursorhub.org/tutorials/projects/introduction",
       "title": "实战项目大全 | CursorHub教程",
-      "sectionCount": 14,
+      "sectionCount": 15,
       "linkCount": 1
     }
   ]

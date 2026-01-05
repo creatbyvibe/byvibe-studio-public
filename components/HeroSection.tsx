@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Heart } from 'lucide-react';
 import VideoCarousel from './VideoCarousel';
 import ComingSoonModal from './ComingSoonModal';
 
@@ -104,16 +105,24 @@ export default function HeroSection() {
           {/* Brand Tag - Removed, now in SloganBanner */}
 
           {/* Product Slogan */}
-          <motion.h1
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="text-product-slogan md:text-product-slogan-md lg:text-product-slogan-lg xl:text-product-slogan-xl font-bold text-white"
+            className="space-y-3 md:space-y-4"
           >
-            The<br className="block" />
-            Engineering<br className="block" />
-            <span className="text-gray-600">Brain.</span>
-          </motion.h1>
+            <h1 className="text-product-slogan md:text-product-slogan-md lg:text-product-slogan-lg xl:text-product-slogan-xl font-bold text-white leading-tight">
+              The<br className="block" />
+              Engineering<br className="block" />
+              <span className="text-gray-600">Brain.</span>
+            </h1>
+            <div className="flex items-center gap-2.5 md:gap-3 pt-1 md:pt-2">
+              <Heart className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 text-red-400 fill-current animate-pulse flex-shrink-0" />
+              <p className="text-xs md:text-sm lg:text-base text-red-400 font-medium tracking-wide leading-relaxed">
+                Create by Vibe, Share the Joy
+              </p>
+            </div>
+          </motion.div>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}

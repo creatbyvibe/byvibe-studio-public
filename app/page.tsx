@@ -53,13 +53,6 @@ export default function Home() {
 
       <EcosystemLogos />
       <Footer />
-      
-        {/* Watermark */}
-        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-10 pointer-events-none">
-          <p className="text-xs md:text-sm text-red-400/30 font-medium tracking-wide">
-            Create by Vibe, Share the Joy
-          </p>
-        </div>
       </div>
     </>
   );

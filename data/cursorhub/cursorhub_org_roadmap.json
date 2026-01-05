@@ -5,51 +5,51 @@
   "sections": [
     {
       "title": "教程目录",
-      "content": ""
+      "content": "学习路线图 前言 会员专享视频教程 Cursor视频教程 Cursor安装和配置 Cursor界面导览与快捷键使用 Cursor插件安装与管理 Cursor AI模型选择 Cursor Rules Cursor AI对话（Chat） Cursor自动代码补全（Tab） SEO视频教程 SEO原理和基础知识分享 待开发 出海网站常见类型 待开发 出海找需求常用工具用法 页面内容优化 待开发 网站结构优化 待开发 外链建设 待开发 实战项目视频 AI图片生成工具站 AI播客生成工具站 出海小游戏站 外贸网站开发 全栈开发指南视频 Github（开发工具） Vercel（服务器部署） Cloudflare（服务器部署） Supabase（数据库） Google Analytics（网站数据分析工具） Stripe（收款工具） Cursor入门基础 开始使用Cursor 介绍 安装/配置初始设置 Cursor常用功能 tab自动补全代码 Cursor Rules 全局Rule 根目录下的.cursorrules 与Cursor开始对话 介绍 模型选择 模式选择(Agent/Ask/Manual) Cursor进阶 如何让Cursor写的代码更听你的话？ 新课程准备中... Cursor常见问题（FAQ） 原有功能被意外改坏怎么办 上来就直接写代码，我还没看完给的方案 代码过长出错多怎么办 代码报错解决思路 实战项目 前言 入门项目 个人博客网站搭建 3D网页前端项目 谷歌浏览器插件实战项目 进阶项目 HTML代码生成网页工具站 AI图片背景移除工具 常用软件/平台清单 API提供商 数据库提供商 网站数据分析提供商 对接广告平台 对接支付平台 UI设计平台 AI编程工具 全栈开发指南 搭建开发环境推荐清单 终端工具 VS Code 插件 配置终端工具 Github desktop 安装依赖工具 域名管理 购买域名 域名解析 服务器部署 Vercel部署 Cloudflare部署 网站数据分析 数据分析工具 SEO基础教程 如何挖掘新词 利用Github拿到搜索引擎排名 如何分析竞争对手 待开发 如何挖掘长尾词 如何获取外链 如何优化网站结构 待开发 如何优化网站内容 学习路线图"
     },
     {
       "title": "探索学习路径",
-      "content": ""
+      "content": "我们为您精心规划了学习路线，从基础到实战，助您高效掌握 Cursor 并构建出色的产品。会员内容提供更深入的视频指导。 Cursor入门基础 从安装开始，一步步熟悉界面、核心功能，轻松上手！ 开始使用Cursor 介绍 安装/配置初始设置 Cursor常用功能 tab自动补全代码 Cursor Rules 全局Rule 根目录下的.cursorrules 与Cursor开始对话 介绍 模型选择 模式选择(Agent/Ask/Manual) 了解更多 会员 · Cursor 视频深入 会员专属深度视频，覆盖从安装到高级用法的方方面面。 Cursor安装和配置 Cursor界面导览与快捷键 Cursor插件安装与管理 Cursor AI模型选择 Cursor Rules Cursor AI对话（Chat） Cursor自动代码补全（Tab） 查看视频 进阶提升与答疑：掌握高级技巧，扫除使用障碍。 Cursor进阶 掌握高级技巧，让 Cursor 更懂你，提升代码生成效率和质量。 提升技巧 如何让Cursor写的代码更听话 新课程准备中... (待开发) 了解更多 Cursor常见问题 (FAQ) 解答使用 Cursor 过程中可能遇到的常见问题和解决方法。 常见问题解答 原有功能被意外改坏怎么办 上来就直接写代码怎么办 代码过长出错多怎么办 代码报错解决思路 了解更多 构建完整应用：学习全栈开发知识，搭建网站基础。 全栈开发指南 分享用 Cursor 搞定前后端的思路和实践，如 Next.js + Supabase。 开发环境搭建 终端工具 VS Code 插件 配置终端工具 Github desktop 安装依赖工具 网站基础设施 购买域名 域名解析 Vercel部署 Cloudflare部署 网站数据分析 数据分析工具 了解更多 会员 · 全栈开发视频 用视频详解 Github, Vercel, Supabase 等全栈开发必备工具和流程。 Github（开发工具） Vercel（服务器部署） Cloudflare（服务器部署） Supabase（数据库） Google Analytics Stripe（收款工具） 查看视频 实践出真知：通过实战项目，将知识转化为成果。 实战项目 分享用 Cursor 从零到一搭建的 AI 工具站、内容站等实际项目。 入门项目 个人..."
     },
     {
       "title": "Cursor入门基础",
-      "content": ""
+      "content": "从安装开始，一步步熟悉界面、核心功能，轻松上手！ 开始使用Cursor 介绍 安装/配置初始设置 Cursor常用功能 tab自动补全代码 Cursor Rules 全局Rule 根目录下的.cursorrules 与Cursor开始对话 介绍 模型选择 模式选择(Agent/Ask/Manual) 了解更多 会员 · Cursor 视频深入 会员专属深度视频，覆盖从安装到高级用法的方方面面。 Cursor安装和配置 Cursor界面导览与快捷键 Cursor插件安装与管理 Cursor AI模型选择 Cursor Rules Cursor AI对话（Chat） Cursor自动代码补全（Tab） 查看视频 进阶提升与答疑：掌握高级技巧，扫除使用障碍。"
     },
     {
       "title": "Cursor进阶",
-      "content": ""
+      "content": "掌握高级技巧，让 Cursor 更懂你，提升代码生成效率和质量。 提升技巧 如何让Cursor写的代码更听话 新课程准备中... (待开发) 了解更多"
     },
     {
       "title": "Cursor常见问题 (FAQ)",
-      "content": ""
+      "content": "解答使用 Cursor 过程中可能遇到的常见问题和解决方法。 常见问题解答 原有功能被意外改坏怎么办 上来就直接写代码怎么办 代码过长出错多怎么办 代码报错解决思路 了解更多 构建完整应用：学习全栈开发知识，搭建网站基础。"
     },
     {
       "title": "全栈开发指南",
-      "content": ""
+      "content": "分享用 Cursor 搞定前后端的思路和实践，如 Next.js + Supabase。 开发环境搭建 终端工具 VS Code 插件 配置终端工具 Github desktop 安装依赖工具 网站基础设施 购买域名 域名解析 Vercel部署 Cloudflare部署 网站数据分析 数据分析工具 了解更多 会员 · 全栈开发视频 用视频详解 Github, Vercel, Supabase 等全栈开发必备工具和流程。 Github（开发工具） Vercel（服务器部署） Cloudflare（服务器部署） Supabase（数据库） Google Analytics Stripe（收款工具） 查看视频 实践出真知：通过实战项目，将知识转化为成果。"
     },
     {
       "title": "实战项目",
-      "content": ""
+      "content": "分享用 Cursor 从零到一搭建的 AI 工具站、内容站等实际项目。 入门项目 个人博客网站搭建 3D网页前端项目 谷歌浏览器插件实战项目 HTML代码生成网页工具站 AI图片背景移除工具 了解更多 会员 · 进阶实战项目 观看如何从零到一搭建更复杂的 AI 工具站、游戏站等项目的完整视频教程。 进阶项目 AI图片生成工具站 AI播客生成工具站 出海小游戏站 外贸网站开发 查看视频 扩大影响力：学习 SEO 技巧，让世界发现你的作品。"
     },
     {
       "title": "SEO 基础教程",
-      "content": ""
+      "content": "分享SEO基础知识，如关键词研究、内容优化等，让更多人找到你的网站。 关键词 & 竞品 如何挖掘新词 如何挖掘长尾词 如何分析竞争对手 (待开发) 网站优化 如何优化网站内容 如何获取外链 如何优化网站结构 (待开发) 利用Github做SEO 利用Github拿到搜索引擎排名 了解更多 会员 · SEO 进阶视频 深入学习 SEO 原理、出海工具使用、内容/结构优化和外链建设视频。 出海找需求常用工具用法 SEO原理和基础 (待开发) (待开发) 出海网站常见类型 (待开发) (待开发) 页面内容优化 (待开发) (待开发) 网站结构优化 (待开发) (待开发) 外链建设 (待开发) (待开发) 查看视频 工具箱参考：了解常用的开发与效率增强工具。"
     },
     {
       "title": "常用软件/平台清单",
-      "content": ""
+      "content": "整理了我常用的开发和SEO工具，帮你节省寻找工具的时间。 开发 & AI API提供商 数据库提供商 AI编程工具 UI设计平台 分析 & 商业化 网站数据分析提供商 对接广告平台 对接支付平台 了解更多 查看教程前言 Cursor Hub 从零基础到独立开发，我将分享如何用Cursor打造实用网站并实现变现。"
     },
     {
       "title": "课程内容",
-      "content": ""
+      "content": "› Cursor 入门基础 › 常用软件/平台清单 › 全栈开发指南 › SEO基础教程"
     },
     {
       "title": "快速导航",
-      "content": ""
+      "content": "› 教程中心 › 课程定价 › 加入免费交流群"
     },
     {
       "title": "联系方式",
-      "content": ""
+      "content": "个人微信: trumansoho 扫码添加微信 请备注来意，不然不予通过 © 2025 Cursor Hub. 保留所有权利。 Made with ♥ by a Cursor enthusiast |"
     }
   ],
   "links": [
@@ -346,5 +346,5 @@
       "url": "/tutorials/software-platforms/payment-platforms"
     }
   ],
-  "timestamp": "2026-01-05T22:37:46.981Z"
+  "timestamp": "2026-01-05T22:47:24.244Z"
 }
