@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Terminal, Play, AlertTriangle, FileCode, Shield, Code } from 'lucide-react';
+import { motion, useInView } from 'framer-motion';
 import { useUsageLimit } from '@/lib/hooks/useUsageLimit';
 import AuthModal from './AuthModal';
 import ErrorModal from './ErrorModal';
@@ -102,40 +103,81 @@ export default function InteractiveConsole() {
     }
   };
 
+  const sectionRef = useRef<HTMLElement>(null);
+  const leftContentRef = useRef<HTMLDivElement>(null);
+  const rightContentRef = useRef<HTMLDivElement>(null);
+  const isLeftInView = useInView(leftContentRef, { once: true, margin: "-100px" });
+  const isRightInView = useInView(rightContentRef, { once: true, margin: "-100px" });
+
   return (
-    <section className="py-12 md:py-20 px-4 md:px-6 bg-surface border-b border-border">
-      <div className="max-w-7xl mx-auto">
+    <section 
+      ref={sectionRef}
+      className="py-12 md:py-20 px-4 md:px-6 bg-surface border-b border-border relative overflow-hidden"
+    >
+      {/* Subtle Grid Background */}
+      <div className="absolute inset-0 bg-grid-subtle pointer-events-none opacity-30"></div>
+      
+      {/* Glowing Transition from Hero */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[200%] h-[200px] pointer-events-none -z-0">
+        <div className="w-full h-full bg-gradient-radial from-blue-500/5 via-blue-500/2 to-transparent"></div>
+      </div>
+      
+      <div className="max-w-7xl mx-auto relative z-10">
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
           {/* Left Column - Text Content */}
-          <div className="flex-1 max-w-xl space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded text-xs font-mono text-blue-400">
-              <Code className="w-4 h-4" /> AI ENGINE v1.0
+          <motion.div 
+            ref={leftContentRef}
+            initial={{ opacity: 0, y: 30 }}
+            animate={isLeftInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="flex-1 max-w-xl space-y-6"
+          >
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded text-xs font-mono text-blue-400 uppercase tracking-widest">
+              ⚡️ FROM VIBE TO ARCHITECTURE
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight font-display">
-              Hands-on with<br className="block" />
-              the Architect.
+              Beyond Code.<br className="block" />
+              Engineered Realities.
             </h2>
             <p className="text-base md:text-lg text-text-muted leading-relaxed">
-              Don't just watch videos. Experience how ByVibe breaks down complex ideas into executable engineering tasks.
+              Stop passive watching. ByVibe transforms abstract prompts into rigorous PRDs, risk assessments, and executable roadmaps. Give your 'vibe' an industrial-grade foundation.
             </p>
-            <div className="flex gap-6 text-sm font-mono text-text-muted">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm font-mono text-text-muted">
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 <span>Auto-PRD</span>
               </div>
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 <span>Risk Analysis</span>
               </div>
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <span>Architecture Mapping</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <span>Tech-Stack Validation</span>
+              </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Right Column - Console with Stacked Effect */}
-          <div className="flex-1 w-full lg:max-w-2xl relative">
+          <motion.div 
+            ref={rightContentRef}
+            initial={{ opacity: 0, y: 30 }}
+            animate={isRightInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+            className="flex-1 w-full lg:max-w-2xl relative"
+          >
             {/* Stacked Console Effect */}
             <div className="relative">
               {/* Background layers for stacked effect */}
@@ -143,7 +185,7 @@ export default function InteractiveConsole() {
               <div className="absolute -right-1 -bottom-1 w-full h-full bg-blue-500/10 border border-blue-500/20 rounded-lg -z-10"></div>
               
               {/* Main Console */}
-              <div className="relative bg-background border border-border rounded-lg shadow-2xl overflow-hidden min-h-[500px] md:min-h-[600px] flex flex-col ring-1 ring-white/5">
+              <div className="relative bg-background border border-border rounded-lg shadow-2xl overflow-hidden min-h-[500px] md:min-h-[600px] flex flex-col ring-1 ring-white/5 console-spotlight">
                 <div className="bg-black border-b border-border px-5 py-4 flex items-center justify-between">
                   <div className="flex items-center gap-2 text-xs font-mono text-gray-400">
                     <Terminal className="w-4 h-4" />
@@ -253,7 +295,7 @@ export default function InteractiveConsole() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
 
