@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart } from 'lucide-react';
 import { toolsData, Tool } from '@/data/tools';
@@ -16,7 +16,7 @@ const slogans = [
 export default function SloganBanner() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedTool, setSelectedTool] = useState<Tool | null>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -30,9 +30,6 @@ export default function SloganBanner() {
     const IconComponent = (LucideIcons as any)[iconName] || LucideIcons.Code;
     return IconComponent;
   };
-
-  // 悬停状态
-  const [isHovered, setIsHovered] = useState(false);
 
   return (
     <>
@@ -75,14 +72,9 @@ export default function SloganBanner() {
           onMouseLeave={() => setIsHovered(false)}
         >
           <div
-            ref={scrollContainerRef}
             className={`flex items-center gap-8 md:gap-12 py-3 md:py-4 scrollbar-hide tool-scroll-container ${
               isHovered ? 'pause-scroll' : ''
             }`}
-            style={{
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none',
-            }}
           >
             {/* 重复工具列表以实现无缝循环 */}
             {[...toolsData, ...toolsData, ...toolsData].map((tool, index) => {
