@@ -1,8 +1,9 @@
 'use client'
 
 import React, { useState } from 'react'
-import { ArrowRight, CheckCircle, Terminal, Shield, Loader2 } from 'lucide-react'
+import { ArrowRight, CheckCircle, Shield, Loader2 } from 'lucide-react'
 import { supabase } from '@/lib/supabaseClient'
+import ToolShowcase from '@/components/ToolShowcase'
 
 type Status = 'idle' | 'loading' | 'success' | 'error'
 
@@ -155,20 +156,9 @@ const HeroSection = () => {
                 </div>
               </div>
 
-              {/* Content Area - 以后这里会替换成真正的工具组件 */}
-              <div className="aspect-[4/3] bg-gray-50 flex flex-col items-center justify-center p-8 text-center">
-                <div className="h-16 w-16 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 mb-4">
-                  <Terminal size={32} />
-                </div>
-                <h3 className="text-gray-900 font-semibold text-lg mb-2">工具演示区域</h3>
-                <p className="text-gray-500 text-sm max-w-xs">
-                  这里将展示真实的 AI + Human 协作工具
-                </p>
-                <div className="mt-6 flex gap-2">
-                  <div className="h-2 w-2 rounded-full bg-blue-400 animate-pulse"></div>
-                  <div className="h-2 w-2 rounded-full bg-blue-400 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                  <div className="h-2 w-2 rounded-full bg-blue-400 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
-                </div>
+              {/* Content Area - 工具展示组件 */}
+              <div className="aspect-[4/3] bg-white">
+                <ToolShowcase />
               </div>
             </div>
           </div>
