@@ -72,17 +72,25 @@ export default function InteractiveConsole() {
         body: JSON.stringify({ input: vibeInput }),
       });
 
-      if (!response.ok) throw new Error('Orchestration failed');
-
       const data = await response.json();
+
+      if (!response.ok) {
+        // Check if it's a usage limit error
+        if (response.status === 429 && data.code === 'USAGE_LIMIT_EXCEEDED') {
+          setShowAuthModal(true);
+          return;
+        }
+        throw new Error(data.error || 'Orchestration failed');
+      }
+
       setPlan(data);
       setShowContent(true);
       
-      // 增加使用次数
+      // Increment usage count
       incrementUsage();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Orchestration Error:', error);
-      alert('System Error: Orchestration failed.');
+      alert(error.message || 'System Error: Orchestration failed.');
       setShowContent(false);
     } finally {
       setIsGenerating(false);

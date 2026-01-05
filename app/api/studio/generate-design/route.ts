@@ -45,7 +45,7 @@ graph TB
     C --> D[Database]
 `;
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`;
 
     const response = await fetch(url, {
       method: 'POST',
@@ -56,20 +56,50 @@ graph TB
     });
 
     if (!response.ok) {
-      throw new Error('Gemini API error');
+      const errorText = await response.text();
+      console.error('Gemini API error:', response.status, errorText);
+      
+      let errorMessage = 'Failed to generate design';
+      try {
+        const errorData = JSON.parse(errorText);
+        errorMessage = errorData.error?.message || errorMessage;
+      } catch {
+        // Use default error message
+      }
+      
+      return NextResponse.json({ error: errorMessage }, { status: response.status });
     }
 
     const data = await response.json();
-    let diagram = data.candidates[0].content.parts[0].text.trim();
+    
+    // Check if response has candidates
+    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+      console.error('Invalid Gemini API response:', JSON.stringify(data));
+      return NextResponse.json(
+        { error: 'Invalid response from AI service' },
+        { status: 500 }
+      );
+    }
+
+    let diagram = data.candidates[0].content.parts[0].text;
+    if (!diagram) {
+      return NextResponse.json(
+        { error: 'Empty response from AI service' },
+        { status: 500 }
+      );
+    }
     
     // Clean up markdown code blocks if present
-    diagram = diagram.replace(/```mermaid/g, '').replace(/```/g, '').trim();
+    diagram = diagram.trim().replace(/```mermaid/g, '').replace(/```/g, '').trim();
 
     return NextResponse.json({ diagram }, { status: 200 });
   } catch (error: any) {
     console.error('Generate design error:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to generate design' },
+      { 
+        error: error.message || 'Failed to generate design',
+        details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      },
       { status: 500 }
     );
   }

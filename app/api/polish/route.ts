@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'API key not configured' }, { status: 500 });
     }
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`;
 
     const prompt = `
       Role: Senior Technical Product Manager.
@@ -31,15 +31,48 @@ export async function POST(request: NextRequest) {
     });
 
     if (!response.ok) {
-      throw new Error('Gemini API error');
+      const errorText = await response.text();
+      console.error('Gemini API error:', response.status, errorText);
+      
+      let errorMessage = 'Failed to refine input';
+      try {
+        const errorData = JSON.parse(errorText);
+        errorMessage = errorData.error?.message || errorMessage;
+      } catch {
+        // Use default error message
+      }
+      
+      return NextResponse.json({ error: errorMessage }, { status: response.status });
     }
 
     const data = await response.json();
+    
+    // Check if response has candidates
+    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+      console.error('Invalid Gemini API response:', JSON.stringify(data));
+      return NextResponse.json(
+        { error: 'Invalid response from AI service' },
+        { status: 500 }
+      );
+    }
+
     const text = data.candidates[0].content.parts[0].text;
+    if (!text) {
+      return NextResponse.json(
+        { error: 'Empty response from AI service' },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({ refined: text.trim() });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Polish error:', error);
-    return NextResponse.json({ error: 'Failed to polish vibe' }, { status: 500 });
+    return NextResponse.json(
+      { 
+        error: error.message || 'Failed to polish vibe',
+        details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      },
+      { status: 500 }
+    );
   }
 }

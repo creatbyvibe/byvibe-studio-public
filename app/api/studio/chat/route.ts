@@ -64,7 +64,7 @@ Provide production-ready, well-structured code. Respond in the same language as 
     const contextStr = context ? `\n\nProject Context: ${JSON.stringify(context)}` : '';
     const fullPrompt = `${systemPrompt}${contextStr}\n\nUser Message: ${message}`;
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`;
 
     const response = await fetch(url, {
       method: 'POST',

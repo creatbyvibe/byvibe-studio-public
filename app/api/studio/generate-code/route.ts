@@ -57,7 +57,7 @@ Include:
 
 Output ONLY valid JSON, no markdown code blocks.`;
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`;
 
     const response = await fetch(url, {
       method: 'POST',
@@ -68,22 +68,63 @@ Output ONLY valid JSON, no markdown code blocks.`;
     });
 
     if (!response.ok) {
-      throw new Error('Gemini API error');
+      const errorText = await response.text();
+      console.error('Gemini API error:', response.status, errorText);
+      
+      let errorMessage = 'Failed to generate code';
+      try {
+        const errorData = JSON.parse(errorText);
+        errorMessage = errorData.error?.message || errorMessage;
+      } catch {
+        // Use default error message
+      }
+      
+      return NextResponse.json({ error: errorMessage }, { status: response.status });
     }
 
     const data = await response.json();
-    let rawText = data.candidates[0].content.parts[0].text.trim();
+    
+    // Check if response has candidates
+    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+      console.error('Invalid Gemini API response:', JSON.stringify(data));
+      return NextResponse.json(
+        { error: 'Invalid response from AI service' },
+        { status: 500 }
+      );
+    }
+
+    let rawText = data.candidates[0].content.parts[0].text;
+    if (!rawText) {
+      return NextResponse.json(
+        { error: 'Empty response from AI service' },
+        { status: 500 }
+      );
+    }
+    
+    rawText = rawText.trim();
     
     // Clean up markdown code blocks if present
     rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
     
-    const codeStructure = JSON.parse(rawText);
+    let codeStructure;
+    try {
+      codeStructure = JSON.parse(rawText);
+    } catch (parseError) {
+      console.error('JSON parse error:', parseError, 'Raw text:', rawText);
+      return NextResponse.json(
+        { error: 'Failed to parse AI response. Please try again.' },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json(codeStructure, { status: 200 });
   } catch (error: any) {
     console.error('Generate code error:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to generate code' },
+      { 
+        error: error.message || 'Failed to generate code',
+        details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      },
       { status: 500 }
     );
   }
