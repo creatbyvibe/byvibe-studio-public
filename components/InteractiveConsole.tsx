@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Terminal, Play, AlertTriangle, FileCode, Shield, Code } from 'lucide-react';
+// Icons removed - using text-only design
 import { motion, useInView } from 'framer-motion';
 import { useUsageLimit } from '@/lib/hooks/useUsageLimit';
 import AuthModal from './AuthModal';
@@ -133,7 +133,7 @@ export default function InteractiveConsole() {
             className="flex-1 max-w-xl space-y-6"
           >
             <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded text-xs font-mono text-blue-400 uppercase tracking-widest">
-              ⚡️ FROM VIBE TO ARCHITECTURE
+              FROM VIBE TO ARCHITECTURE
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight font-display">
               Beyond Code.<br className="block" />
@@ -143,28 +143,20 @@ export default function InteractiveConsole() {
               Stop passive watching. ByVibe transforms abstract prompts into rigorous PRDs, risk assessments, and executable roadmaps. Give your 'vibe' an industrial-grade foundation.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm font-mono text-text-muted">
-              <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+              <div className="flex items-center">
+                <span className="text-green-500 mr-2">•</span>
                 <span>Auto-PRD</span>
               </div>
-              <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+              <div className="flex items-center">
+                <span className="text-green-500 mr-2">•</span>
                 <span>Risk Analysis</span>
               </div>
-              <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+              <div className="flex items-center">
+                <span className="text-green-500 mr-2">•</span>
                 <span>Architecture Mapping</span>
               </div>
-              <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+              <div className="flex items-center">
+                <span className="text-green-500 mr-2">•</span>
                 <span>Tech-Stack Validation</span>
               </div>
             </div>
@@ -188,7 +180,6 @@ export default function InteractiveConsole() {
               <div className="relative bg-background border border-border rounded-lg shadow-2xl overflow-hidden min-h-[500px] md:min-h-[600px] flex flex-col ring-1 ring-white/5 console-spotlight">
                 <div className="bg-black border-b border-border px-5 py-4 flex items-center justify-between">
                   <div className="flex items-center gap-2 text-xs font-mono text-gray-400">
-                    <Terminal className="w-4 h-4" />
                     <span>byvibe-cli</span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -241,7 +232,7 @@ export default function InteractiveConsole() {
                         disabled={isGenerating}
                         className="w-full py-3 bg-white/5 border border-white/10 text-gray-300 text-sm hover:bg-white/10 hover:text-white transition-colors flex items-center justify-center gap-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <Play className="w-4 h-4" /> Generate Plan
+                        Generate Plan
                       </button>
                     </div>
                   </div>
@@ -277,8 +268,7 @@ export default function InteractiveConsole() {
                             </div>
                           </div>
                           {plan.risks && (
-                            <div className="mb-4 p-3 border border-red-900/30 bg-red-900/10 text-red-400 text-sm flex gap-2 items-start rounded">
-                              <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
+                            <div className="mb-4 p-3 border border-red-900/30 bg-red-900/10 text-red-400 text-sm rounded">
                               <span>{plan.risks}</span>
                             </div>
                           )}
