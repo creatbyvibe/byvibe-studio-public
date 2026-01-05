@@ -59,7 +59,10 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
     // 当视频变为非活动状态时停止播放
     useEffect(() => {
       if (!isActive && iframeRef.current) {
-        stop();
+        const currentSrc = iframeRef.current.src;
+        if (currentSrc) {
+          iframeRef.current.src = '';
+        }
       }
     }, [isActive]);
 
