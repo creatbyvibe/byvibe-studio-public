@@ -219,7 +219,7 @@ export default function InteractiveConsole() {
                     <div className="mt-4 space-y-3">
                       {hasReachedLimit && (
                         <div className="p-3 bg-yellow-900/20 border border-yellow-500/30 rounded text-yellow-400 text-xs text-center">
-                          ⚠️ Free trial exhausted. Please sign in to continue.
+                          Free trial exhausted. Please sign in to continue.
                         </div>
                       )}
                       {!hasReachedLimit && remainingUsage > 0 && (
