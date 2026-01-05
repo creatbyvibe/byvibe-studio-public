@@ -120,7 +120,7 @@ export default function Navbar({ onViewChange, onWaitlistClick }: NavbarProps) {
                   className="w-full flex items-center gap-2 px-4 py-2 text-xs text-gray-400 hover:text-white hover:bg-black transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
-                  <span>退出登录</span>
+                  <span>Sign Out</span>
                 </button>
               </motion.div>
             )}

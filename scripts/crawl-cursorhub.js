@@ -82,15 +82,69 @@ function parseHTML(html) {
     result.description = descMatch[1].trim();
   }
 
-  // 提取所有 h2, h3 标题
-  const headingRegex = /<h([23])[^>]*>([^<]+)<\/h[23]>/gi;
+  // 提取所有标题及其内容
+  // 首先找到所有标题的位置
+  const headingRegex = /<h([123])[^>]*>([^<]+)<\/h[123]>/gi;
+  const headings = [];
   let match;
   while ((match = headingRegex.exec(html)) !== null) {
-    result.sections.push({
-      level: match[1],
+    headings.push({
+      level: parseInt(match[1]),
       title: match[2].trim(),
-      content: '', // 简化版本不提取内容
+      index: match.index,
+      endIndex: match.index + match[0].length,
     });
+  }
+
+  // 为每个标题提取后续内容（直到下一个同级或更高级的标题）
+  for (let i = 0; i < headings.length; i++) {
+    const heading = headings[i];
+    const nextHeading = headings.find((h, idx) => idx > i && h.level <= heading.level);
+    const startIndex = heading.endIndex;
+    const endIndex = nextHeading ? nextHeading.index : html.length;
+
+    // 提取这个范围内的文本内容
+    let contentHtml = html.substring(startIndex, endIndex);
+    
+    // 移除 HTML 标签，只保留文本
+    let content = contentHtml
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '') // 移除 script 标签
+      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '') // 移除 style 标签
+      .replace(/<[^>]+>/g, ' ') // 移除所有 HTML 标签
+      .replace(/&nbsp;/g, ' ') // 替换 &nbsp;
+      .replace(/&amp;/g, '&') // 替换 &amp;
+      .replace(/&lt;/g, '<') // 替换 &lt;
+      .replace(/&gt;/g, '>') // 替换 &gt;
+      .replace(/&quot;/g, '"') // 替换 &quot;
+      .replace(/&#39;/g, "'") // 替换 &#39;
+      .replace(/\s+/g, ' ') // 合并多个空格
+      .trim();
+
+    // 限制内容长度（避免过长）
+    if (content.length > 1000) {
+      content = content.substring(0, 1000) + '...';
+    }
+
+    result.sections.push({
+      level: heading.level,
+      title: heading.title,
+      content: content,
+    });
+  }
+
+  // 如果没有找到标题，尝试提取段落
+  if (result.sections.length === 0) {
+    const paragraphRegex = /<p[^>]*>([^<]+)<\/p>/gi;
+    while ((match = paragraphRegex.exec(html)) !== null) {
+      const text = match[1].trim();
+      if (text.length > 30) { // 只保存有意义的段落
+        result.sections.push({
+          level: 0,
+          title: '段落',
+          content: text.substring(0, 500),
+        });
+      }
+    }
   }
 
   // 提取链接

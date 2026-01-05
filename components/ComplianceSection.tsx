@@ -60,7 +60,7 @@ export default function ComplianceSection() {
               <h3 className="text-white font-bold mb-2 group-hover:text-blue-400 transition-colors">{item.title}</h3>
               <p className="text-xs text-text-muted leading-relaxed">{item.description}</p>
               <p className="text-[10px] text-blue-400 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                查看详情 →
+                View Details →
               </p>
             </a>
           ))}

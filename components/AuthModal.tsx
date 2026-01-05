@@ -62,23 +62,23 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
         if (error) throw error;
 
         if (data.user) {
-          // 检查是否需要邮箱验证
+          // Check if email verification is needed
           if (data.user.email_confirmed_at) {
             setError('');
-            setMessage('注册成功！');
+            setMessage('Registration successful!');
             setTimeout(() => {
               onSuccess?.();
               onClose();
             }, 1500);
           } else {
             setError('');
-            setMessage('注册成功！请检查邮箱并点击验证链接以激活账户。');
-            // 不自动关闭，让用户看到提示
+            setMessage('Registration successful! Please check your email and click the verification link to activate your account.');
+            // Don't auto-close, let user see the message
           }
         }
       }
     } catch (err: any) {
-      setError(err.message || '操作失败，请重试');
+      setError(err.message || 'Operation failed, please try again');
     } finally {
       setIsLoading(false);
     }
@@ -98,7 +98,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
 
       if (error) throw error;
     } catch (err: any) {
-      setError(err.message || '登录失败，请重试');
+      setError(err.message || 'Sign in failed, please try again');
       setIsLoading(false);
     }
   };
@@ -113,7 +113,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
 
   const handleWaitlist = () => {
     setShowWaitlist(true);
-    // 滚动到 waitlist form
+    // Scroll to waitlist form
     setTimeout(() => {
       onClose();
       const waitlistForm = document.getElementById('waitlist-form');
@@ -142,10 +142,10 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
           <div className="bg-black border-b border-border px-6 py-4 flex items-center justify-between">
             <div>
               <h2 className="text-xl font-bold text-white">
-                {isLogin ? '登录' : '注册'}
+                {isLogin ? 'Sign In' : 'Sign Up'}
               </h2>
               <p className="text-xs text-gray-500 mt-1">
-                {isLogin ? '继续使用 ByVibe' : '创建账户解锁全部功能'}
+                {isLogin ? 'Continue using ByVibe' : 'Create an account to unlock all features'}
               </p>
             </div>
             <button
@@ -163,7 +163,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
               {!isLogin && (
                 <div>
                   <label className="block text-xs text-gray-500 uppercase tracking-wider mb-2">
-                    姓名（可选）
+                    Name (Optional)
                   </label>
                   <input
                     type="text"
@@ -177,7 +177,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
 
               <div>
                 <label className="block text-xs text-gray-500 uppercase tracking-wider mb-2">
-                  邮箱
+                  Email
                 </label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-3.5 w-4 h-4 text-gray-500" />
@@ -194,7 +194,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
 
               <div>
                 <label className="block text-xs text-gray-500 uppercase tracking-wider mb-2">
-                  密码
+                  Password
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3.5 w-4 h-4 text-gray-500" />
@@ -227,14 +227,14 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
                 disabled={isLoading}
                 className="w-full py-3 bg-white text-black font-bold rounded hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
               >
-                {isLoading ? '处理中...' : isLogin ? '登录' : '注册'}
+                {isLoading ? 'Processing...' : isLogin ? 'Sign In' : 'Sign Up'}
               </button>
             </form>
 
             {/* Divider */}
             <div className="flex items-center gap-4 mb-6">
               <div className="flex-1 h-px bg-border"></div>
-              <span className="text-xs text-gray-500 uppercase">或</span>
+              <span className="text-xs text-gray-500 uppercase">or</span>
               <div className="flex-1 h-px bg-border"></div>
             </div>
 
@@ -246,7 +246,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
                 className="w-full flex items-center justify-center gap-3 py-3 bg-black border border-border rounded hover:bg-surface transition-colors disabled:opacity-50"
               >
                 <Chrome className="w-5 h-5 text-white" />
-                <span className="text-white font-medium text-sm">使用 Google 登录</span>
+                <span className="text-white font-medium text-sm">Sign in with Google</span>
               </button>
 
               <button
@@ -255,7 +255,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
                 className="w-full flex items-center justify-center gap-3 py-3 bg-black border border-border rounded hover:bg-surface transition-colors disabled:opacity-50"
               >
                 <Github className="w-5 h-5 text-white" />
-                <span className="text-white font-medium text-sm">使用 GitHub 登录</span>
+                <span className="text-white font-medium text-sm">Sign in with GitHub</span>
               </button>
 
               <button
@@ -264,7 +264,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
                 className="w-full flex items-center justify-center gap-3 py-3 bg-black border border-border rounded hover:bg-surface transition-colors disabled:opacity-50"
               >
                 <BookOpen className="w-5 h-5 text-white" />
-                <span className="text-white font-medium text-sm">使用 ORCID 登录</span>
+                <span className="text-white font-medium text-sm">Sign in with ORCID</span>
               </button>
             </div>
 
@@ -275,7 +275,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
                 className="w-full flex items-center justify-center gap-2 py-2 text-sm text-gray-500 hover:text-white transition-colors"
               >
                 <UserPlus className="w-4 h-4" />
-                <span>或加入等待列表</span>
+                <span>Or join the waitlist</span>
               </button>
             </div>
 
@@ -290,11 +290,11 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
               >
                 {isLogin ? (
                   <>
-                    还没有账户？<span className="text-blue-400">注册</span>
+                    Don't have an account? <span className="text-blue-400">Sign Up</span>
                   </>
                 ) : (
                   <>
-                    已有账户？<span className="text-blue-400">登录</span>
+                    Already have an account? <span className="text-blue-400">Sign In</span>
                   </>
                 )}
               </button>

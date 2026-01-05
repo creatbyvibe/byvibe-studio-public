@@ -1,12 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
 import VideoCarousel from './VideoCarousel';
-import { useAuth } from '@/lib/hooks/useAuth';
-import AuthModal from './AuthModal';
+import ComingSoonModal from './ComingSoonModal';
 
 function WaitlistForm() {
   const [email, setEmail] = useState('');
@@ -70,16 +67,11 @@ function WaitlistForm() {
 }
 
 function StartBuildingButton() {
-  const { user } = useAuth();
-  const router = useRouter();
-  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showComingSoonModal, setShowComingSoonModal] = useState(false);
 
   const handleClick = () => {
-    if (user) {
-      router.push('/studio');
-    } else {
-      setShowAuthModal(true);
-    }
+    // Show coming soon modal
+    setShowComingSoonModal(true);
   };
 
   return (
@@ -90,13 +82,10 @@ function StartBuildingButton() {
       >
         Start Building →
       </button>
-      {showAuthModal && (
-        <AuthModal
-          isOpen={showAuthModal}
-          onClose={() => setShowAuthModal(false)}
-          onSuccess={() => router.push('/studio')}
-        />
-      )}
+      <ComingSoonModal
+        isOpen={showComingSoonModal}
+        onClose={() => setShowComingSoonModal(false)}
+      />
     </>
   );
 }
@@ -114,7 +103,7 @@ export default function HeroSection() {
         >
           {/* Brand Tag - Removed, now in SloganBanner */}
 
-          {/* 产品 Slogan - 产品标题 */}
+          {/* Product Slogan */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

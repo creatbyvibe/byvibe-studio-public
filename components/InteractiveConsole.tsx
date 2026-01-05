@@ -173,12 +173,12 @@ export default function InteractiveConsole() {
                     <div className="mt-4 space-y-3">
                       {hasReachedLimit && (
                         <div className="p-3 bg-yellow-900/20 border border-yellow-500/30 rounded text-yellow-400 text-xs text-center">
-                          ⚠️ 免费试用已用完，请登录继续使用
+                          ⚠️ Free trial exhausted. Please sign in to continue.
                         </div>
                       )}
                       {!hasReachedLimit && remainingUsage > 0 && (
                         <div className="text-xs text-gray-500 text-center">
-                          剩余免费次数: {remainingUsage}
+                          Free attempts remaining: {remainingUsage}
                         </div>
                       )}
                       <button
