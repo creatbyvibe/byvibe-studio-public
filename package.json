@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "pages:build": "npx @cloudflare/next-on-pages",
+    "pages:dev": "npx @cloudflare/next-on-pages --watch",
     "start": "next start",
     "lint": "next lint"
   },
@@ -19,6 +21,7 @@
     "tailwind-merge": "^2.6.0"
   },
   "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.11.4",
     "@types/node": "^20.11.0",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
