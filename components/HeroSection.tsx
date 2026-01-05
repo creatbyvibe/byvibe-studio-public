@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Heart } from 'lucide-react';
 import VideoCarousel from './VideoCarousel';
 import ComingSoonModal from './ComingSoonModal';
 
@@ -111,12 +110,9 @@ export default function HeroSection() {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="space-y-3 md:space-y-4"
           >
-            <div className="flex items-center gap-2.5 md:gap-3 mb-2 md:mb-3">
-              <Heart className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 text-red-400 fill-current animate-pulse flex-shrink-0" />
-              <p className="text-xs md:text-sm lg:text-base text-red-400 font-medium tracking-wide leading-relaxed">
-                Create by Vibe, Share the Joy
-              </p>
-            </div>
+            <p className="text-xs md:text-sm lg:text-base text-red-400 font-medium tracking-wide leading-relaxed mb-2 md:mb-3">
+              Create by Vibe, Share the Joy
+            </p>
             <h1 className="text-product-slogan md:text-product-slogan-md lg:text-product-slogan-lg xl:text-product-slogan-xl font-bold text-white leading-tight">
               The<br className="block" />
               Engineering<br className="block" />
