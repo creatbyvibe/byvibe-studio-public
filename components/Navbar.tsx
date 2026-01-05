@@ -87,10 +87,10 @@ export default function Navbar({ onViewChange, onWaitlistClick }: NavbarProps) {
             <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
           </button>
           <a
-            href="#compliance"
+            href="/governance"
             className="hover:text-white transition-colors uppercase"
           >
-            Compliance
+            Governance
           </a>
         </div>
 

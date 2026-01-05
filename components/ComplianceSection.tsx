@@ -38,10 +38,10 @@ export default function ComplianceSection() {
             </p>
           </div>
           <a
-            href="#"
+            href="/governance"
             className="text-xs text-white border-b border-white/20 hover:border-white pb-0.5 transition-colors"
           >
-            View Compliance Docs -&gt;
+            View Full Governance Page -&gt;
           </a>
         </div>
 
