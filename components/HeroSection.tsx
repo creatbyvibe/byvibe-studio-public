@@ -17,7 +17,7 @@ const HeroSection = () => {
     
     if (!email || !email.includes('@')) {
       setStatus('error')
-      setErrorMessage('请输入有效的邮箱地址')
+      setErrorMessage('Please enter a valid email address')
       return
     }
 
@@ -32,10 +32,10 @@ const HeroSection = () => {
       if (error) {
         if (error.code === '23505') {
           setStatus('error')
-          setErrorMessage('该邮箱已订阅')
+          setErrorMessage('This email is already subscribed')
         } else {
           setStatus('error')
-          setErrorMessage('订阅失败，请稍后重试')
+          setErrorMessage('Subscription failed, please try again later')
         }
         return
       }
@@ -48,7 +48,7 @@ const HeroSection = () => {
       }, 3000)
     } catch (err) {
       setStatus('error')
-      setErrorMessage('订阅失败，请稍后重试')
+      setErrorMessage('Subscription failed, please try again later')
     }
   }
 
@@ -68,18 +68,18 @@ const HeroSection = () => {
             </div>
             
             <h1 className="mb-6 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl leading-[1.1]">
-              停止无效的 AI 焦虑，<br/>
+              Stop AI Anxiety,<br/>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-                开始真正的协作。
+                Start Real Collaboration.
               </span>
             </h1>
             
             <p className="mb-8 text-lg text-gray-600 leading-relaxed max-w-lg">
-              byvibe.ai 致力于打造人与 AI 最优解的分工流。
-              我们不直播写代码，我们只交付可用的生产力工具。
+              byvibe.ai is building the optimal division of labor between humans and AI.
+              We don't stream coding sessions. We ship usable productivity tools.
               <br/>
               <span className="text-sm text-gray-400 mt-2 block">
-                * 订阅仅用于接收版本迭代通知，绝无垃圾邮件。
+                * Subscribe only for version updates. Zero spam, guaranteed.
               </span>
             </p>
 
@@ -89,7 +89,7 @@ const HeroSection = () => {
                 <input
                   type="email"
                   required
-                  placeholder="输入你的邮箱接收更新..."
+                  placeholder="Enter your email for updates..."
                   className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition disabled:opacity-50"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -105,16 +105,16 @@ const HeroSection = () => {
                   {status === 'loading' ? (
                     <span className="flex items-center gap-2">
                       <Loader2 size={18} className="animate-spin" />
-                      提交中...
+                      Submitting...
                     </span>
                   ) : status === 'success' ? (
                     <span className="flex items-center gap-2">
                       <CheckCircle size={18} />
-                      已加入
+                      Subscribed
                     </span>
                   ) : (
                     <span className="flex items-center gap-2">
-                      获取更新
+                      Get Updates
                       <ArrowRight size={18} />
                     </span>
                   )}
@@ -128,12 +128,12 @@ const HeroSection = () => {
               
               {/* Success Message */}
               {status === 'success' && (
-                <p className="mt-2 text-sm text-green-600">订阅成功！我们会在有新版本时通知你。</p>
+                <p className="mt-2 text-sm text-green-600">Successfully subscribed! We'll notify you when new versions are released.</p>
               )}
               
               <p className="mt-4 flex items-center text-xs text-gray-500">
                 <Shield size={12} className="mr-1 text-gray-400" />
-                数据安全保障，随时可一键退订。
+                Your data is secure. Unsubscribe anytime with one click.
               </p>
             </div>
           </div>
