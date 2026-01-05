@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run pages:build",
+  "buildCommand": "npm install --legacy-peer-deps && npm run pages:build",
   "outputDirectory": ".vercel/output/static",
   "rootDirectory": "/",
   "framework": "nextjs",
