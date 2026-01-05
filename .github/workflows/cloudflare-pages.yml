@@ -1,51 +1,46 @@
-# 可选：GitHub Actions 工作流（如果不想使用 Cloudflare 的自动构建）
-# 注意：Cloudflare Pages 通常会自动检测 GitHub 仓库并构建，此文件为可选
+# ⚠️ 此工作流已禁用
 # 
-# 如果你已经在 Cloudflare Dashboard 中连接了 GitHub 仓库，
-# 那么 Cloudflare 会自动处理部署，这个工作流不是必需的。
+# 原因：Cloudflare Pages 已经在 Dashboard 中配置了自动构建
+# 使用 Cloudflare 的原生构建系统更简单、更可靠
 # 
-# 只有在以下情况才需要这个工作流：
-# 1. 想要在 GitHub Actions 中构建（而不是 Cloudflare 构建）
-# 2. 需要更复杂的构建流程
-# 3. 想要在部署前运行测试
+# 如果你需要重新启用此工作流，请：
+# 1. 取消下面的注释
+# 2. 更新构建命令为：npm run pages:build
+# 3. 更新输出目录为：.vercel/output/static
+# 4. 配置必要的 GitHub Secrets
 
-name: Deploy to Cloudflare Pages
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-  workflow_dispatch: # 允许手动触发
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build
-        run: npm run build
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: byvibe-studio-public
-          directory: out
+# name: Deploy to Cloudflare Pages
+# 
+# on:
+#   workflow_dispatch: # 仅允许手动触发，避免与 Cloudflare 自动构建冲突
+# 
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v3
+# 
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: '20'
+#           cache: 'npm'
+# 
+#       - name: Install dependencies
+#         run: npm ci
+# 
+#       - name: Build
+#         run: npm run pages:build
+#         env:
+#           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+#           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+#           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+# 
+#       - name: Deploy to Cloudflare Pages
+#         uses: cloudflare/pages-action@v1
+#         with:
+#           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+#           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+#           projectName: byvibe-studio-public
+#           directory: .vercel/output/static
