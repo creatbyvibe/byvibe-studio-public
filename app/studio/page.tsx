@@ -15,7 +15,8 @@ import { shouldUseDevMode, getDevUser } from '@/lib/dev-mode';
 export default function StudioDashboard() {
   const { user, loading: authLoading } = useAuth();
   const devMode = shouldUseDevMode();
-  const devUser = devMode ? getDevUser() : null;
+  // 始终提供一个稳定的 devUser，避免在渲染/类型检查中出现 null 分支
+  const devUser = getDevUser();
   const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
@@ -48,7 +49,7 @@ export default function StudioDashboard() {
           name: '示例项目 1',
           description: '这是一个示例项目，用于展示 Studio 功能',
           status: 'in_progress',
-          user_id: devUser!.id,
+          user_id: devUser.id,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         },
@@ -57,7 +58,7 @@ export default function StudioDashboard() {
           name: '示例项目 2',
           description: '已完成的项目示例',
           status: 'completed',
-          user_id: devUser!.id,
+          user_id: devUser.id,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         },

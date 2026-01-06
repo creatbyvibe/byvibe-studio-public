@@ -29,7 +29,8 @@ const phases: { id: ProjectPhase; label: string; description: string }[] = [
 export default function StudioWorkspace() {
   const { user, loading: authLoading } = useAuth();
   const devMode = shouldUseDevMode();
-  const devUser = devMode ? getDevUser() : null;
+  // 始终提供一个稳定的 devUser，避免在渲染/类型检查中出现 null 分支
+  const devUser = getDevUser();
   const router = useRouter();
   const params = useParams();
   const projectId = params.id as string;
@@ -59,7 +60,7 @@ export default function StudioWorkspace() {
           name: projectId.startsWith('dev-project') ? '示例项目' : '开发项目',
           description: '这是一个示例项目，用于展示 Studio 功能',
           status: 'in_progress',
-          user_id: devUser!.id,
+          user_id: devUser.id,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         } as Project);
