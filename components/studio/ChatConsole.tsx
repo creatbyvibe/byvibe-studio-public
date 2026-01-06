@@ -374,7 +374,9 @@ export default function ChatConsole({ projectId, phase, context }: ChatConsolePr
           }}
         />
         <button
-          onClick={handleSend}
+          onClick={() => {
+            void handleSend();
+          }}
           disabled={!input.trim() || isLoading}
           className="p-2 bg-blue-500/20 border border-blue-500/30 rounded hover:bg-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex-shrink-0"
           title="Send message (Enter)"
