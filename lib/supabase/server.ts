@@ -37,13 +37,13 @@ export function createServerClient(request: NextRequest) {
 
   const supabase = createSupabaseServerClient(supabaseUrl, supabaseAnonKey, {
     cookies: {
-      get(name) {
+      get(name: string) {
         return request.cookies.get(name)?.value
       },
-      set(name, value, options) {
+      set(name: string, value: string, options: any) {
         cookieOps.push({ type: 'set', name, value, options })
       },
-      remove(name, options) {
+      remove(name: string, options: any) {
         cookieOps.push({ type: 'remove', name, options })
       },
     },
