@@ -43,16 +43,6 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
       setIframeSrc(`${cleanUrl}${separator}enablejsapi=1`);
     }, [url]);
 
-    useEffect(() => {
-      // #region agent log
-      let host = 'unknown'
-      try {
-        host = new URL(thumbnailUrl).hostname
-      } catch {}
-      fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'video-missing-20260106',hypothesisId:'H3',location:'components/VideoPlayer.tsx:useEffect:props',message:'video player props',data:{isActive,shouldPlay,thumbHost:host,urlHasEmbed:url.includes('youtube.com/embed')},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion agent log
-    }, [thumbnailUrl, shouldPlay, isActive, url]);
-
     // 非活动时停止
     useEffect(() => {
       if (!isActive) {

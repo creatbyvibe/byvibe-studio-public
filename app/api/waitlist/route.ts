@@ -6,10 +6,6 @@ export const runtime = 'edge';
 
 export async function POST(request: NextRequest) {
   try {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'waitlist-20260106',hypothesisId:'A',location:'app/api/waitlist/route.ts:POST:entry',message:'waitlist POST entry',data:{hasSupabaseUrl:!!process.env.NEXT_PUBLIC_SUPABASE_URL,hasSupabaseAnonKey:!!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,hasResendApiKey:!!process.env.RESEND_API_KEY,hasAdminEmail:!!(process.env.ADMIN_EMAIL||process.env.NOTIFICATION_EMAIL),hasOrigin:!!request.headers.get('origin'),hasHost:!!request.headers.get('host')},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion agent log
-
     const body = await request.json()
     const { email, name } = body
 
@@ -23,10 +19,6 @@ export async function POST(request: NextRequest) {
 
     const emailNormalized = String(email).toLowerCase().trim()
     const nameNormalized = typeof name === 'string' ? name.trim() : ''
-
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'waitlist-20260106',hypothesisId:'A',location:'app/api/waitlist/route.ts:POST:parsed',message:'waitlist request parsed',data:{hasName:!!nameNormalized,emailLen:emailNormalized.length},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion agent log
 
     // Check if Supabase is configured
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -69,10 +61,6 @@ export async function POST(request: NextRequest) {
     const rowWithOptionalName =
       nameNormalized.length > 0 ? { ...rowBase, name: nameNormalized } : rowBase
 
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'waitlist-20260106',hypothesisId:'A',location:'app/api/waitlist/route.ts:POST:insert:attempt1',message:'waitlist insert attempt1',data:{payloadKeys:Object.keys(rowWithOptionalName)},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion agent log
-
     let { data, error } = await supabase.from('waitlist').insert([rowWithOptionalName]).select()
 
     // 兼容旧版/自建 waitlist 表：可能没有 name/created_at 字段
@@ -83,10 +71,6 @@ export async function POST(request: NextRequest) {
         code === '42703' || msg.includes('column') || msg.includes('does not exist') || msg.includes('PGRST')
 
       if (looksLikeMissingColumn) {
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'waitlist-20260106',hypothesisId:'C',location:'app/api/waitlist/route.ts:POST:insert:retry',message:'waitlist insert retry due to possible schema mismatch',data:{errorCode:code,hasMessage:!!msg},timestamp:Date.now()})}).catch(()=>{});
-        // #endregion agent log
-
         // retry 1: drop name
         ;({ data, error } = await supabase.from('waitlist').insert([{ ...rowBase }]).select())
 
@@ -114,9 +98,6 @@ export async function POST(request: NextRequest) {
         msg.includes('not allowed') ||
         msg.includes('insufficient_privilege')
       ) {
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'waitlist-20260106',hypothesisId:'B',location:'app/api/waitlist/route.ts:POST:insert:rls',message:'waitlist insert blocked by RLS/permissions',data:{errorCode:(error as any)?.code||'',hasMessage:!!msg},timestamp:Date.now()})}).catch(()=>{});
-        // #endregion agent log
         return NextResponse.json(
           {
             error: 'Waitlist insert is blocked by database security policy (RLS). Please add an INSERT policy for the waitlist table.',

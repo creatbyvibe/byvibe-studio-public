@@ -80,12 +80,6 @@ export default function AuthPage() {
     setIsLoading(true);
 
     try {
-      // #region agent log
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'auth-secret-key-20260106',hypothesisId:'A',location:'app/auth/page.tsx:handleEmailAuth:envcheck',message:'auth page env check',data:{hasUrl:!!supabaseUrl,hasKey:!!supabaseKey,isSecretKey:!!supabaseKey && (supabaseKey.toLowerCase().startsWith('sb_secret_')||supabaseKey.toLowerCase().includes('service_role')),isMisconfigured:isSupabaseBrowserKeyMisconfigured(),isLogin},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion agent log
-
       if (isSupabaseBrowserKeyMisconfigured()) {
         setError('Supabase Key 配置错误：你把 sb_secret_*（Secret Key）配置到了 NEXT_PUBLIC_SUPABASE_ANON_KEY。请在 Cloudflare Pages 改成 sb_publishable_*（anon/public key），然后重新部署。');
         return;

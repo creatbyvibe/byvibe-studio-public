@@ -40,10 +40,6 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
       // 检查 Supabase 是否配置
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
       const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'auth-secret-key-20260106',hypothesisId:'A',location:'components/AuthModal.tsx:handleEmailAuth:envcheck',message:'auth modal env check',data:{hasUrl:!!supabaseUrl,hasKey:!!supabaseKey,isSecretKey:!!supabaseKey && (supabaseKey.toLowerCase().startsWith('sb_secret_')||supabaseKey.toLowerCase().includes('service_role')),isMisconfigured:isSupabaseBrowserKeyMisconfigured(),isLogin},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion agent log
       
       if (!supabaseUrl || !supabaseKey || 
           supabaseUrl.includes('placeholder') || 
