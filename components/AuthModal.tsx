@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mail, Lock, Github, Chrome, BookOpen, UserPlus } from 'lucide-react';
-import { supabase } from '@/lib/supabase/client';
+import { supabase, isSupabaseBrowserKeyMisconfigured } from '@/lib/supabase/client';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -40,11 +40,21 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
       // 检查 Supabase 是否配置
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
       const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'auth-secret-key-20260106',hypothesisId:'A',location:'components/AuthModal.tsx:handleEmailAuth:envcheck',message:'auth modal env check',data:{hasUrl:!!supabaseUrl,hasKey:!!supabaseKey,isSecretKey:!!supabaseKey && (supabaseKey.toLowerCase().startsWith('sb_secret_')||supabaseKey.toLowerCase().includes('service_role')),isMisconfigured:isSupabaseBrowserKeyMisconfigured(),isLogin},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion agent log
       
       if (!supabaseUrl || !supabaseKey || 
           supabaseUrl.includes('placeholder') || 
           supabaseKey.includes('placeholder')) {
         setError('Supabase 未配置。请创建 .env.local 文件并配置 Supabase 环境变量。');
+        setIsLoading(false);
+        return;
+      }
+
+      if (isSupabaseBrowserKeyMisconfigured()) {
+        setError('Supabase Key 配置错误：你把 sb_secret_*（Secret Key）配置到了 NEXT_PUBLIC_SUPABASE_ANON_KEY。请在 Cloudflare Pages 把它改成 sb_publishable_*（anon/public key），然后重新部署。');
         setIsLoading(false);
         return;
       }
@@ -103,6 +113,8 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
       if (err.message?.includes('Supabase not configured') || 
           err.message?.includes('placeholder')) {
         errorMessage = 'Supabase 未配置。请创建 .env.local 文件并配置 Supabase 环境变量。';
+      } else if (err.message?.includes('Forbidden use of secret API key')) {
+        errorMessage = 'Supabase Key 配置错误：检测到在浏览器端使用了 Secret Key。请将 NEXT_PUBLIC_SUPABASE_ANON_KEY 改为 sb_publishable_*（anon/public key），并重新部署。';
       } else if (err.message?.includes('Invalid login credentials')) {
         errorMessage = '邮箱或密码错误，请重试';
       } else if (err.message?.includes('User already registered')) {

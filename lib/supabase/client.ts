@@ -4,6 +4,13 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js'
 let supabaseInstance: SupabaseClient | null = null
 let isPlaceholder = false
 
+function looksLikeSupabaseSecretKey(key: string): boolean {
+  // Supabase keys: publishable usually start with sb_publishable_; secret/service role start with sb_secret_
+  // Never allow secret key in browser bundle (NEXT_PUBLIC_*)
+  const k = key.toLowerCase()
+  return k.startsWith('sb_secret_') || k.includes('service_role')
+}
+
 function getSupabaseClient(): SupabaseClient | null {
   // 如果已经初始化，直接返回
   if (supabaseInstance) {
@@ -22,6 +29,16 @@ function getSupabaseClient(): SupabaseClient | null {
     return supabaseInstance
   }
 
+  // 防止误把 Supabase Secret Key 配到 NEXT_PUBLIC_SUPABASE_ANON_KEY（会在浏览器端被禁止使用）
+  if (looksLikeSupabaseSecretKey(supabaseAnonKey)) {
+    supabaseInstance = createClient('https://placeholder.supabase.co', 'placeholder-key')
+    isPlaceholder = true
+    console.error(
+      'Supabase anon key is misconfigured: secret key detected in NEXT_PUBLIC_SUPABASE_ANON_KEY. Please use the publishable/anon key (sb_publishable_...)'
+    )
+    return supabaseInstance
+  }
+
   // 正常情况，创建真实的客户端
   supabaseInstance = createClient(supabaseUrl, supabaseAnonKey)
   isPlaceholder = false
@@ -31,6 +48,12 @@ function getSupabaseClient(): SupabaseClient | null {
 // 检查是否是占位客户端
 export function isSupabaseConfigured(): boolean {
   return !isPlaceholder && supabaseInstance !== null
+}
+
+export function isSupabaseBrowserKeyMisconfigured(): boolean {
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!key) return false
+  return looksLikeSupabaseSecretKey(key)
 }
 
 // 导出时延迟初始化，优雅处理环境变量缺失

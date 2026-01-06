@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Mail, Lock, Github, Chrome, BookOpen, X, Loader2 } from 'lucide-react';
-import { supabase } from '@/lib/supabase/client';
+import { supabase, isSupabaseBrowserKeyMisconfigured } from '@/lib/supabase/client';
 
 export default function AuthPage() {
   const router = useRouter();
@@ -80,6 +80,17 @@ export default function AuthPage() {
     setIsLoading(true);
 
     try {
+      // #region agent log
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+      fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'auth-secret-key-20260106',hypothesisId:'A',location:'app/auth/page.tsx:handleEmailAuth:envcheck',message:'auth page env check',data:{hasUrl:!!supabaseUrl,hasKey:!!supabaseKey,isSecretKey:!!supabaseKey && (supabaseKey.toLowerCase().startsWith('sb_secret_')||supabaseKey.toLowerCase().includes('service_role')),isMisconfigured:isSupabaseBrowserKeyMisconfigured(),isLogin},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion agent log
+
+      if (isSupabaseBrowserKeyMisconfigured()) {
+        setError('Supabase Key 配置错误：你把 sb_secret_*（Secret Key）配置到了 NEXT_PUBLIC_SUPABASE_ANON_KEY。请在 Cloudflare Pages 改成 sb_publishable_*（anon/public key），然后重新部署。');
+        return;
+      }
+
       if (isLogin) {
         // Sign in
         const { data, error } = await supabase.auth.signInWithPassword({
@@ -125,7 +136,11 @@ export default function AuthPage() {
         }
       }
     } catch (err: any) {
-      setError(err.message || 'Operation failed, please try again');
+      if (err.message?.includes('Forbidden use of secret API key')) {
+        setError('Supabase Key 配置错误：检测到在浏览器端使用了 Secret Key。请将 NEXT_PUBLIC_SUPABASE_ANON_KEY 改为 sb_publishable_*（anon/public key），并重新部署。');
+      } else {
+        setError(err.message || 'Operation failed, please try again');
+      }
     } finally {
       setIsLoading(false);
     }
