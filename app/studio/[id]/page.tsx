@@ -56,20 +56,37 @@ export default function StudioWorkspace() {
 
   // 加载工作区数据
   useEffect(() => {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'workspace-load-20260106',hypothesisId:'H1',location:'app/studio/[id]/page.tsx:useEffect:enter',message:'useEffect entered',data:{projectId:projectId||'',hasLoaded:hasLoadedRef.current,loadKey:loadKeyRef.current,devMode,authLoading,hasUser:!!user,userId:user?.id?String(user.id).slice(0,8):''},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion agent log
+
     const currentLoadKey = getLoadKey();
+    
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'workspace-load-20260106',hypothesisId:'H1',location:'app/studio/[id]/page.tsx:useEffect:loadKey',message:'loadKey calculated',data:{currentLoadKey,previousLoadKey:loadKeyRef.current,matches:hasLoadedRef.current&&loadKeyRef.current===currentLoadKey},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion agent log
     
     // 如果已经加载过相同的key，跳过
     if (hasLoadedRef.current && loadKeyRef.current === currentLoadKey) {
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'workspace-load-20260106',hypothesisId:'H2',location:'app/studio/[id]/page.tsx:useEffect:skip',message:'skipped - already loaded',data:{currentLoadKey},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion agent log
       return;
     }
 
     // 如果认证还在加载中，等待
     if (!devMode && authLoading) {
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'workspace-load-20260106',hypothesisId:'H3',location:'app/studio/[id]/page.tsx:useEffect:waitAuth',message:'waiting for auth',data:{authLoading},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion agent log
       return;
     }
 
     // 如果未登录且不是开发模式，显示未授权
     if (!devMode && !authLoading && !user) {
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'workspace-load-20260106',hypothesisId:'H4',location:'app/studio/[id]/page.tsx:useEffect:unauthorized',message:'setting unauthorized',data:{currentLoadKey},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion agent log
       setWorkspaceState({ status: 'unauthorized' });
       setShowAuthModal(true);
       hasLoadedRef.current = true;
@@ -80,6 +97,11 @@ export default function StudioWorkspace() {
     // 标记为已加载
     hasLoadedRef.current = true;
     loadKeyRef.current = currentLoadKey;
+    
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'workspace-load-20260106',hypothesisId:'H5',location:'app/studio/[id]/page.tsx:useEffect:startLoad',message:'starting data load',data:{currentLoadKey,devMode,hasUser:!!user},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion agent log
+    
     setWorkspaceState({ status: 'loading' });
 
     // 加载数据
@@ -96,6 +118,9 @@ export default function StudioWorkspace() {
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           };
+          // #region agent log
+          fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'workspace-load-20260106',hypothesisId:'H6',location:'app/studio/[id]/page.tsx:loadWorkspace:devMode',message:'setting dev mode ready state',data:{projectId},timestamp:Date.now()})}).catch(()=>{});
+          // #endregion agent log
           setWorkspaceState({
             status: 'ready',
             project: mockProject,
@@ -128,6 +153,9 @@ export default function StudioWorkspace() {
             throw new Error('Project not found');
           }
 
+          // #region agent log
+          fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'workspace-load-20260106',hypothesisId:'H7',location:'app/studio/[id]/page.tsx:loadWorkspace:success',message:'setting ready state',data:{projectId,hasProject:!!projectResult.data,artifactsCount:artifactsResult.data?.length||0},timestamp:Date.now()})}).catch(()=>{});
+          // #endregion agent log
           setWorkspaceState({
             status: 'ready',
             project: projectResult.data,
@@ -136,6 +164,9 @@ export default function StudioWorkspace() {
         }
       } catch (err: any) {
         console.error('Error loading workspace:', err);
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'workspace-load-20260106',hypothesisId:'H8',location:'app/studio/[id]/page.tsx:loadWorkspace:error',message:'setting error state',data:{projectId,errorName:err?.name||'',errorMessage:err?.message?.slice(0,100)||''},timestamp:Date.now()})}).catch(()=>{});
+        // #endregion agent log
         setWorkspaceState({
           status: 'error',
           error: err.message || 'Failed to load workspace',
