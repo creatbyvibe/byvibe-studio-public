@@ -5,6 +5,9 @@ import { Save, Lock, Unlock, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { supabase } from '@/lib/supabase/client';
 import { Artifact, ProjectPhase } from '@/types/supabase';
+import ErrorModal from '@/components/ErrorModal';
+import ConfirmModal from '@/components/ConfirmModal';
+import { ErrorHandler } from '@/lib/utils/error-handler';
 
 interface ScopePhaseProps {
   projectId: string;
@@ -30,6 +33,11 @@ export default function ScopePhase({ projectId, artifact, onArtifactUpdate }: Sc
   });
   const [saving, setSaving] = useState(false);
   const [locking, setLocking] = useState(false);
+  const [errorModal, setErrorModal] = useState<{ isOpen: boolean; message: string }>({
+    isOpen: false,
+    message: '',
+  });
+  const [confirmModal, setConfirmModal] = useState<{ isOpen: boolean }>({ isOpen: false });
 
   useEffect(() => {
     if (artifact?.content) {
@@ -67,8 +75,8 @@ export default function ScopePhase({ projectId, artifact, onArtifactUpdate }: Sc
 
       onArtifactUpdate();
     } catch (error) {
-      console.error('Error saving scope:', error);
-      alert('Failed to save. Please try again.');
+      const appError = ErrorHandler.handleFetchError(error, 'ScopePhase.save');
+      setErrorModal({ isOpen: true, message: appError.message });
     } finally {
       setSaving(false);
     }
@@ -76,11 +84,15 @@ export default function ScopePhase({ projectId, artifact, onArtifactUpdate }: Sc
 
   const handleLock = async () => {
     if (!artifact) {
-      alert('Please save the project scope first.');
+      setErrorModal({ isOpen: true, message: 'Please save the project scope first.' });
       return;
     }
 
-    if (!confirm('This phase will be locked and cannot be edited. Are you sure you want to continue?')) return;
+    setConfirmModal({ isOpen: true });
+  };
+
+  const confirmLock = async () => {
+    if (!artifact) return;
 
     try {
       setLocking(true);
@@ -99,8 +111,8 @@ export default function ScopePhase({ projectId, artifact, onArtifactUpdate }: Sc
 
       onArtifactUpdate();
     } catch (error) {
-      console.error('Error locking scope:', error);
-      alert('Failed to lock. Please try again.');
+      const appError = ErrorHandler.handleFetchError(error, 'ScopePhase.lock');
+      setErrorModal({ isOpen: true, message: appError.message });
     } finally {
       setLocking(false);
     }
@@ -313,6 +325,23 @@ export default function ScopePhase({ projectId, artifact, onArtifactUpdate }: Sc
           </p>
         </div>
       )}
+
+      <ErrorModal
+        isOpen={errorModal.isOpen}
+        onClose={() => setErrorModal({ isOpen: false, message: '' })}
+        message={errorModal.message}
+      />
+
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal({ isOpen: false })}
+        onConfirm={confirmLock}
+        title="Lock Phase"
+        message="This phase will be locked and cannot be edited. Are you sure you want to continue?"
+        confirmText="Lock"
+        cancelText="Cancel"
+        confirmVariant="primary"
+      />
     </div>
   );
 }

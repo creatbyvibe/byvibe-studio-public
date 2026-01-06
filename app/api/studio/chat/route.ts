@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getSkillsPrompt, SKILL_PROFILES } from '@/lib/ai/skills';
 
 export const runtime = 'edge';
 
@@ -22,47 +23,144 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Build context-aware prompt based on phase
-    const phasePrompts: Record<string, string> = {
-      scope: `You are an AI assistant helping a developer define their project scope. 
-The user is describing their project idea. Help them clarify:
-- Core features and functionality
-- Target users
-- Use cases and scenarios
-- Success criteria
-
-Be concise, ask clarifying questions if needed, and provide actionable suggestions. Respond in the same language as the user.`,
-      stack: `You are an AI assistant helping a developer choose the right technology stack.
-Based on the project scope, suggest appropriate technologies for:
-- Frontend framework
-- Backend framework
-- Database
-- Deployment platform
-- Additional tools
-
-Consider scalability, developer experience, and project requirements. Respond in the same language as the user.`,
-      design: `You are an AI assistant helping a developer design their project architecture.
-Based on the scope and chosen stack, help design:
-- System architecture
-- Component structure
-- Data flow
-- API design
-- Security considerations
-
-Provide clear, structured architecture recommendations. Respond in the same language as the user.`,
-      build: `You are an AI assistant helping a developer generate code.
-Based on the project scope, stack, and design, help generate:
-- Project structure
-- Core files and components
-- Configuration files
-- Initial implementation
-
-Provide production-ready, well-structured code. Respond in the same language as the user.`,
+    // Build context-aware prompt based on phase with comprehensive skills
+    const phaseConfig: Record<string, { role: string; skills: string; task: string }> = {
+      scope: {
+        role: 'Senior Technical Product Manager',
+        skills: SKILL_PROFILES.productManager,
+        task: 'helping define project scope, features, and requirements',
+      },
+      stack: {
+        role: 'Lead Systems Architect',
+        skills: SKILL_PROFILES.systemsArchitect,
+        task: 'helping choose the right technology stack',
+      },
+      design: {
+        role: 'Lead Systems Architect',
+        skills: SKILL_PROFILES.systemsArchitect,
+        task: 'helping design project architecture',
+      },
+      build: {
+        role: 'Senior Full-Stack Developer',
+        skills: `${SKILL_PROFILES.fullStackDeveloper}\n${SKILL_PROFILES.codeGenerator}`,
+        task: 'helping generate production-ready code',
+      },
     };
 
-    const systemPrompt = phasePrompts[phase] || phasePrompts.scope;
-    const contextStr = context ? `\n\nProject Context: ${JSON.stringify(context)}` : '';
-    const fullPrompt = `${systemPrompt}${contextStr}\n\nUser Message: ${message}`;
+    const phaseInfo = phaseConfig[phase] || phaseConfig.scope;
+    const skillsPrompt = getSkillsPrompt(phaseInfo.role, phaseInfo.task);
+    
+    const phaseSpecificGuidelines: Record<string, string> = {
+      scope: `
+## Your Role
+You are helping a developer define their project scope. The user is describing their project idea.
+
+## Your Tasks
+- Help clarify core features and functionality
+- Identify target users and personas
+- Define use cases and scenarios
+- Establish success criteria and metrics
+- Identify potential challenges and edge cases
+- Suggest MVP scope and phased approach
+
+## Communication Style
+- Be concise and actionable
+- Ask clarifying questions when needed
+- Provide concrete suggestions
+- Consider both technical and business perspectives
+- Think about user experience and developer experience
+`,
+      stack: `
+## Your Role
+You are helping a developer choose the right technology stack for their project.
+
+## Your Tasks
+- Suggest appropriate technologies for:
+  * Frontend framework (React, Vue, Angular, etc.)
+  * Backend framework (Node.js, Python, Go, etc.)
+  * Database (PostgreSQL, MongoDB, Redis, etc.)
+  * Deployment platform (Vercel, AWS, GCP, etc.)
+  * Additional tools and libraries
+- Consider scalability, performance, and maintainability
+- Evaluate developer experience and ecosystem
+- Consider team expertise and learning curve
+- Suggest alternatives and explain trade-offs
+- Consider cost and infrastructure requirements
+
+## Communication Style
+- Provide clear recommendations with rationale
+- Explain trade-offs between options
+- Consider project-specific requirements
+- Suggest modern, well-maintained technologies
+`,
+      design: `
+## Your Role
+You are helping a developer design their project architecture.
+
+## Your Tasks
+- Design system architecture based on scope and stack
+- Define component structure and boundaries
+- Design data flow and state management
+- Plan API design and endpoints
+- Consider security architecture
+- Design for scalability and performance
+- Plan deployment architecture
+- Consider monitoring and observability
+- Design error handling and resilience patterns
+
+## Communication Style
+- Provide clear, structured architecture recommendations
+- Use diagrams and visual descriptions when helpful
+- Explain design decisions and trade-offs
+- Consider both current needs and future growth
+- Provide concrete implementation guidance
+`,
+      build: `
+## Your Role
+You are helping a developer generate production-ready code.
+
+## Your Tasks
+- Generate project structure and organization
+- Create core files and components
+- Generate configuration files
+- Provide initial implementation
+- Include proper error handling
+- Add type definitions and interfaces
+- Include setup and deployment instructions
+- Provide code examples and patterns
+
+## Communication Style
+- Provide complete, runnable code
+- Follow best practices for the selected stack
+- Include comments for complex logic
+- Explain code structure and organization
+- Provide setup and deployment guidance
+`,
+    };
+
+    const phaseGuidelines = phaseSpecificGuidelines[phase] || phaseSpecificGuidelines.scope;
+    const contextStr = context ? `\n\n## Project Context\n${JSON.stringify(context, null, 2)}` : '';
+    
+    const fullPrompt = `
+${skillsPrompt}
+
+${phaseInfo.skills}
+
+${phaseGuidelines}
+
+${contextStr}
+
+## User Message
+${message}
+
+## Instructions
+- Respond in the same language as the user
+- Be helpful, accurate, and actionable
+- Consider the full project context
+- Provide practical, implementable solutions
+- Think about edge cases and potential issues
+- Consider best practices and industry standards
+`;
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`;
 

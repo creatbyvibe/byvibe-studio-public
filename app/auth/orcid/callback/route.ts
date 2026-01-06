@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { ErrorHandler } from '@/lib/utils/error-handler';
 
 export const runtime = 'edge';
 
@@ -6,19 +7,25 @@ export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get('code');
   const error = requestUrl.searchParams.get('error');
+  const errorDescription = requestUrl.searchParams.get('error_description');
 
-  // 处理错误情况
+  // Handle OAuth errors
   if (error) {
-    console.error('ORCID OAuth error:', error);
-    return NextResponse.redirect(new URL('/auth?error=orcid_auth_failed', requestUrl.origin));
+    const errorMessage = errorDescription || error;
+    ErrorHandler.logError(`ORCID OAuth error: ${errorMessage}`, 'ORCIDCallback');
+    return NextResponse.redirect(
+      new URL(`/auth?error=${encodeURIComponent(error)}&provider=orcid`, requestUrl.origin)
+    );
   }
 
   if (!code) {
-    return NextResponse.redirect(new URL('/auth?error=no_code', requestUrl.origin));
+    return NextResponse.redirect(
+      new URL('/auth?error=no_code&provider=orcid', requestUrl.origin)
+    );
   }
 
   try {
-    // 调用内部 API 处理 ORCID token 交换
+    // Call internal API to handle ORCID token exchange
     const apiUrl = new URL('/api/auth/orcid', requestUrl.origin);
     
     const apiResponse = await fetch(apiUrl.toString(), {
@@ -30,32 +37,54 @@ export async function GET(request: NextRequest) {
     });
 
     if (!apiResponse.ok) {
-      const errorData = await apiResponse.json();
+      const errorData = await apiResponse.json().catch(() => ({}));
+      const errorCode = errorData.error || 'orcid_auth_failed';
+      ErrorHandler.logError(`ORCID API error: ${errorCode}`, 'ORCIDCallback');
       return NextResponse.redirect(
-        new URL(`/auth?error=${errorData.error || 'orcid_auth_failed'}`, requestUrl.origin)
+        new URL(`/auth?error=${errorCode}&provider=orcid`, requestUrl.origin)
       );
     }
 
     const result = await apiResponse.json();
     
-    // 如果成功创建/登录用户，重定向到首页
+    // Success - redirect to home or return URL
     if (result.success) {
-      return NextResponse.redirect(new URL('/', requestUrl.origin));
+      const returnUrl = requestUrl.searchParams.get('return_url') || '/';
+      return NextResponse.redirect(new URL(returnUrl, requestUrl.origin));
     }
 
-    // 如果需要用户完成注册，传递 ORCID 信息
+    // Requires registration - redirect with ORCID info
     if (result.requiresRegistration) {
+      const params = new URLSearchParams({
+        orcid_id: result.orcidId || '',
+        orcid_name: result.name || '',
+        orcid_email: result.email || '',
+        provider: 'orcid',
+      });
       return NextResponse.redirect(
-        new URL(
-          `/auth?orcid_id=${result.orcidId}&orcid_name=${encodeURIComponent(result.name)}&orcid_email=${encodeURIComponent(result.email)}`,
-          requestUrl.origin
-        )
+        new URL(`/auth?${params.toString()}`, requestUrl.origin)
       );
     }
 
-    return NextResponse.redirect(new URL('/auth?error=unknown', requestUrl.origin));
+    // Account linking - redirect with linking info
+    if (result.requiresLinking) {
+      const params = new URLSearchParams({
+        link_account: 'true',
+        orcid_id: result.orcidId || '',
+        provider: 'orcid',
+      });
+      return NextResponse.redirect(
+        new URL(`/auth?${params.toString()}`, requestUrl.origin)
+      );
+    }
+
+    return NextResponse.redirect(
+      new URL('/auth?error=unknown&provider=orcid', requestUrl.origin)
+    );
   } catch (error: any) {
-    console.error('ORCID callback error:', error);
-    return NextResponse.redirect(new URL('/auth?error=orcid_callback_error', requestUrl.origin));
+    ErrorHandler.logError(error, 'ORCIDCallback');
+    return NextResponse.redirect(
+      new URL('/auth?error=orcid_callback_error&provider=orcid', requestUrl.origin)
+    );
   }
 }

@@ -5,6 +5,9 @@ import { Save, Lock, Loader2, RefreshCw, Download } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { supabase } from '@/lib/supabase/client';
 import { Artifact, ProjectPhase } from '@/types/supabase';
+import ErrorModal from '@/components/ErrorModal';
+import ConfirmModal from '@/components/ConfirmModal';
+import { ErrorHandler } from '@/lib/utils/error-handler';
 
 interface DesignPhaseProps {
   projectId: string;
@@ -31,6 +34,11 @@ export default function DesignPhase({ projectId, artifact, scopeContext, stackCo
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
   const [locking, setLocking] = useState(false);
+  const [errorModal, setErrorModal] = useState<{ isOpen: boolean; message: string }>({
+    isOpen: false,
+    message: '',
+  });
+  const [confirmModal, setConfirmModal] = useState<{ isOpen: boolean }>({ isOpen: false });
 
   useEffect(() => {
     if (artifact?.content) {
@@ -41,7 +49,7 @@ export default function DesignPhase({ projectId, artifact, scopeContext, stackCo
 
   const handleGenerate = async () => {
     if (!scopeContext || !stackContext) {
-      alert('Please complete the Scope and Stack phases first.');
+      setErrorModal({ isOpen: true, message: 'Please complete the Scope and Stack phases first.' });
       return;
     }
 
@@ -68,8 +76,8 @@ export default function DesignPhase({ projectId, artifact, scopeContext, stackCo
         diagram: data.diagram,
       }));
     } catch (error: any) {
-      console.error('Error generating design:', error);
-      alert(`Failed to generate architecture diagram: ${error.message}`);
+      const appError = ErrorHandler.handleFetchError(error, 'DesignPhase.generate');
+      setErrorModal({ isOpen: true, message: appError.message });
     } finally {
       setGenerating(false);
     }
@@ -102,8 +110,8 @@ export default function DesignPhase({ projectId, artifact, scopeContext, stackCo
 
       onArtifactUpdate();
     } catch (error) {
-      console.error('Error saving design:', error);
-      alert('Failed to save. Please try again.');
+      const appError = ErrorHandler.handleFetchError(error, 'DesignPhase.save');
+      setErrorModal({ isOpen: true, message: appError.message });
     } finally {
       setSaving(false);
     }
@@ -111,11 +119,15 @@ export default function DesignPhase({ projectId, artifact, scopeContext, stackCo
 
   const handleLock = async () => {
     if (!artifact || !content.diagram) {
-      alert('Please generate and save the architecture diagram first.');
+      setErrorModal({ isOpen: true, message: 'Please generate and save the architecture diagram first.' });
       return;
     }
 
-    if (!confirm('This phase will be locked and cannot be edited. Are you sure you want to continue?')) return;
+    setConfirmModal({ isOpen: true });
+  };
+
+  const confirmLock = async () => {
+    if (!artifact) return;
 
     try {
       setLocking(true);
@@ -128,8 +140,8 @@ export default function DesignPhase({ projectId, artifact, scopeContext, stackCo
 
       onArtifactUpdate();
     } catch (error) {
-      console.error('Error locking design:', error);
-      alert('Failed to lock. Please try again.');
+      const appError = ErrorHandler.handleFetchError(error, 'DesignPhase.lock');
+      setErrorModal({ isOpen: true, message: appError.message });
     } finally {
       setLocking(false);
     }
@@ -246,6 +258,23 @@ export default function DesignPhase({ projectId, artifact, scopeContext, stackCo
           </p>
         </div>
       )}
+
+      <ErrorModal
+        isOpen={errorModal.isOpen}
+        onClose={() => setErrorModal({ isOpen: false, message: '' })}
+        message={errorModal.message}
+      />
+
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal({ isOpen: false })}
+        onConfirm={confirmLock}
+        title="Lock Phase"
+        message="This phase will be locked and cannot be edited. Are you sure you want to continue?"
+        confirmText="Lock"
+        cancelText="Cancel"
+        confirmVariant="primary"
+      />
     </div>
   );
 }

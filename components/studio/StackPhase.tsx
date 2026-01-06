@@ -5,6 +5,9 @@ import { Save, Lock, Loader2, Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { supabase } from '@/lib/supabase/client';
 import { Artifact, ProjectPhase } from '@/types/supabase';
+import ErrorModal from '@/components/ErrorModal';
+import ConfirmModal from '@/components/ConfirmModal';
+import { ErrorHandler } from '@/lib/utils/error-handler';
 
 interface StackPhaseProps {
   projectId: string;
@@ -54,6 +57,11 @@ export default function StackPhase({ projectId, artifact, scopeContext, onArtifa
   });
   const [saving, setSaving] = useState(false);
   const [locking, setLocking] = useState(false);
+  const [errorModal, setErrorModal] = useState<{ isOpen: boolean; message: string }>({
+    isOpen: false,
+    message: '',
+  });
+  const [confirmModal, setConfirmModal] = useState<{ isOpen: boolean }>({ isOpen: false });
 
   useEffect(() => {
     if (artifact?.content) {
@@ -101,8 +109,8 @@ export default function StackPhase({ projectId, artifact, scopeContext, onArtifa
 
       onArtifactUpdate();
     } catch (error) {
-      console.error('Error saving stack:', error);
-      alert('Failed to save. Please try again.');
+      const appError = ErrorHandler.handleFetchError(error, 'StackPhase.save');
+      setErrorModal({ isOpen: true, message: appError.message });
     } finally {
       setSaving(false);
     }
@@ -110,11 +118,15 @@ export default function StackPhase({ projectId, artifact, scopeContext, onArtifa
 
   const handleLock = async () => {
     if (!artifact) {
-      alert('Please save the technology stack selection first.');
+      setErrorModal({ isOpen: true, message: 'Please save the technology stack selection first.' });
       return;
     }
 
-    if (!confirm('This phase will be locked and cannot be edited. Are you sure you want to continue?')) return;
+    setConfirmModal({ isOpen: true });
+  };
+
+  const confirmLock = async () => {
+    if (!artifact) return;
 
     try {
       setLocking(true);
@@ -127,8 +139,8 @@ export default function StackPhase({ projectId, artifact, scopeContext, onArtifa
 
       onArtifactUpdate();
     } catch (error) {
-      console.error('Error locking stack:', error);
-      alert('Failed to lock. Please try again.');
+      const appError = ErrorHandler.handleFetchError(error, 'StackPhase.lock');
+      setErrorModal({ isOpen: true, message: appError.message });
     } finally {
       setLocking(false);
     }
@@ -326,6 +338,23 @@ export default function StackPhase({ projectId, artifact, scopeContext, onArtifa
           </p>
         </div>
       )}
+
+      <ErrorModal
+        isOpen={errorModal.isOpen}
+        onClose={() => setErrorModal({ isOpen: false, message: '' })}
+        message={errorModal.message}
+      />
+
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal({ isOpen: false })}
+        onConfirm={confirmLock}
+        title="Lock Phase"
+        message="This phase will be locked and cannot be edited. Are you sure you want to continue?"
+        confirmText="Lock"
+        cancelText="Cancel"
+        confirmVariant="primary"
+      />
     </div>
   );
 }

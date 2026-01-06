@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getSkillsPrompt, SKILL_PROFILES } from '@/lib/ai/skills';
 
 export const runtime = 'edge';
 
@@ -22,27 +23,53 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const prompt = `You are a Lead Systems Architect. Based on the following project scope and technology stack, generate a Mermaid architecture diagram.
+    const skillsPrompt = getSkillsPrompt('Lead Systems Architect', 'generating system architecture diagrams');
+    const architectSkills = SKILL_PROFILES.systemsArchitect;
 
-Project Scope:
+    const prompt = `
+${skillsPrompt}
+
+${architectSkills}
+
+## Current Task
+Generate a comprehensive Mermaid architecture diagram based on the project scope and technology stack.
+
+## Project Scope
 ${JSON.stringify(scope, null, 2)}
 
-Technology Stack:
+## Technology Stack
 ${JSON.stringify(stack, null, 2)}
 
-Generate a Mermaid diagram that shows:
-1. System architecture (components, services, databases)
-2. Data flow between components
-3. Key integrations and APIs
-4. Deployment structure
+## Architecture Design Guidelines
+1. Design a scalable, maintainable system architecture
+2. Show clear separation of concerns and component boundaries
+3. Illustrate data flow between components (request/response, events, data streams)
+4. Include all key integrations (APIs, third-party services, databases)
+5. Show deployment structure (client, server, database, CDN, etc.)
+6. Consider security boundaries and authentication flows
+7. Show caching layers and performance optimization points
+8. Include monitoring and logging infrastructure
+9. Design for horizontal and vertical scalability
+10. Consider failover and redundancy strategies
 
-Output ONLY the Mermaid diagram code (without markdown code blocks). Use appropriate Mermaid diagram types (graph, flowchart, or architecture diagrams).
+## Diagram Requirements
+- Use appropriate Mermaid diagram types (graph TB, flowchart TD, or architecture diagrams)
+- Use clear, descriptive node labels
+- Show relationships with proper edge labels
+- Group related components logically
+- Use consistent styling and colors
+- Include legend or annotations if needed
+- Make it production-ready and comprehensive
+
+## Output Format
+Output ONLY the Mermaid diagram code (without markdown code blocks).
 
 Example format:
 graph TB
     A[Frontend] --> B[API Gateway]
     B --> C[Backend Service]
     C --> D[Database]
+    B --> E[Cache Layer]
 `;
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`;

@@ -108,27 +108,28 @@ export default function HeroSection() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="space-y-6 md:space-y-8 max-w-xl"
         >
-          {/* Eyebrow Slogan - Above H1 */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="text-sm text-red-400 font-medium tracking-wide mb-3 md:mb-4"
-          >
-            Create by Vibe, Share the Joy
-          </motion.p>
-
           {/* Main H1 Title */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="text-product-slogan md:text-product-slogan-md lg:text-product-slogan-lg xl:text-product-slogan-xl font-bold text-white leading-tight font-display tracking-tighter mb-3 md:mb-4"
+          >
+            Create by Vibe,<br className="block" />
+            Share the Joy
+          </motion.h1>
+
+          {/* Subtitle */}
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.5 }}
-            className="text-product-slogan md:text-product-slogan-md lg:text-product-slogan-lg xl:text-product-slogan-xl font-bold text-white leading-tight font-display tracking-tighter"
+            className="text-2xl md:text-3xl lg:text-4xl font-light text-gray-400 leading-tight font-display tracking-tight"
           >
             The<br className="block" />
             Engineering<br className="block" />
-            <span className="text-gray-600">Brain.</span>
-          </motion.h1>
+            <span className="text-gray-500">Brain.</span>
+          </motion.h2>
 
           {/* Description - Lighter Gray */}
           <motion.p

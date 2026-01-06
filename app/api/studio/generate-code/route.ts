@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getSkillsPrompt, SKILL_PROFILES } from '@/lib/ai/skills';
 
 export const runtime = 'edge';
 
@@ -22,17 +23,73 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const prompt = `You are a Senior Full-Stack Developer. Based on the project scope, technology stack, and architecture design, generate a complete project structure with code files.
+    const skillsPrompt = getSkillsPrompt('Senior Full-Stack Developer', 'generating complete project code');
+    const developerSkills = SKILL_PROFILES.fullStackDeveloper;
+    const codeGeneratorSkills = SKILL_PROFILES.codeGenerator;
 
-Project Scope:
+    const prompt = `
+${skillsPrompt}
+
+${developerSkills}
+
+${codeGeneratorSkills}
+
+## Current Task
+Generate a complete, production-ready project structure with all necessary code files based on the project scope, technology stack, and architecture design.
+
+## Project Scope
 ${JSON.stringify(scope, null, 2)}
 
-Technology Stack:
+## Technology Stack
 ${JSON.stringify(stack, null, 2)}
 
-Architecture Design:
+## Architecture Design
 ${design || 'No specific design provided'}
 
+## Code Generation Guidelines
+1. Generate complete, runnable, production-ready code
+2. Follow best practices for the selected technology stack
+3. Include proper TypeScript types and interfaces
+4. Implement proper error handling and validation
+5. Add meaningful comments for complex logic
+6. Include proper imports and dependencies
+7. Create proper project structure following industry standards
+8. Generate configuration files (package.json, tsconfig.json, .env.example, etc.)
+9. Include setup and deployment documentation
+10. Consider security, performance, and scalability
+
+## Required Files
+1. **Project Configuration**
+   - package.json with all dependencies
+   - tsconfig.json (if TypeScript)
+   - Configuration files (.env.example, etc.)
+   - Build configuration files
+
+2. **Core Application Files**
+   - Main entry point
+   - Application setup and initialization
+   - Core business logic
+   - API routes and handlers
+
+3. **Components/Modules**
+   - Reusable components
+   - Business logic modules
+   - Utility functions
+   - Type definitions
+
+4. **Configuration & Setup**
+   - Environment configuration
+   - Database setup/migrations
+   - Build scripts
+   - Deployment configuration
+
+5. **Documentation**
+   - README.md with setup instructions
+   - API documentation
+   - Architecture overview
+   - Development guidelines
+
+## Output Format
 Generate a JSON response with the following structure:
 {
   "fileTree": {
@@ -41,21 +98,24 @@ Generate a JSON response with the following structure:
   "files": [
     {
       "path": "relative/path/to/file.ext",
-      "content": "file content here",
-      "language": "typescript|javascript|python|etc"
+      "content": "complete file content here",
+      "language": "typescript|javascript|python|etc",
+      "description": "brief description of what this file does"
     }
   ],
-  "instructions": "Setup and deployment instructions"
+  "instructions": "Comprehensive setup and deployment instructions"
 }
 
-Include:
-1. Project structure (package.json, config files)
-2. Core application files
-3. Key components/modules
-4. Configuration files
-5. README with setup instructions
+## Code Quality Requirements
+- All code must be production-ready and follow best practices
+- Include proper error handling
+- Add type safety where applicable
+- Include comments for complex logic
+- Follow naming conventions
+- Ensure code is testable and maintainable
 
-Output ONLY valid JSON, no markdown code blocks.`;
+Output ONLY valid JSON, no markdown code blocks.
+`;
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`;
 

@@ -72,6 +72,49 @@ export interface Database {
           updated_at?: string
         }
       }
+      waitlist: {
+        Row: {
+          id: string
+          email: string
+          name: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          email: string
+          name?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          email?: string
+          name?: string | null
+          created_at?: string
+        }
+      }
+      ip_usage: {
+        Row: {
+          id: string
+          ip_address: string
+          usage_count: number
+          last_used_at: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          ip_address: string
+          usage_count?: number
+          last_used_at?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          ip_address?: string
+          usage_count?: number
+          last_used_at?: string
+          created_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
@@ -93,6 +136,14 @@ export type ProjectUpdate = Database['public']['Tables']['projects']['Update']
 export type Artifact = Database['public']['Tables']['artifacts']['Row']
 export type ArtifactInsert = Database['public']['Tables']['artifacts']['Insert']
 export type ArtifactUpdate = Database['public']['Tables']['artifacts']['Update']
+
+export type WaitlistEntry = Database['public']['Tables']['waitlist']['Row']
+export type WaitlistInsert = Database['public']['Tables']['waitlist']['Insert']
+export type WaitlistUpdate = Database['public']['Tables']['waitlist']['Update']
+
+export type IpUsage = Database['public']['Tables']['ip_usage']['Row']
+export type IpUsageInsert = Database['public']['Tables']['ip_usage']['Insert']
+export type IpUsageUpdate = Database['public']['Tables']['ip_usage']['Update']
 
 export type ProjectPhase = 'scope' | 'stack' | 'design' | 'build'
 export type ProjectStatus = 'draft' | 'in_progress' | 'completed'

@@ -6,12 +6,78 @@ import { motion, useInView } from 'framer-motion';
 import { useUsageLimit } from '@/lib/hooks/useUsageLimit';
 import AuthModal from './AuthModal';
 import ErrorModal from './ErrorModal';
+import EnhancedPlanView from './EnhancedPlanView';
+
+interface Risk {
+  category: string;
+  description: string;
+  severity: 'Low' | 'Medium' | 'High';
+  mitigation: string;
+}
+
+interface Task {
+  phase: string;
+  title: string;
+  description: string;
+  estimated_hours: number;
+  dependencies: number[];
+}
+
+interface RoadmapItem {
+  week: number;
+  milestone: string;
+  deliverables: string[];
+  dependencies: number[];
+}
+
+interface TechOption {
+  name: string;
+  pros: string[];
+  cons: string[];
+  recommendation: 'Recommended' | 'Alternative';
+}
+
+interface TechComparison {
+  category: string;
+  options: TechOption[];
+}
+
+interface CodeFile {
+  path: string;
+  snippet: string;
+  description: string;
+}
+
+interface Deployment {
+  strategy: string;
+  steps: string[];
+  infrastructure: string;
+  cost_estimate: string;
+}
+
+interface CostBreakdown {
+  development: string;
+  infrastructure: string;
+  maintenance: string;
+  total_first_year: string;
+  notes: string;
+}
 
 interface PlanResult {
   difficulty: string;
   time_est: string;
   tech_stack: string;
-  risks?: string;
+  risks?: Risk[] | string; // Support both old format (string) and new format (array)
+  tasks?: Task[];
+  roadmap?: RoadmapItem[];
+  architecture_diagram?: string;
+  tech_comparison?: TechComparison[];
+  code_preview?: {
+    language: string;
+    files: CodeFile[];
+  };
+  deployment?: Deployment;
+  cost_breakdown?: CostBreakdown;
   file_tree?: string;
   cursor_prompt: string;
 }
@@ -252,33 +318,7 @@ export default function InteractiveConsole() {
                         </div>
                       )}
                       {showContent && plan && (
-                        <div className="h-full flex flex-col overflow-y-auto custom-scrollbar pb-2">
-                          <div className="grid grid-cols-3 border border-border mb-4 text-xs bg-surface/50">
-                            <div className="p-3 border-r border-border">
-                              <div className="text-gray-500 uppercase mb-1">Diff</div>
-                              <div className="text-white font-semibold">{plan.difficulty || '-'}</div>
-                            </div>
-                            <div className="p-3 border-r border-border">
-                              <div className="text-gray-500 uppercase mb-1">Time</div>
-                              <div className="text-white font-semibold">{plan.time_est || '-'}</div>
-                            </div>
-                            <div className="p-3">
-                              <div className="text-gray-500 uppercase mb-1">Stack</div>
-                              <div className="text-blue-400 truncate">{plan.tech_stack || '-'}</div>
-                            </div>
-                          </div>
-                          {plan.risks && (
-                            <div className="mb-4 p-3 border border-red-900/30 bg-red-900/10 text-red-400 text-sm rounded">
-                              <span>{plan.risks}</span>
-                            </div>
-                          )}
-                          <div className="flex-1 border border-border bg-[#050505] p-4 relative group/code rounded">
-                            <div className="text-blue-500/70 text-xs mb-3"># Generated Context</div>
-                            <div className="text-gray-400 text-xs whitespace-pre-wrap leading-relaxed min-h-[150px] overflow-y-auto custom-scrollbar">
-                              {plan.cursor_prompt || '-'}
-                            </div>
-                          </div>
-                        </div>
+                        <EnhancedPlanView plan={plan} />
                       )}
                     </div>
                   </div>

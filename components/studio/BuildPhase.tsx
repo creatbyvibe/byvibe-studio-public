@@ -5,6 +5,9 @@ import { Save, Lock, Loader2, RefreshCw, Download, FileCode, ChevronRight, Chevr
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase/client';
 import { Artifact, ProjectPhase } from '@/types/supabase';
+import ErrorModal from '@/components/ErrorModal';
+import ConfirmModal from '@/components/ConfirmModal';
+import { ErrorHandler } from '@/lib/utils/error-handler';
 
 interface BuildPhaseProps {
   projectId: string;
@@ -39,6 +42,11 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
   const [locking, setLocking] = useState(false);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [expandedPaths, setExpandedPaths] = useState<Set<string>>(new Set());
+  const [errorModal, setErrorModal] = useState<{ isOpen: boolean; message: string }>({
+    isOpen: false,
+    message: '',
+  });
+  const [confirmModal, setConfirmModal] = useState<{ isOpen: boolean }>({ isOpen: false });
 
   useEffect(() => {
     if (artifact?.content) {
@@ -60,7 +68,7 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
 
   const handleGenerate = async () => {
     if (!scopeContext || !stackContext) {
-      alert('Please complete the Scope and Stack phases first.');
+      setErrorModal({ isOpen: true, message: 'Please complete the Scope and Stack phases first.' });
       return;
     }
 
@@ -102,8 +110,8 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
         setExpandedPaths(paths);
       }
     } catch (error: any) {
-      console.error('Error generating code:', error);
-      alert(`Failed to generate code: ${error.message}`);
+      const appError = ErrorHandler.handleFetchError(error, 'BuildPhase.generate');
+      setErrorModal({ isOpen: true, message: appError.message });
     } finally {
       setGenerating(false);
     }
@@ -142,8 +150,8 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
 
       onArtifactUpdate();
     } catch (error) {
-      console.error('Error saving build:', error);
-      alert('Failed to save. Please try again.');
+      const appError = ErrorHandler.handleFetchError(error, 'BuildPhase.save');
+      setErrorModal({ isOpen: true, message: appError.message });
     } finally {
       setSaving(false);
     }
@@ -151,11 +159,15 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
 
   const handleLock = async () => {
     if (!artifact || !content.files || content.files.length === 0) {
-      alert('Please generate and save the code first.');
+      setErrorModal({ isOpen: true, message: 'Please generate and save the code first.' });
       return;
     }
 
-    if (!confirm('This phase will be locked and cannot be edited. Are you sure you want to continue?')) return;
+    setConfirmModal({ isOpen: true });
+  };
+
+  const confirmLock = async () => {
+    if (!artifact) return;
 
     try {
       setLocking(true);
@@ -168,8 +180,8 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
 
       onArtifactUpdate();
     } catch (error) {
-      console.error('Error locking build:', error);
-      alert('Failed to lock. Please try again.');
+      const appError = ErrorHandler.handleFetchError(error, 'BuildPhase.lock');
+      setErrorModal({ isOpen: true, message: appError.message });
     } finally {
       setLocking(false);
     }
@@ -243,7 +255,7 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
 
   const handleExport = () => {
     if (!content.files || content.files.length === 0) {
-      alert('No files to export');
+      setErrorModal({ isOpen: true, message: 'No files to export' });
       return;
     }
 
@@ -398,6 +410,23 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
           </p>
         </div>
       )}
+
+      <ErrorModal
+        isOpen={errorModal.isOpen}
+        onClose={() => setErrorModal({ isOpen: false, message: '' })}
+        message={errorModal.message}
+      />
+
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal({ isOpen: false })}
+        onConfirm={confirmLock}
+        title="Lock Phase"
+        message="This phase will be locked and cannot be edited. Are you sure you want to continue?"
+        confirmText="Lock"
+        cancelText="Cancel"
+        confirmVariant="primary"
+      />
     </div>
   );
 }
