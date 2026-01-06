@@ -92,9 +92,19 @@ export default function VideoCarousel() {
   useEffect(() => {
     const node = containerRef.current;
     if (!node) return;
+
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'video-missing-20260106',hypothesisId:'H2',location:'components/VideoCarousel.tsx:useEffect:observer:init',message:'video carousel observer init',data:{hasNode:true,className:node.className},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion agent log
+
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => setIsInView(entry.isIntersecting));
+        entries.forEach((entry) => {
+          setIsInView(entry.isIntersecting)
+          // #region agent log
+          fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'video-missing-20260106',hypothesisId:'H1',location:'components/VideoCarousel.tsx:observer:entry',message:'video carousel intersection',data:{isIntersecting:entry.isIntersecting,ratio:entry.intersectionRatio},timestamp:Date.now()})}).catch(()=>{});
+          // #endregion agent log
+        });
       },
       { threshold: 0.25 }
     );
@@ -156,7 +166,7 @@ export default function VideoCarousel() {
       onMouseLeave={handleMouseLeave}
       ref={containerRef}
     >
-      <div className="relative w-full max-w-[420px] sm:max-w-[480px] lg:max-w-[520px] aspect-[4/5] bg-surface border border-border rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 group">
+      <div className="relative w-full max-w-[420px] sm:max-w-[480px] lg:max-w-[520px] aspect-[4/5] min-h-[360px] sm:min-h-[420px] bg-surface border border-border rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 group">
         <motion.div
           className="w-full h-full carousel-track flex flex-col"
           animate={{ y: `-${currentIndex * 100}%` }}
@@ -174,7 +184,7 @@ export default function VideoCarousel() {
               tagColor={video.tagColor}
               isActive={index === currentIndex}
               shouldPlay={index === currentIndex && playingId === video.id && isInView}
-              thumbnailUrl={`https://img.youtube.com/vi/${extractVideoId(video.url)}/maxresdefault.jpg`}
+              thumbnailUrl={`https://i.ytimg.com/vi/${extractVideoId(video.url)}/maxresdefault.jpg`}
               onPlay={() => setPlayingId(video.id)}
             />
           ))}
