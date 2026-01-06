@@ -3,9 +3,8 @@
 // Cloudflare Pages 要求动态路由导出 edge runtime（即使客户端组件也会在 Edge 上运行）
 export const runtime = 'edge';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { motion } from 'framer-motion';
 import { ArrowLeft, Lock, Unlock } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { supabase } from '@/lib/supabase/client';
@@ -30,7 +29,6 @@ const phases: { id: ProjectPhase; label: string; description: string }[] = [
 export default function StudioWorkspace() {
   const { user, loading: authLoading } = useAuth();
   const devMode = shouldUseDevMode();
-  // 始终提供一个稳定的 devUser，避免在渲染/类型检查中出现 null 分支
   const devUser = getDevUser();
   const router = useRouter();
   const params = useParams();
@@ -41,46 +39,114 @@ export default function StudioWorkspace() {
   const [currentPhase, setCurrentPhase] = useState<ProjectPhase>('scope');
   const [loading, setLoading] = useState(true);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  // 用包含“登录态”的 key 作为初始化标记，避免 user 从 null -> 有值后被误判“已初始化”
+  const [error, setError] = useState<string | null>(null);
+  
+  // 使用ref跟踪初始化状态，避免重复加载
   const initializedRef = useRef<string | null>(null);
+  const fetchingRef = useRef(false);
 
+  // 检查认证状态
   useEffect(() => {
     if (!devMode && !authLoading && !user) {
       setShowAuthModal(true);
+      setLoading(false);
     }
   }, [user?.id, authLoading, devMode]);
 
-  const fetchProject = useCallback(async () => {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H3',location:'app/studio/[id]/page.tsx:fetchProject:start',message:'fetchProject start',data:{projectId:projectId||'',userId:user?.id?String(user.id).slice(0,8):''},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion agent log
-    try {
-      const { data, error } = await supabase
-        .from('projects')
-        .select('*')
-        .eq('id', projectId)
-        .eq('user_id', user?.id)
-        .single();
-
-      if (error) throw error;
-      setProject(data);
-      setLoading(false); // 只在 project 加载完成后设置 loading=false
-
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H3',location:'app/studio/[id]/page.tsx:fetchProject:ok',message:'fetchProject ok',data:{hasData:!!data},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion agent log
-    } catch (error) {
-      console.error('Error fetching project:', error);
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H6',location:'app/studio/[id]/page.tsx:fetchProject:error',message:'fetchProject error',data:{projectId:projectId||'',userId:user?.id?String(user.id).slice(0,8):'',errorName:(error as any)?.name?String((error as any).name):'',errorMessage:(error as any)?.message?String((error as any).message).slice(0,180):''},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion agent log
-      setLoading(false);
-      router.push('/studio');
+  // 加载项目数据（只执行一次）
+  useEffect(() => {
+    // 生成初始化key，基于projectId和用户状态
+    const initKey = `${projectId}:${devMode ? 'dev' : user?.id || 'anon'}`;
+    
+    // 如果已经初始化过相同的key，跳过
+    if (initializedRef.current === initKey) {
+      return;
     }
-  }, [projectId, user?.id, router]);
 
-  const fetchArtifacts = useCallback(async () => {
+    // 如果正在获取数据，跳过
+    if (fetchingRef.current) {
+      return;
+    }
+
+    // 标记为已初始化
+    initializedRef.current = initKey;
+    fetchingRef.current = true;
+    setLoading(true);
+    setError(null);
+
+    const loadData = async () => {
+      try {
+        // 开发模式：使用模拟数据
+        if (devMode && projectId) {
+          setProject({
+            id: projectId,
+            name: projectId.startsWith('dev-project') ? '示例项目' : '开发项目',
+            description: '这是一个示例项目，用于展示 Studio 功能',
+            status: 'in_progress',
+            user_id: devUser.id,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          } as Project);
+          setArtifacts([]);
+          setLoading(false);
+          fetchingRef.current = false;
+          return;
+        }
+
+        // 生产模式：从数据库加载
+        if (!devMode && user && projectId) {
+          // 并行加载项目和artifacts
+          const [projectResult, artifactsResult] = await Promise.all([
+            supabase
+              .from('projects')
+              .select('*')
+              .eq('id', projectId)
+              .eq('user_id', user.id)
+              .single(),
+            supabase
+              .from('artifacts')
+              .select('*')
+              .eq('project_id', projectId)
+              .order('created_at', { ascending: true }),
+          ]);
+
+          if (projectResult.error) {
+            throw projectResult.error;
+          }
+
+          if (!projectResult.data) {
+            throw new Error('Project not found');
+          }
+
+          setProject(projectResult.data);
+          setArtifacts(artifactsResult.data || []);
+          setLoading(false);
+        } else if (!devMode && !authLoading && !user) {
+          // 认证完成但没有用户
+          setLoading(false);
+        }
+      } catch (err: any) {
+        console.error('Error loading workspace:', err);
+        setError(err.message || 'Failed to load workspace');
+        setLoading(false);
+        // 如果是权限错误，跳转到studio列表
+        if (err.code === 'PGRST116' || err.message?.includes('not found')) {
+          setTimeout(() => router.push('/studio'), 1000);
+        }
+      } finally {
+        fetchingRef.current = false;
+      }
+    };
+
+    loadData();
+  }, [projectId, devMode, user?.id, authLoading, devUser.id, router]);
+
+  // 刷新artifacts（当phase组件更新时调用）
+  const refreshArtifacts = async () => {
+    if (!projectId || fetchingRef.current) return;
+
     try {
+      fetchingRef.current = true;
       const { data, error } = await supabase
         .from('artifacts')
         .select('*')
@@ -89,82 +155,30 @@ export default function StudioWorkspace() {
 
       if (error) throw error;
       setArtifacts(data || []);
-    } catch (error) {
-      console.error('Error fetching artifacts:', error);
+    } catch (err) {
+      console.error('Error refreshing artifacts:', err);
+    } finally {
+      fetchingRef.current = false;
     }
-    // 移除 finally 里的 setLoading(false)，由 fetchProject 统一控制 loading 状态
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H1',location:'app/studio/[id]/page.tsx:fetchArtifacts:done',message:'fetchArtifacts done',data:{},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion agent log
-  }, [projectId]);
-
-  useEffect(() => {
-    const authKey = devMode ? `dev:${devUser.id}` : (user?.id ? `authed:${String(user.id).slice(0, 8)}` : 'anon');
-    const initKey = `${projectId}:${authKey}`;
-
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H5',location:'app/studio/[id]/page.tsx:useEffect:enter',message:'workspace effect enter',data:{projectId:projectId||'',initialized:String(initializedRef.current||''),devMode,authLoading,hasUser:!!user,userId:user?.id?String(user.id).slice(0,8):''},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion agent log
-
-    // 如果 initKey 变化，重置初始化标记
-    if (initializedRef.current !== initKey) {
-      initializedRef.current = initKey;
-
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H2',location:'app/studio/[id]/page.tsx:useEffect:init',message:'workspace init effect',data:{projectId:projectId||'',devMode,authLoading,hasUser:!!user,userId:user?.id?String(user.id).slice(0,8):''},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion agent log
-      
-      if (devMode && projectId) {
-        // 开发模式：使用模拟数据
-        setProject({
-          id: projectId,
-          name: projectId.startsWith('dev-project') ? '示例项目' : '开发项目',
-          description: '这是一个示例项目，用于展示 Studio 功能',
-          status: 'in_progress',
-          user_id: devUser.id,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        } as Project);
-        setArtifacts([]);
-        setLoading(false);
-        return;
-      }
-
-      if (!devMode && user && projectId) {
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H6',location:'app/studio/[id]/page.tsx:useEffect:triggerFetch',message:'triggering fetchProject/fetchArtifacts',data:{projectId:projectId||'',userId:user?.id?String(user.id).slice(0,8):''},timestamp:Date.now()})}).catch(()=>{});
-        // #endregion agent log
-
-        fetchProject();
-        fetchArtifacts();
-      } else if (!devMode && !authLoading && !user) {
-        // 如果认证检查完成但没有用户，停止 loading
-        setLoading(false);
-      }
-    } else {
-      // initializedRef.current === initKey 时，不会再次初始化
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H5',location:'app/studio/[id]/page.tsx:useEffect:skip',message:'workspace init skipped (same initKey)',data:{projectId:projectId||'',initKey,devMode,authLoading,hasUser:!!user,userId:user?.id?String(user.id).slice(0,8):''},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion agent log
-    }
-  }, [projectId, devMode, user?.id, authLoading, fetchProject, fetchArtifacts, devUser.id]);
+  };
 
   const getArtifactForPhase = (phase: ProjectPhase) => {
     return artifacts.find(a => a.phase === phase);
   };
 
-  // 添加超时处理，避免无限 loading
+  // 添加超时处理，避免无限loading
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if ((!devMode && authLoading) || loading) {
+      if (loading) {
         console.warn('Loading timeout, forcing stop');
         setLoading(false);
       }
     }, 10000); // 10秒超时
 
     return () => clearTimeout(timeout);
-  }, [authLoading, loading, devMode]);
+  }, [loading]);
 
+  // Loading状态
   if ((!devMode && authLoading) || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -178,10 +192,32 @@ export default function StudioWorkspace() {
     );
   }
 
+  // 错误状态
+  if (error && !project) {
+    return (
+      <div className="min-h-screen flex flex-col bg-background">
+        <Navbar onViewChange={() => {}} onWaitlistClick={() => {}} />
+        <main className="flex-1 pt-24 pb-12">
+          <div className="max-w-3xl mx-auto px-4 md:px-6">
+            <div className="rounded-xl border border-border bg-surface/40 p-6">
+              <div className="text-white font-semibold mb-1">Error</div>
+              <div className="text-sm text-text-muted mb-4">{error}</div>
+              <button
+                onClick={() => router.push('/studio')}
+                className="px-4 py-2 rounded bg-surface hover:bg-surface/70 text-white text-sm transition-colors"
+              >
+                Back to Studio
+              </button>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // 项目不存在或无权访问
   if (!project) {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H1',location:'app/studio/[id]/page.tsx:render:noProject',message:'rendered with project=null',data:{loading,authLoading,devMode,hasUser:!!user},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion agent log
     return (
       <div className="min-h-screen flex flex-col bg-background">
         <Navbar onViewChange={() => {}} onWaitlistClick={() => {}} />
@@ -217,28 +253,13 @@ export default function StudioWorkspace() {
 
         <AuthModal
           isOpen={showAuthModal}
-          onClose={() => setShowAuthModal(false)}
+          onClose={() => {
+            setShowAuthModal(false);
+            if (!user) {
+              router.push('/studio');
+            }
+          }}
         />
-      </div>
-    );
-  }
-
-  // 双重检查：防止竞态条件导致 project 在渲染时变为 null
-  if (!project) {
-    return (
-      <div className="min-h-screen flex flex-col bg-background">
-        <Navbar onViewChange={() => {}} onWaitlistClick={() => {}} />
-        <main className="flex-1 pt-24 pb-12">
-          <div className="max-w-3xl mx-auto px-4 md:px-6">
-            <div className="rounded-xl border border-border bg-surface/40 p-6">
-              <div className="text-white font-semibold mb-1">Loading project...</div>
-              <div className="text-sm text-text-muted">
-                Please wait while we load your project.
-              </div>
-            </div>
-          </div>
-        </main>
-        <Footer />
       </div>
     );
   }
@@ -294,7 +315,6 @@ export default function StudioWorkspace() {
                   const hasArtifact = !!artifact;
                   const isAccessible = index === 0 || getArtifactForPhase(phases[index - 1].id)?.is_locked;
                   const prevPhase = index > 0 ? phases[index - 1] : null;
-                  const prevArtifact = prevPhase ? getArtifactForPhase(prevPhase.id) : null;
                   const needsPrevPhase = !isAccessible && prevPhase;
 
                   return (
@@ -302,7 +322,6 @@ export default function StudioWorkspace() {
                       key={phase.id}
                       onClick={() => {
                         if (!isAccessible && needsPrevPhase) {
-                          // Show tooltip or modal about needing to complete previous phase
                           return;
                         }
                         setCurrentPhase(phase.id);
@@ -425,7 +444,7 @@ export default function StudioWorkspace() {
                   <ScopePhase
                     projectId={projectId}
                     artifact={getArtifactForPhase('scope')}
-                    onArtifactUpdate={fetchArtifacts}
+                    onArtifactUpdate={refreshArtifacts}
                   />
                 )}
                 {currentPhase === 'stack' && (
@@ -433,7 +452,7 @@ export default function StudioWorkspace() {
                     projectId={projectId}
                     artifact={getArtifactForPhase('stack')}
                     scopeContext={getArtifactForPhase('scope')?.content}
-                    onArtifactUpdate={fetchArtifacts}
+                    onArtifactUpdate={refreshArtifacts}
                   />
                 )}
                 {currentPhase === 'design' && (
@@ -442,7 +461,7 @@ export default function StudioWorkspace() {
                     artifact={getArtifactForPhase('design')}
                     scopeContext={getArtifactForPhase('scope')?.content}
                     stackContext={getArtifactForPhase('stack')?.content}
-                    onArtifactUpdate={fetchArtifacts}
+                    onArtifactUpdate={refreshArtifacts}
                   />
                 )}
                 {currentPhase === 'build' && (
@@ -452,7 +471,7 @@ export default function StudioWorkspace() {
                     scopeContext={getArtifactForPhase('scope')?.content}
                     stackContext={getArtifactForPhase('stack')?.content}
                     designContext={getArtifactForPhase('design')?.content}
-                    onArtifactUpdate={fetchArtifacts}
+                    onArtifactUpdate={refreshArtifacts}
                   />
                 )}
               </div>
