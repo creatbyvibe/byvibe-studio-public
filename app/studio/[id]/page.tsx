@@ -2,7 +2,7 @@
 
 export const runtime = 'edge';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Lock, Unlock } from 'lucide-react';
@@ -49,6 +49,54 @@ export default function StudioWorkspace() {
     }
   }, [user?.id, authLoading, devMode]);
 
+  const fetchProject = useCallback(async () => {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H3',location:'app/studio/[id]/page.tsx:fetchProject:start',message:'fetchProject start',data:{projectId:projectId||'',userId:user?.id?String(user.id).slice(0,8):''},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion agent log
+    try {
+      const { data, error } = await supabase
+        .from('projects')
+        .select('*')
+        .eq('id', projectId)
+        .eq('user_id', user?.id)
+        .single();
+
+      if (error) throw error;
+      setProject(data);
+      setLoading(false); // 只在 project 加载完成后设置 loading=false
+
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H3',location:'app/studio/[id]/page.tsx:fetchProject:ok',message:'fetchProject ok',data:{hasData:!!data},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion agent log
+    } catch (error) {
+      console.error('Error fetching project:', error);
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H6',location:'app/studio/[id]/page.tsx:fetchProject:error',message:'fetchProject error',data:{projectId:projectId||'',userId:user?.id?String(user.id).slice(0,8):'',errorName:(error as any)?.name?String((error as any).name):'',errorMessage:(error as any)?.message?String((error as any).message).slice(0,180):''},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion agent log
+      setLoading(false);
+      router.push('/studio');
+    }
+  }, [projectId, user?.id, router]);
+
+  const fetchArtifacts = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('artifacts')
+        .select('*')
+        .eq('project_id', projectId)
+        .order('created_at', { ascending: true });
+
+      if (error) throw error;
+      setArtifacts(data || []);
+    } catch (error) {
+      console.error('Error fetching artifacts:', error);
+    }
+    // 移除 finally 里的 setLoading(false)，由 fetchProject 统一控制 loading 状态
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H1',location:'app/studio/[id]/page.tsx:fetchArtifacts:done',message:'fetchArtifacts done',data:{},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion agent log
+  }, [projectId]);
+
   useEffect(() => {
     const authKey = devMode ? `dev:${devUser.id}` : (user?.id ? `authed:${String(user.id).slice(0, 8)}` : 'anon');
     const initKey = `${projectId}:${authKey}`;
@@ -57,7 +105,7 @@ export default function StudioWorkspace() {
     fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H5',location:'app/studio/[id]/page.tsx:useEffect:enter',message:'workspace effect enter',data:{projectId:projectId||'',initialized:String(initializedRef.current||''),devMode,authLoading,hasUser:!!user,userId:user?.id?String(user.id).slice(0,8):''},timestamp:Date.now()})}).catch(()=>{});
     // #endregion agent log
 
-    // 如果 projectId 变化，重置初始化标记
+    // 如果 initKey 变化，重置初始化标记
     if (initializedRef.current !== initKey) {
       initializedRef.current = initKey;
 
@@ -93,60 +141,12 @@ export default function StudioWorkspace() {
         setLoading(false);
       }
     } else {
-      // initializedRef.current === projectId 时，不会再次初始化
+      // initializedRef.current === initKey 时，不会再次初始化
       // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H5',location:'app/studio/[id]/page.tsx:useEffect:skip',message:'workspace init skipped (same projectId)',data:{projectId:projectId||'',devMode,authLoading,hasUser:!!user,userId:user?.id?String(user.id).slice(0,8):''},timestamp:Date.now()})}).catch(()=>{});
+      fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H5',location:'app/studio/[id]/page.tsx:useEffect:skip',message:'workspace init skipped (same initKey)',data:{projectId:projectId||'',initKey,devMode,authLoading,hasUser:!!user,userId:user?.id?String(user.id).slice(0,8):''},timestamp:Date.now()})}).catch(()=>{});
       // #endregion agent log
     }
-  }, [projectId, devMode, user?.id, authLoading]); // 不包含 project，避免循环
-
-  const fetchProject = async () => {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H3',location:'app/studio/[id]/page.tsx:fetchProject:start',message:'fetchProject start',data:{projectId:projectId||'',userId:user?.id?String(user.id).slice(0,8):''},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion agent log
-    try {
-      const { data, error } = await supabase
-        .from('projects')
-        .select('*')
-        .eq('id', projectId)
-        .eq('user_id', user?.id)
-        .single();
-
-      if (error) throw error;
-      setProject(data);
-      setLoading(false); // 只在 project 加载完成后设置 loading=false
-
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H3',location:'app/studio/[id]/page.tsx:fetchProject:ok',message:'fetchProject ok',data:{hasData:!!data},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion agent log
-    } catch (error) {
-      console.error('Error fetching project:', error);
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H6',location:'app/studio/[id]/page.tsx:fetchProject:error',message:'fetchProject error',data:{projectId:projectId||'',userId:user?.id?String(user.id).slice(0,8):'',errorName:(error as any)?.name?String((error as any).name):'',errorMessage:(error as any)?.message?String((error as any).message).slice(0,180):''},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion agent log
-      setLoading(false);
-      router.push('/studio');
-    }
-  };
-
-  const fetchArtifacts = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('artifacts')
-        .select('*')
-        .eq('project_id', projectId)
-        .order('created_at', { ascending: true });
-
-      if (error) throw error;
-      setArtifacts(data || []);
-    } catch (error) {
-      console.error('Error fetching artifacts:', error);
-    }
-    // 移除 finally 里的 setLoading(false)，由 fetchProject 统一控制 loading 状态
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H1',location:'app/studio/[id]/page.tsx:fetchArtifacts:done',message:'fetchArtifacts done',data:{},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion agent log
-  };
+  }, [projectId, devMode, user?.id, authLoading, fetchProject, fetchArtifacts, devUser.id]);
 
   const getArtifactForPhase = (phase: ProjectPhase) => {
     return artifacts.find(a => a.phase === phase);
