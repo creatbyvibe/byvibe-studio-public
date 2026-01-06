@@ -49,6 +49,10 @@ export default function StudioWorkspace() {
   }, [user?.id, authLoading, devMode]);
 
   useEffect(() => {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H5',location:'app/studio/[id]/page.tsx:useEffect:enter',message:'workspace effect enter',data:{projectId:projectId||'',initialized:String(initializedRef.current||''),devMode,authLoading,hasUser:!!user,userId:user?.id?String(user.id).slice(0,8):''},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion agent log
+
     // 如果 projectId 变化，重置初始化标记
     if (initializedRef.current !== projectId) {
       initializedRef.current = projectId;
@@ -74,12 +78,21 @@ export default function StudioWorkspace() {
       }
 
       if (!devMode && user && projectId) {
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H6',location:'app/studio/[id]/page.tsx:useEffect:triggerFetch',message:'triggering fetchProject/fetchArtifacts',data:{projectId:projectId||'',userId:user?.id?String(user.id).slice(0,8):''},timestamp:Date.now()})}).catch(()=>{});
+        // #endregion agent log
+
         fetchProject();
         fetchArtifacts();
       } else if (!devMode && !authLoading && !user) {
         // 如果认证检查完成但没有用户，停止 loading
         setLoading(false);
       }
+    } else {
+      // initializedRef.current === projectId 时，不会再次初始化
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H5',location:'app/studio/[id]/page.tsx:useEffect:skip',message:'workspace init skipped (same projectId)',data:{projectId:projectId||'',devMode,authLoading,hasUser:!!user,userId:user?.id?String(user.id).slice(0,8):''},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion agent log
     }
   }, [projectId, devMode, user?.id, authLoading]); // 不包含 project，避免循环
 
@@ -103,6 +116,9 @@ export default function StudioWorkspace() {
       // #endregion agent log
     } catch (error) {
       console.error('Error fetching project:', error);
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H6',location:'app/studio/[id]/page.tsx:fetchProject:error',message:'fetchProject error',data:{projectId:projectId||'',userId:user?.id?String(user.id).slice(0,8):'',errorName:(error as any)?.name?String((error as any).name):'',errorMessage:(error as any)?.message?String((error as any).message).slice(0,180):''},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion agent log
       setLoading(false);
       router.push('/studio');
     }
