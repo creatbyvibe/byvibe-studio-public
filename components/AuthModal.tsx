@@ -333,7 +333,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
               >
                 {isLogin ? (
                   <>
-                    Don't have an account? <span className="text-blue-400">Sign Up</span>
+                    Don&apos;t have an account? <span className="text-blue-400">Sign Up</span>
                   </>
                 ) : (
                   <>

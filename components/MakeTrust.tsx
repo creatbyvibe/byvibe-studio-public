@@ -69,7 +69,7 @@ export default function MakeTrust() {
               Built with Trusted Tools
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              We're transparent about our stack. Here's what powers byvibe.ai and how each tool contributes to building better products.
+              We&apos;re transparent about our stack. Here&apos;s what powers byvibe.ai and how each tool contributes to building better products.
             </p>
           </div>
 

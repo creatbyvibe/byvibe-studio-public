@@ -24,10 +24,9 @@ export function useAuth() {
 
     // 设置超时，避免无限 loading
     const timeout = setTimeout(() => {
-      if (isMounted && loading) {
-        console.warn('Auth loading timeout, forcing stop');
-        setLoading(false);
-      }
+      if (!isMounted) return;
+      console.warn('Auth loading timeout, forcing stop');
+      setLoading((prev) => (prev ? false : prev));
     }, 5000); // 5秒超时
 
     // 获取当前用户

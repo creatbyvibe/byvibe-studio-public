@@ -32,7 +32,7 @@ export default function ComingSoonModal({ isOpen, onClose }: ComingSoonModalProp
               </div>
               <div>
                 <h2 className="text-xl font-bold text-white">Coming Soon</h2>
-                <p className="text-xs text-gray-500 mt-1">We're building something amazing</p>
+                <p className="text-xs text-gray-500 mt-1">We&apos;re building something amazing</p>
               </div>
             </div>
             <button
@@ -47,7 +47,7 @@ export default function ComingSoonModal({ isOpen, onClose }: ComingSoonModalProp
           <div className="p-6">
             <div className="space-y-4">
               <p className="text-sm text-text-muted leading-relaxed">
-                We're working hard to bring you the full Studio experience. The registration and core features are currently under active development.
+                We&apos;re working hard to bring you the full Studio experience. The registration and core features are currently under active development.
               </p>
               <p className="text-sm text-text-muted leading-relaxed">
                 Join our waitlist to be the first to know when we launch, and get early access to all features.

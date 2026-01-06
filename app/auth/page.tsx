@@ -457,7 +457,7 @@ export default function AuthPage() {
               >
                 {isLogin ? (
                   <>
-                    Don't have an account? <span className="text-blue-400">Sign Up</span>
+                    Don&apos;t have an account? <span className="text-blue-400">Sign Up</span>
                   </>
                 ) : (
                   <>

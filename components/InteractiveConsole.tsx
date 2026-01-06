@@ -206,7 +206,7 @@ export default function InteractiveConsole() {
               Engineered Realities.
             </h2>
             <p className="text-base md:text-lg text-text-muted leading-relaxed font-light tracking-tight">
-              Stop passive watching. ByVibe transforms abstract prompts into rigorous PRDs, risk assessments, and executable roadmaps. Give your 'vibe' an industrial-grade foundation.
+              Stop passive watching. ByVibe transforms abstract prompts into rigorous PRDs, risk assessments, and executable roadmaps. Give your &apos;vibe&apos; an industrial-grade foundation.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm font-mono text-text-muted">
               <div className="flex items-center">
