@@ -10,7 +10,8 @@
     "start": "next start",
     "lint": "next lint",
     "crawl": "node scripts/crawl-cursorhub.js",
-    "crawl:ts": "tsx scripts/crawl-cursorhub.ts"
+    "crawl:ts": "tsx scripts/crawl-cursorhub.ts",
+    "download-logos": "node scripts/download-logos.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.89.0",
