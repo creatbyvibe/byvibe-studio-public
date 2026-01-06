@@ -47,7 +47,11 @@ function getSupabaseClient(): SupabaseClient | null {
 
 // 检查是否是占位客户端
 export function isSupabaseConfigured(): boolean {
-  return !isPlaceholder && supabaseInstance !== null
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!supabaseUrl || !supabaseAnonKey) return false
+  if (looksLikeSupabaseSecretKey(supabaseAnonKey)) return false
+  return true
 }
 
 export function isSupabaseBrowserKeyMisconfigured(): boolean {

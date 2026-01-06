@@ -9,6 +9,10 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H4',location:'lib/hooks/useAuth.ts:useEffect:config',message:'useAuth init: supabase config check',data:{configured:isSupabaseConfigured()},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion agent log
+
     // 如果 Supabase 未配置，直接返回
     if (!isSupabaseConfigured()) {
       setLoading(false);

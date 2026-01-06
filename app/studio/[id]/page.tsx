@@ -162,7 +162,45 @@ export default function StudioWorkspace() {
     // #region agent log
     fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H1',location:'app/studio/[id]/page.tsx:render:noProject',message:'rendered with project=null',data:{loading,authLoading,devMode,hasUser:!!user},timestamp:Date.now()})}).catch(()=>{});
     // #endregion agent log
-    return null;
+    return (
+      <div className="min-h-screen flex flex-col bg-background">
+        <Navbar onViewChange={() => {}} onWaitlistClick={() => {}} />
+        <main className="flex-1 pt-24 pb-12">
+          <div className="max-w-3xl mx-auto px-4 md:px-6">
+            <div className="rounded-xl border border-border bg-surface/40 p-6">
+              <div className="text-white font-semibold mb-1">Project unavailable</div>
+              <div className="text-sm text-text-muted">
+                {showAuthModal
+                  ? 'Please sign in to access this workspace.'
+                  : 'This project does not exist, or you do not have access.'}
+              </div>
+              <div className="mt-4 flex gap-2">
+                <button
+                  onClick={() => router.push('/studio')}
+                  className="px-4 py-2 rounded bg-surface hover:bg-surface/70 text-white text-sm transition-colors"
+                >
+                  Back to Studio
+                </button>
+                {!devMode && !user && (
+                  <button
+                    onClick={() => setShowAuthModal(true)}
+                    className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-500 text-white text-sm transition-colors"
+                  >
+                    Sign in
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </main>
+        <Footer />
+
+        <AuthModal
+          isOpen={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+        />
+      </div>
+    );
   }
 
   return (
