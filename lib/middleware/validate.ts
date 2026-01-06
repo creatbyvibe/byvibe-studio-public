@@ -72,7 +72,9 @@ export function validateRequestBody(
           break;
 
         case 'number':
-          const numValue = typeof value === 'string' ? parseFloat(value) : value;
+          // validateNumber expects (string | number); normalize unknown -> NaN
+          const numValue: number =
+            typeof value === 'number' ? value : typeof value === 'string' ? parseFloat(value) : Number.NaN;
           const numValidation = validateNumber(numValue, {
             min: rule.min,
             max: rule.max,
