@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Mail, Lock, Github, Chrome, BookOpen, X } from 'lucide-react';
+import { Mail, Lock, Github, Chrome, BookOpen, X, Loader2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 
 export default function AuthPage() {
@@ -17,6 +17,9 @@ export default function AuthPage() {
   const [message, setMessage] = useState('');
   const [showResetPassword, setShowResetPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
+  const [pendingVerificationEmail, setPendingVerificationEmail] = useState('');
+  const [isResendingVerification, setIsResendingVerification] = useState(false);
+  const [resendVerificationMessage, setResendVerificationMessage] = useState('');
 
   useEffect(() => {
     // 检查 URL 参数
@@ -41,6 +44,12 @@ export default function AuthPage() {
 
     if (verified === 'true') {
       setMessage('Email verified successfully! Please sign in.');
+      setIsLogin(true);
+    }
+
+    const resetMessage = params.get('message');
+    if (resetMessage === 'password_reset_success') {
+      setMessage('Password reset successful! Please sign in with your new password.');
       setIsLogin(true);
     }
 
@@ -109,6 +118,7 @@ export default function AuthPage() {
             }, 1500);
           } else {
             setMessage('Registration successful! Please check your email and click the verification link to activate your account.');
+            setPendingVerificationEmail(email);
           }
         }
       }
@@ -163,7 +173,7 @@ export default function AuthPage() {
 
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-        redirectTo: `${window.location.origin}/auth?reset=true`,
+        redirectTo: `${window.location.origin}/auth/reset-password`,
       });
 
       if (error) throw error;
@@ -175,6 +185,34 @@ export default function AuthPage() {
       setError(err.message || 'Failed to send password reset email');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    if (!pendingVerificationEmail) return;
+
+    setIsResendingVerification(true);
+    setResendVerificationMessage('');
+    setError('');
+
+    try {
+      const response = await fetch('/api/auth/resend-verification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: pendingVerificationEmail }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to resend verification email');
+      }
+
+      setResendVerificationMessage(data.message || 'Verification email sent! Please check your inbox.');
+    } catch (err: any) {
+      setError(err.message || 'Failed to resend verification email');
+    } finally {
+      setIsResendingVerification(false);
     }
   };
 
@@ -268,8 +306,37 @@ export default function AuthPage() {
               )}
 
               {message && (
-                <div className="p-3 bg-green-900/20 border border-green-500/30 rounded text-green-400 text-sm">
-                  {message}
+                <div className="space-y-3">
+                  <div className="p-3 bg-green-900/20 border border-green-500/30 rounded text-green-400 text-sm">
+                    {message}
+                  </div>
+                  {pendingVerificationEmail && (
+                    <div className="space-y-2">
+                      <button
+                        type="button"
+                        onClick={handleResendVerification}
+                        disabled={isResendingVerification}
+                        className="w-full py-2 text-xs text-blue-400 hover:text-blue-300 disabled:text-blue-400/50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                      >
+                        {isResendingVerification ? (
+                          <>
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                            Sending...
+                          </>
+                        ) : (
+                          <>
+                            <Mail className="w-3 h-3" />
+                            Resend Verification Email
+                          </>
+                        )}
+                      </button>
+                      {resendVerificationMessage && (
+                        <div className="p-2 bg-blue-900/20 border border-blue-500/30 rounded text-blue-400 text-xs">
+                          {resendVerificationMessage}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
 

@@ -42,6 +42,8 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
   const [locking, setLocking] = useState(false);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [expandedPaths, setExpandedPaths] = useState<Set<string>>(new Set());
+  const [fileEditValue, setFileEditValue] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
   const [errorModal, setErrorModal] = useState<{ isOpen: boolean; message: string }>({
     isOpen: false,
     message: '',
@@ -66,9 +68,21 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
     }
   }, [artifact]);
 
+  // Keep edit buffer in sync with selected file
+  useEffect(() => {
+    const target = content.files.find(f => f.path === selectedFile);
+    if (target) {
+      setFileEditValue(target.content);
+      setIsEditing(false);
+    } else {
+      setFileEditValue('');
+      setIsEditing(false);
+    }
+  }, [selectedFile, content.files]);
+
   const handleGenerate = async () => {
-    if (!scopeContext || !stackContext) {
-      setErrorModal({ isOpen: true, message: 'Please complete the Scope and Stack phases first.' });
+    if (!scopeContext || !stackContext || !designContext?.diagram) {
+      setErrorModal({ isOpen: true, message: 'Please先完成 Scope/Stack/Design 阶段后再生成代码。' });
       return;
     }
 
@@ -114,6 +128,24 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
       setErrorModal({ isOpen: true, message: appError.message });
     } finally {
       setGenerating(false);
+    }
+  };
+
+  const handleFileEditSave = () => {
+    if (!selectedFile) return;
+    setContent((prev) => {
+      const files = prev.files.map(f => f.path === selectedFile ? { ...f, content: fileEditValue } : f);
+      return { ...prev, files };
+    });
+    setIsEditing(false);
+  };
+
+  const handleCopy = async () => {
+    if (!fileEditValue) return;
+    try {
+      await navigator.clipboard.writeText(fileEditValue);
+    } catch {
+      setErrorModal({ isOpen: true, message: '复制失败，请手动复制。' });
     }
   };
 
@@ -328,11 +360,37 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-bold text-white">{selectedFileContent.path}</h3>
-                  <span className="text-xs text-text-dim">{selectedFileContent.language}</span>
+                  <div className="flex items-center gap-2 text-xs text-text-dim">
+                    <span>{selectedFileContent.language}</span>
+                    {content.generatedAt && (
+                      <span className="text-[10px] text-text-muted">Generated {new Date(content.generatedAt).toLocaleString()}</span>
+                    )}
+                  </div>
                 </div>
-                <pre className="text-xs text-text-muted font-mono whitespace-pre-wrap overflow-x-auto">
-                  {selectedFileContent.content}
-                </pre>
+                <div className="flex items-center gap-2 mb-2">
+                  <button
+                    onClick={handleCopy}
+                    className="px-3 py-1.5 text-xs bg-blue-500/20 border border-blue-500/30 rounded text-blue-400 hover:bg-blue-500/30 transition-colors"
+                  >
+                    Copy
+                  </button>
+                  <button
+                    onClick={handleFileEditSave}
+                    className="px-3 py-1.5 text-xs bg-green-500/20 border border-green-500/30 rounded text-green-400 hover:bg-green-500/30 transition-colors"
+                  >
+                    Save Edit
+                  </button>
+                  <span className="text-[11px] text-text-dim">{isEditing ? 'Editing (not persisted until Save)' : 'Preview'}</span>
+                </div>
+                <textarea
+                  value={fileEditValue}
+                  onChange={(e) => {
+                    setFileEditValue(e.target.value);
+                    setIsEditing(true);
+                  }}
+                  className="w-full min-h-[320px] bg-background border border-border rounded p-3 text-xs text-text-muted font-mono whitespace-pre overflow-x-auto custom-scrollbar focus:outline-none focus:border-blue-500/50"
+                  spellCheck={false}
+                />
               </div>
             ) : (
               <div className="text-center py-16 text-text-muted">

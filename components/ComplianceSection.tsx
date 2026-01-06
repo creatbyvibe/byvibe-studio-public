@@ -53,7 +53,7 @@ export default function ComplianceSection() {
               className="p-6 border border-border bg-background rounded hover:border-blue-500/30 transition-colors group"
             >
               <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-mono text-gray-500 group-hover:text-gray-400 transition-colors">
+                <span className="text-xs font-sans text-gray-500 group-hover:text-gray-400 transition-colors">
                   {item.region}
                 </span>
               </div>

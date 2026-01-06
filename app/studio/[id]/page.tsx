@@ -2,7 +2,7 @@
 
 export const runtime = 'edge';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Lock, Unlock } from 'lucide-react';
@@ -17,6 +17,7 @@ import ScopePhase from '@/components/studio/ScopePhase';
 import StackPhase from '@/components/studio/StackPhase';
 import DesignPhase from '@/components/studio/DesignPhase';
 import BuildPhase from '@/components/studio/BuildPhase';
+import { shouldUseDevMode, getDevUser } from '@/lib/dev-mode';
 
 const phases: { id: ProjectPhase; label: string; description: string }[] = [
   { id: 'scope', label: 'Scope', description: 'Define project scope' },
@@ -27,6 +28,8 @@ const phases: { id: ProjectPhase; label: string; description: string }[] = [
 
 export default function StudioWorkspace() {
   const { user, loading: authLoading } = useAuth();
+  const devMode = shouldUseDevMode();
+  const devUser = devMode ? getDevUser() : null;
   const router = useRouter();
   const params = useParams();
   const projectId = params.id as string;
@@ -36,19 +39,44 @@ export default function StudioWorkspace() {
   const [currentPhase, setCurrentPhase] = useState<ProjectPhase>('scope');
   const [loading, setLoading] = useState(true);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const initializedRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!authLoading && !user) {
+    if (!devMode && !authLoading && !user) {
       setShowAuthModal(true);
     }
-  }, [user, authLoading]);
+  }, [user?.id, authLoading, devMode]);
 
   useEffect(() => {
-    if (user && projectId) {
-      fetchProject();
-      fetchArtifacts();
+    // 如果 projectId 变化，重置初始化标记
+    if (initializedRef.current !== projectId) {
+      initializedRef.current = projectId;
+      
+      if (devMode && projectId) {
+        // 开发模式：使用模拟数据
+        setProject({
+          id: projectId,
+          name: projectId.startsWith('dev-project') ? '示例项目' : '开发项目',
+          description: '这是一个示例项目，用于展示 Studio 功能',
+          status: 'in_progress',
+          user_id: devUser!.id,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        } as Project);
+        setArtifacts([]);
+        setLoading(false);
+        return;
+      }
+
+      if (!devMode && user && projectId) {
+        fetchProject();
+        fetchArtifacts();
+      } else if (!devMode && !authLoading && !user) {
+        // 如果认证检查完成但没有用户，停止 loading
+        setLoading(false);
+      }
     }
-  }, [user, projectId]);
+  }, [projectId, devMode, user?.id, authLoading]); // 不包含 project，避免循环
 
   const fetchProject = async () => {
     try {
@@ -63,6 +91,7 @@ export default function StudioWorkspace() {
       setProject(data);
     } catch (error) {
       console.error('Error fetching project:', error);
+      setLoading(false);
       router.push('/studio');
     }
   };
@@ -88,10 +117,27 @@ export default function StudioWorkspace() {
     return artifacts.find(a => a.phase === phase);
   };
 
-  if (authLoading || loading) {
+  // 添加超时处理，避免无限 loading
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if ((!devMode && authLoading) || loading) {
+        console.warn('Loading timeout, forcing stop');
+        setLoading(false);
+      }
+    }, 10000); // 10秒超时
+
+    return () => clearTimeout(timeout);
+  }, [authLoading, loading, devMode]);
+
+  if ((!devMode && authLoading) || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-text-muted">Loading...</div>
+        <div className="text-center">
+          <div className="text-text-muted mb-2">Loading...</div>
+          <div className="text-xs text-text-dim">
+            {authLoading ? 'Checking authentication...' : 'Loading project...'}
+          </div>
+        </div>
       </div>
     );
   }
@@ -126,38 +172,106 @@ export default function StudioWorkspace() {
             </div>
 
             {/* Phase Navigation */}
-            <div className="flex gap-2 overflow-x-auto pb-2">
-              {phases.map((phase, index) => {
-                const artifact = getArtifactForPhase(phase.id);
-                const isActive = currentPhase === phase.id;
-                const isCompleted = artifact && artifact.is_locked;
-                const isAccessible = index === 0 || getArtifactForPhase(phases[index - 1].id)?.is_locked;
+            <div className="space-y-3">
+              {/* Progress Bar */}
+              <div className="flex items-center gap-2">
+                <div className="flex-1 h-2 bg-surface rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-blue-500 to-green-500 transition-all duration-500"
+                    style={{ 
+                      width: `${(phases.filter((_, i) => getArtifactForPhase(phases[i].id)?.is_locked).length / phases.length) * 100}%` 
+                    }}
+                  />
+                </div>
+                <span className="text-xs text-text-muted font-medium whitespace-nowrap">
+                  {phases.filter((_, i) => getArtifactForPhase(phases[i].id)?.is_locked).length} / {phases.length} Complete
+                </span>
+              </div>
 
-                return (
-                  <button
-                    key={phase.id}
-                    onClick={() => isAccessible && setCurrentPhase(phase.id)}
-                    disabled={!isAccessible}
-                    className={`flex items-center gap-2 px-4 py-2 rounded transition-all whitespace-nowrap ${
-                      isActive
-                        ? 'bg-blue-500/20 text-blue-400 border border-blue-500/50'
-                        : isCompleted
-                        ? 'bg-green-500/10 text-green-400 border border-green-500/20'
-                        : isAccessible
-                        ? 'bg-surface border border-border text-text-muted hover:text-white hover:border-gray-600'
-                        : 'bg-surface/50 border border-border/50 text-gray-600 cursor-not-allowed'
-                    }`}
-                  >
-                    {isCompleted ? (
-                      <Lock className="w-4 h-4" />
-                    ) : (
-                      <Unlock className="w-4 h-4" />
-                    )}
-                    <span className="text-sm font-medium">{phase.label}</span>
-                    <span className="text-xs opacity-75">({phase.description})</span>
-                  </button>
-                );
-              })}
+              {/* Phase Buttons */}
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {phases.map((phase, index) => {
+                  const artifact = getArtifactForPhase(phase.id);
+                  const isActive = currentPhase === phase.id;
+                  const isCompleted = artifact && artifact.is_locked;
+                  const hasArtifact = !!artifact;
+                  const isAccessible = index === 0 || getArtifactForPhase(phases[index - 1].id)?.is_locked;
+                  const prevPhase = index > 0 ? phases[index - 1] : null;
+                  const prevArtifact = prevPhase ? getArtifactForPhase(prevPhase.id) : null;
+                  const needsPrevPhase = !isAccessible && prevPhase;
+
+                  return (
+                    <button
+                      key={phase.id}
+                      onClick={() => {
+                        if (!isAccessible && needsPrevPhase) {
+                          // Show tooltip or modal about needing to complete previous phase
+                          return;
+                        }
+                        setCurrentPhase(phase.id);
+                      }}
+                      disabled={!isAccessible}
+                      title={!isAccessible && needsPrevPhase ? `Complete ${prevPhase.label} phase first` : ''}
+                      className={`relative flex items-center gap-2 px-4 py-2.5 rounded transition-all whitespace-nowrap min-w-[140px] ${
+                        isActive
+                          ? 'bg-blue-500/20 text-blue-400 border-2 border-blue-500/50 shadow-lg shadow-blue-500/20'
+                          : isCompleted
+                          ? 'bg-green-500/10 text-green-400 border border-green-500/30 hover:bg-green-500/20'
+                          : isAccessible
+                          ? 'bg-surface border border-border text-text-muted hover:text-white hover:border-gray-600 hover:bg-surface/80'
+                          : 'bg-surface/30 border border-border/30 text-gray-600 cursor-not-allowed opacity-60'
+                      }`}
+                    >
+                      {/* Status Indicator */}
+                      <div className="flex items-center gap-1.5">
+                        {isCompleted ? (
+                          <Lock className="w-4 h-4" />
+                        ) : hasArtifact ? (
+                          <div className="w-4 h-4 rounded-full border-2 border-yellow-400" />
+                        ) : (
+                          <Unlock className="w-4 h-4" />
+                        )}
+                      </div>
+                      
+                      <div className="flex flex-col items-start">
+                        <span className="text-sm font-medium">{phase.label}</span>
+                        <span className="text-[10px] opacity-75 mt-0.5">{phase.description}</span>
+                      </div>
+
+                      {/* Active Indicator */}
+                      {isActive && (
+                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-blue-400 rounded-full" />
+                      )}
+
+                      {/* Locked Badge */}
+                      {isCompleted && (
+                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-background" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Phase Status Info */}
+              {(() => {
+                const currentIndex = phases.findIndex(p => p.id === currentPhase);
+                const isCurrentAccessible = currentIndex === 0 || getArtifactForPhase(phases[currentIndex - 1].id)?.is_locked;
+                const prevPhase = currentIndex > 0 ? phases[currentIndex - 1] : null;
+                
+                if (currentIndex > 0 && !isCurrentAccessible && prevPhase) {
+                  return (
+                    <div className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded text-sm">
+                      <div className="flex items-center gap-2 text-yellow-400">
+                        <Lock className="w-4 h-4" />
+                        <span className="font-medium">
+                          Complete the {prevPhase.label} phase first to unlock {phases.find(p => p.id === currentPhase)?.label}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
             </div>
           </div>
         </div>
@@ -252,8 +366,23 @@ export default function StudioWorkspace() {
 
       <Footer />
 
+      {/* Dev Mode Banner */}
+      {devMode && (
+        <div className="fixed top-16 left-0 right-0 z-50 bg-yellow-500/20 border-b border-yellow-500/30 px-4 py-2">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-2 text-yellow-400 text-sm">
+              <span className="font-semibold">🔧 开发模式</span>
+              <span className="text-yellow-300/80">已启用 - 使用模拟数据预览功能</span>
+            </div>
+            <div className="text-xs text-yellow-300/60">
+              用户: {devUser.email} | 项目: {project?.name}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Auth Modal */}
-      {showAuthModal && (
+      {!devMode && showAuthModal && (
         <AuthModal
           isOpen={showAuthModal}
           onClose={() => {

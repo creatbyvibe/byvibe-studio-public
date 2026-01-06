@@ -58,12 +58,16 @@ export default function VideoCarousel() {
   const [isPaused, setIsPaused] = useState(false);
   const videoRefs = useRef<(VideoPlayerRef | null)[]>([]);
   const autoPlayIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [playingId, setPlayingId] = useState<number | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [isInView, setIsInView] = useState(false);
 
   const nextVideo = () => {
     // Stop current video
     if (videoRefs.current[currentIndex]) {
       videoRefs.current[currentIndex]?.stop();
     }
+    setPlayingId(null);
     setCurrentIndex((prev) => (prev + 1) % videos.length);
   };
 
@@ -72,6 +76,7 @@ export default function VideoCarousel() {
     if (videoRefs.current[currentIndex]) {
       videoRefs.current[currentIndex]?.stop();
     }
+    setPlayingId(null);
     setCurrentIndex((prev) => (prev - 1 + videos.length) % videos.length);
   };
 
@@ -79,8 +84,23 @@ export default function VideoCarousel() {
     if (videoRefs.current[currentIndex]) {
       videoRefs.current[currentIndex]?.stop();
     }
+    setPlayingId(null);
     setCurrentIndex(index);
   };
+
+  // Intersection observer to delay iframe loading until visible
+  useEffect(() => {
+    const node = containerRef.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => setIsInView(entry.isIntersecting));
+      },
+      { threshold: 0.25 }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   // Auto-play carousel
   useEffect(() => {
@@ -117,17 +137,24 @@ export default function VideoCarousel() {
         ref.stop();
       }
     });
+    setPlayingId(null);
   }, [currentIndex]);
 
   // Pause auto-play on hover
   const handleMouseEnter = () => setIsPaused(true);
   const handleMouseLeave = () => setIsPaused(false);
 
+  const extractVideoId = (url: string) => {
+    const match = url.match(/embed\/([^?&]+)/);
+    return match ? match[1] : '';
+  };
+
   return (
     <div 
       className="relative mt-8 lg:mt-0 flex items-center justify-center"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      ref={containerRef}
     >
       <div className="relative w-full max-w-sm h-[360px] sm:h-[420px] md:h-[520px] lg:h-[580px] bg-surface border border-border rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 group">
         <motion.div
@@ -146,6 +173,9 @@ export default function VideoCarousel() {
               tag={video.tag}
               tagColor={video.tagColor}
               isActive={index === currentIndex}
+              shouldPlay={index === currentIndex && playingId === video.id && isInView}
+              thumbnailUrl={`https://img.youtube.com/vi/${extractVideoId(video.url)}/maxresdefault.jpg`}
+              onPlay={() => setPlayingId(video.id)}
             />
           ))}
         </motion.div>

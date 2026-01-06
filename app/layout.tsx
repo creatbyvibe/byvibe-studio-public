@@ -92,8 +92,24 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const supabaseOrigin = process.env.NEXT_PUBLIC_SUPABASE_URL
+    ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).origin
+    : undefined
+
   return (
     <html lang="en" className="dark">
+      <head>
+        {supabaseOrigin && (
+          <>
+            <link rel="preconnect" href={supabaseOrigin} />
+            <link rel="dns-prefetch" href={supabaseOrigin} />
+          </>
+        )}
+        <link rel="preconnect" href="https://www.youtube.com" />
+        <link rel="preconnect" href="https://i.ytimg.com" />
+        <link rel="dns-prefetch" href="https://www.youtube.com" />
+        <link rel="dns-prefetch" href="https://i.ytimg.com" />
+      </head>
       <body className={`${inter.variable} ${plusJakartaSans.variable} ${jetbrainsMono.variable} bg-background text-text-muted antialiased min-h-screen flex flex-col relative overflow-x-hidden font-sans tracking-tight selection:bg-blue-500/30 selection:text-white`}>
         {children}
       </body>

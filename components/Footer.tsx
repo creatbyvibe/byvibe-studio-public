@@ -21,7 +21,7 @@ export default function Footer() {
             make@byvibe.ai
           </a>
         </div>
-        <div className="font-mono">© 2026 byVibe.ai Team. All rights reserved.</div>
+        <div className="font-sans">© 2026 byVibe.ai Team. All rights reserved.</div>
       </div>
     </footer>
   );

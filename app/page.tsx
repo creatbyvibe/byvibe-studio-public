@@ -7,9 +7,14 @@ import InteractiveConsole from '@/components/InteractiveConsole';
 import FeaturesGrid from '@/components/FeaturesGrid';
 import EcosystemLogos from '@/components/EcosystemLogos';
 import ComplianceSection from '@/components/ComplianceSection';
-import ToolDirectory from '@/components/ToolDirectory';
 import Footer from '@/components/Footer';
 import StructuredData from '@/components/StructuredData';
+import dynamic from 'next/dynamic';
+
+const ToolDirectory = dynamic(() => import('@/components/ToolDirectory'), {
+  ssr: false,
+  loading: () => <div className="py-16 text-center text-text-dim">Loading tools...</div>,
+});
 
 export default function Home() {
   const [currentView, setCurrentView] = useState<'home' | 'directory'>('home');

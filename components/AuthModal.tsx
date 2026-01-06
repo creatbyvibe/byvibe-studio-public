@@ -33,9 +33,22 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setMessage('');
     setIsLoading(true);
 
     try {
+      // 检查 Supabase 是否配置
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+      
+      if (!supabaseUrl || !supabaseKey || 
+          supabaseUrl.includes('placeholder') || 
+          supabaseKey.includes('placeholder')) {
+        setError('Supabase 未配置。请创建 .env.local 文件并配置 Supabase 环境变量。');
+        setIsLoading(false);
+        return;
+      }
+
       if (isLogin) {
         const { data, error } = await supabase.auth.signInWithPassword({
           email,
@@ -45,8 +58,11 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
         if (error) throw error;
 
         if (data.user) {
-          onSuccess?.();
-          onClose();
+          setMessage('登录成功！');
+          setTimeout(() => {
+            onSuccess?.();
+            onClose();
+          }, 1000);
         }
       } else {
         const { data, error } = await supabase.auth.signUp({
@@ -65,20 +81,37 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
           // Check if email verification is needed
           if (data.user.email_confirmed_at) {
             setError('');
-            setMessage('Registration successful!');
+            setMessage('注册成功！');
             setTimeout(() => {
               onSuccess?.();
               onClose();
             }, 1500);
           } else {
             setError('');
-            setMessage('Registration successful! Please check your email and click the verification link to activate your account.');
+            setMessage('注册成功！请检查您的邮箱并点击验证链接来激活账户。');
             // Don't auto-close, let user see the message
           }
         }
       }
     } catch (err: any) {
-      setError(err.message || 'Operation failed, please try again');
+      console.error('Auth error:', err);
+      // 提供更友好的错误信息
+      let errorMessage = err.message || '操作失败，请重试';
+      
+      if (err.message?.includes('Supabase not configured') || 
+          err.message?.includes('placeholder')) {
+        errorMessage = 'Supabase 未配置。请创建 .env.local 文件并配置 Supabase 环境变量。';
+      } else if (err.message?.includes('Invalid login credentials')) {
+        errorMessage = '邮箱或密码错误，请重试';
+      } else if (err.message?.includes('User already registered')) {
+        errorMessage = '该邮箱已被注册，请直接登录';
+      } else if (err.message?.includes('Password should be at least')) {
+        errorMessage = '密码长度不足，请使用至少 6 个字符';
+      } else if (err.message?.includes('Invalid email')) {
+        errorMessage = '邮箱格式不正确，请检查后重试';
+      }
+      
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

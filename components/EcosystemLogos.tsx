@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 export default function EcosystemLogos() {
   // Logo configuration - using local images from public/logos/
   // isMonochrome: true for black/white logos that need invert filter
@@ -115,7 +117,7 @@ export default function EcosystemLogos() {
   return (
     <section className="border-b border-border bg-surface/50 py-16 md:py-20 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
-        <p className="text-center text-sm md:text-base font-mono text-gray-500 uppercase tracking-widest mb-10 md:mb-12">
+        <p className="text-center text-sm md:text-base font-display text-gray-500 uppercase tracking-widest mb-10 md:mb-12">
           Orchestrating the AI Ecosystem
         </p>
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-6 gap-4 md:gap-5 justify-items-center">
@@ -129,20 +131,24 @@ export default function EcosystemLogos() {
               aria-label={logo.name}
             >
               <div className="flex items-center justify-center mb-2 h-8 md:h-10 w-full relative">
-                <img
+                <Image
                   src={logo.imagePath}
                   alt={`${logo.name} logo`}
+                  width={160}
+                  height={48}
                   className={`h-full w-auto max-w-full object-contain transition-all duration-300 ${
                     logo.isMonochrome
                       ? 'filter brightness-0 invert opacity-70 group-hover:brightness-100 group-hover:invert-0 group-hover:opacity-100'
                       : 'opacity-90 group-hover:opacity-100'
                   }`}
-                  loading="lazy"
+                  priority={index < 4}
+                  loading={index < 4 ? 'eager' : 'lazy'}
+                  sizes="(max-width: 768px) 100px, 160px"
                   onError={(e) => {
                     // Fallback: show colored background if image fails to load
-                    const target = e.currentTarget;
+                    const target = e.currentTarget as HTMLImageElement;
                     target.style.display = 'none';
-                    const fallback = target.parentElement?.querySelector('.logo-fallback');
+                    const fallback = (target.parentElement as HTMLElement)?.querySelector('.logo-fallback');
                     if (fallback) {
                       fallback.classList.remove('hidden');
                       (fallback as HTMLElement).style.backgroundColor = logo.fallbackColor;
@@ -154,7 +160,7 @@ export default function EcosystemLogos() {
                   style={{ backgroundColor: logo.fallbackColor }}
                 />
               </div>
-              <span className="text-xs md:text-sm font-medium text-gray-500 group-hover:text-white transition-colors text-center">
+              <span className="text-xs md:text-sm font-medium text-gray-500 group-hover:text-white transition-colors text-center font-sans">
                 {logo.name}
               </span>
             </a>

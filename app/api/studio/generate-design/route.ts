@@ -6,7 +6,7 @@ export const runtime = 'edge';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { projectId, scope, stack } = body;
+    const { projectId, scope, stack, viewType = 'system' } = body;
 
     if (!scope || !stack) {
       return NextResponse.json(
@@ -41,16 +41,33 @@ ${JSON.stringify(scope, null, 2)}
 ${JSON.stringify(stack, null, 2)}
 
 ## Architecture Design Guidelines
+${viewType === 'system' ? `
 1. Design a scalable, maintainable system architecture
 2. Show clear separation of concerns and component boundaries
-3. Illustrate data flow between components (request/response, events, data streams)
-4. Include all key integrations (APIs, third-party services, databases)
-5. Show deployment structure (client, server, database, CDN, etc.)
-6. Consider security boundaries and authentication flows
-7. Show caching layers and performance optimization points
-8. Include monitoring and logging infrastructure
-9. Design for horizontal and vertical scalability
-10. Consider failover and redundancy strategies
+3. Include all key components (frontend, backend, database, APIs, services)
+4. Show relationships and interactions between components
+5. Consider security boundaries and authentication flows
+6. Include monitoring and logging infrastructure
+7. Design for horizontal and vertical scalability
+` : viewType === 'dataflow' ? `
+1. Focus on data flow through the system
+2. Show request/response patterns
+3. Illustrate event streams and data pipelines
+4. Show data transformations and processing steps
+5. Include caching and data storage layers
+6. Show data validation and error handling flows
+` : viewType === 'deployment' ? `
+1. Show deployment architecture and infrastructure
+2. Include client, server, database, CDN layers
+3. Show load balancing and scaling strategies
+4. Include CI/CD pipelines
+5. Show environment separation (dev, staging, prod)
+6. Include monitoring and observability infrastructure
+` : `
+1. Design a comprehensive system architecture
+2. Show all components and their relationships
+3. Include deployment and data flow considerations
+`}
 
 ## Diagram Requirements
 - Use appropriate Mermaid diagram types (graph TB, flowchart TD, or architecture diagrams)
@@ -60,6 +77,7 @@ ${JSON.stringify(stack, null, 2)}
 - Use consistent styling and colors
 - Include legend or annotations if needed
 - Make it production-ready and comprehensive
+- Focus on ${viewType === 'system' ? 'system components and structure' : viewType === 'dataflow' ? 'data flow patterns' : 'deployment infrastructure'}
 
 ## Output Format
 Output ONLY the Mermaid diagram code (without markdown code blocks).
