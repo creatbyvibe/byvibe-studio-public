@@ -1,6 +1,5 @@
 'use client';
 
-// Cloudflare Pages 要求动态路由导出 edge runtime（即使客户端组件也会在 Edge 上运行）
 export const runtime = 'edge';
 
 import { useState, useEffect, useRef } from 'react';
@@ -26,6 +25,12 @@ const phases: { id: ProjectPhase; label: string; description: string }[] = [
   { id: 'build', label: 'Build', description: 'Generate code' },
 ];
 
+type WorkspaceState = 
+  | { status: 'loading' }
+  | { status: 'error'; error: string }
+  | { status: 'unauthorized' }
+  | { status: 'ready'; project: Project; artifacts: Artifact[] };
+
 export default function StudioWorkspace() {
   const { user, loading: authLoading } = useAuth();
   const devMode = shouldUseDevMode();
@@ -34,51 +39,55 @@ export default function StudioWorkspace() {
   const params = useParams();
   const projectId = params.id as string;
 
-  const [project, setProject] = useState<Project | null>(null);
-  const [artifacts, setArtifacts] = useState<Artifact[]>([]);
+  const [workspaceState, setWorkspaceState] = useState<WorkspaceState>({ status: 'loading' });
   const [currentPhase, setCurrentPhase] = useState<ProjectPhase>('scope');
-  const [loading, setLoading] = useState(true);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   
-  // 使用ref跟踪初始化状态，避免重复加载
-  const initializedRef = useRef<string | null>(null);
-  const fetchingRef = useRef(false);
+  // 使用ref确保数据只加载一次
+  const hasLoadedRef = useRef(false);
+  const loadKeyRef = useRef<string>('');
 
-  // 检查认证状态
-  useEffect(() => {
-    if (!devMode && !authLoading && !user) {
-      setShowAuthModal(true);
-      setLoading(false);
-    }
-  }, [user?.id, authLoading, devMode]);
+  // 生成加载key，用于判断是否需要重新加载
+  const getLoadKey = () => {
+    if (devMode) return `dev:${projectId}`;
+    if (!user) return `anon:${projectId}`;
+    return `user:${user.id}:${projectId}`;
+  };
 
-  // 加载项目数据（只执行一次）
+  // 加载工作区数据
   useEffect(() => {
-    // 生成初始化key，基于projectId和用户状态
-    const initKey = `${projectId}:${devMode ? 'dev' : user?.id || 'anon'}`;
+    const currentLoadKey = getLoadKey();
     
-    // 如果已经初始化过相同的key，跳过
-    if (initializedRef.current === initKey) {
+    // 如果已经加载过相同的key，跳过
+    if (hasLoadedRef.current && loadKeyRef.current === currentLoadKey) {
       return;
     }
 
-    // 如果正在获取数据，跳过
-    if (fetchingRef.current) {
+    // 如果认证还在加载中，等待
+    if (!devMode && authLoading) {
       return;
     }
 
-    // 标记为已初始化
-    initializedRef.current = initKey;
-    fetchingRef.current = true;
-    setLoading(true);
-    setError(null);
+    // 如果未登录且不是开发模式，显示未授权
+    if (!devMode && !authLoading && !user) {
+      setWorkspaceState({ status: 'unauthorized' });
+      setShowAuthModal(true);
+      hasLoadedRef.current = true;
+      loadKeyRef.current = currentLoadKey;
+      return;
+    }
 
-    const loadData = async () => {
+    // 标记为已加载
+    hasLoadedRef.current = true;
+    loadKeyRef.current = currentLoadKey;
+    setWorkspaceState({ status: 'loading' });
+
+    // 加载数据
+    const loadWorkspace = async () => {
       try {
         // 开发模式：使用模拟数据
         if (devMode && projectId) {
-          setProject({
+          const mockProject: Project = {
             id: projectId,
             name: projectId.startsWith('dev-project') ? '示例项目' : '开发项目',
             description: '这是一个示例项目，用于展示 Studio 功能',
@@ -86,16 +95,17 @@ export default function StudioWorkspace() {
             user_id: devUser.id,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
-          } as Project);
-          setArtifacts([]);
-          setLoading(false);
-          fetchingRef.current = false;
+          };
+          setWorkspaceState({
+            status: 'ready',
+            project: mockProject,
+            artifacts: [],
+          });
           return;
         }
 
         // 生产模式：从数据库加载
         if (!devMode && user && projectId) {
-          // 并行加载项目和artifacts
           const [projectResult, artifactsResult] = await Promise.all([
             supabase
               .from('projects')
@@ -118,35 +128,29 @@ export default function StudioWorkspace() {
             throw new Error('Project not found');
           }
 
-          setProject(projectResult.data);
-          setArtifacts(artifactsResult.data || []);
-          setLoading(false);
-        } else if (!devMode && !authLoading && !user) {
-          // 认证完成但没有用户
-          setLoading(false);
+          setWorkspaceState({
+            status: 'ready',
+            project: projectResult.data,
+            artifacts: artifactsResult.data || [],
+          });
         }
       } catch (err: any) {
         console.error('Error loading workspace:', err);
-        setError(err.message || 'Failed to load workspace');
-        setLoading(false);
-        // 如果是权限错误，跳转到studio列表
-        if (err.code === 'PGRST116' || err.message?.includes('not found')) {
-          setTimeout(() => router.push('/studio'), 1000);
-        }
-      } finally {
-        fetchingRef.current = false;
+        setWorkspaceState({
+          status: 'error',
+          error: err.message || 'Failed to load workspace',
+        });
       }
     };
 
-    loadData();
-  }, [projectId, devMode, user?.id, authLoading, devUser.id, router]);
+    loadWorkspace();
+  }, [projectId, devMode, user?.id, authLoading, devUser.id]);
 
-  // 刷新artifacts（当phase组件更新时调用）
+  // 刷新artifacts
   const refreshArtifacts = async () => {
-    if (!projectId || fetchingRef.current) return;
+    if (workspaceState.status !== 'ready' || !projectId) return;
 
     try {
-      fetchingRef.current = true;
       const { data, error } = await supabase
         .from('artifacts')
         .select('*')
@@ -154,32 +158,23 @@ export default function StudioWorkspace() {
         .order('created_at', { ascending: true });
 
       if (error) throw error;
-      setArtifacts(data || []);
+
+      setWorkspaceState({
+        ...workspaceState,
+        artifacts: data || [],
+      });
     } catch (err) {
       console.error('Error refreshing artifacts:', err);
-    } finally {
-      fetchingRef.current = false;
     }
   };
 
-  const getArtifactForPhase = (phase: ProjectPhase) => {
-    return artifacts.find(a => a.phase === phase);
+  const getArtifactForPhase = (phase: ProjectPhase): Artifact | undefined => {
+    if (workspaceState.status !== 'ready') return undefined;
+    return workspaceState.artifacts.find(a => a.phase === phase);
   };
 
-  // 添加超时处理，避免无限loading
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (loading) {
-        console.warn('Loading timeout, forcing stop');
-        setLoading(false);
-      }
-    }, 10000); // 10秒超时
-
-    return () => clearTimeout(timeout);
-  }, [loading]);
-
   // Loading状态
-  if ((!devMode && authLoading) || loading) {
+  if (workspaceState.status === 'loading' || (!devMode && authLoading)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
@@ -193,7 +188,7 @@ export default function StudioWorkspace() {
   }
 
   // 错误状态
-  if (error && !project) {
+  if (workspaceState.status === 'error') {
     return (
       <div className="min-h-screen flex flex-col bg-background">
         <Navbar onViewChange={() => {}} onWaitlistClick={() => {}} />
@@ -201,7 +196,7 @@ export default function StudioWorkspace() {
           <div className="max-w-3xl mx-auto px-4 md:px-6">
             <div className="rounded-xl border border-border bg-surface/40 p-6">
               <div className="text-white font-semibold mb-1">Error</div>
-              <div className="text-sm text-text-muted mb-4">{error}</div>
+              <div className="text-sm text-text-muted mb-4">{workspaceState.error}</div>
               <button
                 onClick={() => router.push('/studio')}
                 className="px-4 py-2 rounded bg-surface hover:bg-surface/70 text-white text-sm transition-colors"
@@ -216,8 +211,8 @@ export default function StudioWorkspace() {
     );
   }
 
-  // 项目不存在或无权访问
-  if (!project) {
+  // 未授权状态
+  if (workspaceState.status === 'unauthorized') {
     return (
       <div className="min-h-screen flex flex-col bg-background">
         <Navbar onViewChange={() => {}} onWaitlistClick={() => {}} />
@@ -226,9 +221,7 @@ export default function StudioWorkspace() {
             <div className="rounded-xl border border-border bg-surface/40 p-6">
               <div className="text-white font-semibold mb-1">Project unavailable</div>
               <div className="text-sm text-text-muted">
-                {showAuthModal
-                  ? 'Please sign in to access this workspace.'
-                  : 'This project does not exist, or you do not have access.'}
+                Please sign in to access this workspace.
               </div>
               <div className="mt-4 flex gap-2">
                 <button
@@ -237,20 +230,17 @@ export default function StudioWorkspace() {
                 >
                   Back to Studio
                 </button>
-                {!devMode && !user && (
-                  <button
-                    onClick={() => setShowAuthModal(true)}
-                    className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-500 text-white text-sm transition-colors"
-                  >
-                    Sign in
-                  </button>
-                )}
+                <button
+                  onClick={() => setShowAuthModal(true)}
+                  className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-500 text-white text-sm transition-colors"
+                >
+                  Sign in
+                </button>
               </div>
             </div>
           </div>
         </main>
         <Footer />
-
         <AuthModal
           isOpen={showAuthModal}
           onClose={() => {
@@ -263,6 +253,9 @@ export default function StudioWorkspace() {
       </div>
     );
   }
+
+  // Ready状态 - 渲染工作区
+  const { project, artifacts } = workspaceState;
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-x-hidden">
@@ -311,7 +304,7 @@ export default function StudioWorkspace() {
                 {phases.map((phase, index) => {
                   const artifact = getArtifactForPhase(phase.id);
                   const isActive = currentPhase === phase.id;
-                  const isCompleted = artifact && artifact.is_locked;
+                  const isCompleted = artifact?.is_locked;
                   const hasArtifact = !!artifact;
                   const isAccessible = index === 0 || getArtifactForPhase(phases[index - 1].id)?.is_locked;
                   const prevPhase = index > 0 ? phases[index - 1] : null;
@@ -321,13 +314,12 @@ export default function StudioWorkspace() {
                     <button
                       key={phase.id}
                       onClick={() => {
-                        if (!isAccessible && needsPrevPhase) {
-                          return;
+                        if (isAccessible) {
+                          setCurrentPhase(phase.id);
                         }
-                        setCurrentPhase(phase.id);
                       }}
                       disabled={!isAccessible}
-                      title={!isAccessible && needsPrevPhase ? `Complete ${prevPhase.label} phase first` : ''}
+                      title={needsPrevPhase ? `Complete ${prevPhase.label} phase first` : ''}
                       className={`relative flex items-center gap-2 px-4 py-2.5 rounded transition-all whitespace-nowrap min-w-[140px] ${
                         isActive
                           ? 'bg-blue-500/20 text-blue-400 border-2 border-blue-500/50 shadow-lg shadow-blue-500/20'
@@ -491,7 +483,7 @@ export default function StudioWorkspace() {
               <span className="text-yellow-300/80">已启用 - 使用模拟数据预览功能</span>
             </div>
             <div className="text-xs text-yellow-300/60">
-              用户: {devUser.email} | 项目: {project?.name}
+              用户: {devUser.email} | 项目: {project.name}
             </div>
           </div>
         </div>
