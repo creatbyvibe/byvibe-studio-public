@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/hooks/useAuth';
 import VideoCarousel from './VideoCarousel';
 import ComingSoonModal from './ComingSoonModal';
 
@@ -68,10 +70,18 @@ function WaitlistForm() {
 
 function StartBuildingLink() {
   const [showComingSoonModal, setShowComingSoonModal] = useState(false);
+  const { user } = useAuth();
+  const router = useRouter();
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    setShowComingSoonModal(true);
+    if (user) {
+      // If logged in, go to studio
+      router.push('/studio');
+    } else {
+      // If not logged in, show coming soon modal
+      setShowComingSoonModal(true);
+    }
   };
 
   return (

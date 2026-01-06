@@ -100,9 +100,10 @@ export default function StudioDashboard() {
     }
   };
 
-  const handleCreateProject = async () => {
+  const handleCreateProject = async (useTestName = false) => {
     const currentUser = devMode ? devUser : user;
-    if (!currentUser || !newProjectName.trim()) return;
+    const projectName = useTestName ? 'Test Project - Habit Tracker' : newProjectName.trim();
+    if (!currentUser || !projectName) return;
 
     try {
       setCreating(true);
@@ -111,7 +112,7 @@ export default function StudioDashboard() {
         // 开发模式：创建模拟项目
         const newProject: Project = {
           id: `dev-project-${Date.now()}`,
-          name: newProjectName.trim(),
+          name: projectName,
           description: null,
           status: 'draft',
           user_id: devUser.id,
@@ -124,7 +125,7 @@ export default function StudioDashboard() {
         const { data, error } = await supabase
           .from('projects')
           .insert({
-            name: newProjectName.trim(),
+            name: projectName,
             user_id: user!.id,
             status: 'draft',
           })
@@ -132,10 +133,6 @@ export default function StudioDashboard() {
           .single();
 
         if (error) throw error;
-
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H4',location:'app/studio/page.tsx:createProject:ok',message:'created project, navigating',data:{hasId:!!data?.id},timestamp:Date.now()})}).catch(()=>{});
-        // #endregion agent log
 
         // Navigate to the new project workspace
         router.push(`/studio/${data.id}`);
@@ -256,6 +253,25 @@ export default function StudioDashboard() {
               <span className="text-sm font-medium text-text-muted group-hover:text-white transition-colors">
                 Create New Project
               </span>
+            </motion.button>
+
+            {/* Quick Test Project Card */}
+            <motion.button
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => handleCreateProject(true)}
+              disabled={creating}
+              className="h-48 border-2 border-dashed border-green-500/30 bg-green-500/5 rounded-lg flex flex-col items-center justify-center gap-3 hover:border-green-500/50 hover:bg-green-500/10 transition-all group disabled:opacity-50"
+            >
+              <div className="w-12 h-12 rounded-full bg-green-500/10 border border-green-500/30 flex items-center justify-center group-hover:bg-green-500/20 transition-colors">
+                <Plus className="w-6 h-6 text-green-400" />
+              </div>
+              <span className="text-sm font-medium text-green-400 group-hover:text-green-300 transition-colors">
+                Quick Test Project
+              </span>
+              <span className="text-xs text-text-dim">(With sample data)</span>
             </motion.button>
 
             {/* Project Cards */}

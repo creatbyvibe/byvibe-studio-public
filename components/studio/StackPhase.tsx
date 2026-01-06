@@ -48,13 +48,16 @@ const techOptions = {
 };
 
 export default function StackPhase({ projectId, artifact, scopeContext, onArtifactUpdate }: StackPhaseProps) {
-  const [content, setContent] = useState<StackContent>({
-    frontend: [],
-    backend: [],
-    database: [],
-    deployment: [],
-    additional: [],
-  });
+  // Default test content for quick testing
+  const defaultContent: StackContent = {
+    frontend: ['React', 'Next.js', 'TypeScript', 'Tailwind CSS'],
+    backend: ['Node.js', 'Express'],
+    database: ['PostgreSQL', 'Supabase'],
+    deployment: ['Vercel', 'Cloudflare Pages'],
+    additional: ['GitHub Actions', 'ESLint', 'Prettier'],
+  };
+
+  const [content, setContent] = useState<StackContent>(defaultContent);
   const [saving, setSaving] = useState(false);
   const [locking, setLocking] = useState(false);
   const [loadingRecommendations, setLoadingRecommendations] = useState(false);
@@ -72,6 +75,9 @@ export default function StackPhase({ projectId, artifact, scopeContext, onArtifa
     if (artifact?.content) {
       const parsed = artifact.content as unknown as StackContent;
       setContent(parsed);
+    } else {
+      // If no artifact, use default test content
+      setContent(defaultContent);
     }
   }, [artifact]);
 

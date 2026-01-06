@@ -162,13 +162,19 @@ ${message}
 - Consider best practices and industry standards
 `;
 
+    const systemInstruction = fullPrompt;
+    const userMessage = message;
+
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`;
 
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: fullPrompt }] }],
+        systemInstruction: {
+          parts: [{ text: systemInstruction }]
+        },
+        contents: [{ parts: [{ text: userMessage }] }],
       }),
     });
 

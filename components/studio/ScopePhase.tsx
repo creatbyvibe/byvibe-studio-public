@@ -24,13 +24,25 @@ interface ScopeContent {
 }
 
 export default function ScopePhase({ projectId, artifact, onArtifactUpdate }: ScopePhaseProps) {
-  const [content, setContent] = useState<ScopeContent>({
-    description: '',
-    coreFeatures: [''],
-    targetUsers: '',
-    useCases: [''],
-    successCriteria: '',
-  });
+  // Default test content for quick testing
+  const defaultContent: ScopeContent = {
+    description: 'A habit tracker app that uses AI to remind and motivate users to build good habits. Users can set daily goals, track progress, and receive personalized AI suggestions.',
+    coreFeatures: [
+      'Daily habit tracking with visual progress indicators',
+      'AI-powered reminders and motivation messages',
+      'Personalized habit recommendations based on user behavior',
+      'Social sharing and community challenges'
+    ],
+    targetUsers: 'Young professionals aged 25-35 who want to build consistent habits, students who need help with time management, and anyone looking to improve their daily routines.',
+    useCases: [
+      'User sets a goal to drink 8 glasses of water daily and receives AI reminders',
+      'User tracks morning meditation streak and gets encouragement when maintaining consistency',
+      'User receives personalized suggestions for new habits based on their current patterns'
+    ],
+    successCriteria: 'Users consistently use the app for more than 30 days, completing at least 80% of their set goals. User retention rate above 60% after 3 months. Average user completes 3+ habits per day.'
+  };
+
+  const [content, setContent] = useState<ScopeContent>(defaultContent);
   const [saving, setSaving] = useState(false);
   const [locking, setLocking] = useState(false);
   const [parsing, setParsing] = useState(false);
@@ -47,6 +59,9 @@ export default function ScopePhase({ projectId, artifact, onArtifactUpdate }: Sc
     if (artifact?.content) {
       const parsed = artifact.content as unknown as ScopeContent;
       setContent(parsed);
+    } else {
+      // If no artifact, use default test content
+      setContent(defaultContent);
     }
   }, [artifact]);
 

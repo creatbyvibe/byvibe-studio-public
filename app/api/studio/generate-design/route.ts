@@ -96,6 +96,9 @@ graph TB
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        systemInstruction: {
+          parts: [{ text: `${skillsPrompt}\n\n${architectSkills}` }]
+        },
         contents: [{ parts: [{ text: prompt }] }],
       }),
     });
