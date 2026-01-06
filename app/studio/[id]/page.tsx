@@ -114,6 +114,7 @@ export default function StudioWorkspace() {
 
       if (error) throw error;
       setProject(data);
+      setLoading(false); // 只在 project 加载完成后设置 loading=false
 
       // #region agent log
       fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H3',location:'app/studio/[id]/page.tsx:fetchProject:ok',message:'fetchProject ok',data:{hasData:!!data},timestamp:Date.now()})}).catch(()=>{});
@@ -140,13 +141,11 @@ export default function StudioWorkspace() {
       setArtifacts(data || []);
     } catch (error) {
       console.error('Error fetching artifacts:', error);
-    } finally {
-      setLoading(false);
-
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H1',location:'app/studio/[id]/page.tsx:fetchArtifacts:finally',message:'fetchArtifacts finally (loading false)',data:{},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion agent log
     }
+    // 移除 finally 里的 setLoading(false)，由 fetchProject 统一控制 loading 状态
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H1',location:'app/studio/[id]/page.tsx:fetchArtifacts:done',message:'fetchArtifacts done',data:{},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion agent log
   };
 
   const getArtifactForPhase = (phase: ProjectPhase) => {
