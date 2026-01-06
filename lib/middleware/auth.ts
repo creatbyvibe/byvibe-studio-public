@@ -40,9 +40,9 @@ export async function getAuthUser(
 
     return {
       user: {
+        ...user,
         id: user.id,
         email: user.email || '',
-        ...user,
       },
       supabase,
     };
