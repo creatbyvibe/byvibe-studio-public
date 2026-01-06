@@ -10,6 +10,8 @@ import { Project } from '@/types/supabase';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import AuthModal from '@/components/AuthModal';
+import ErrorModal from '@/components/ErrorModal';
+import ConfirmModal from '@/components/ConfirmModal';
 import { shouldUseDevMode, getDevUser } from '@/lib/dev-mode';
 
 export default function StudioDashboard() {
@@ -24,6 +26,8 @@ export default function StudioDashboard() {
   const [newProjectName, setNewProjectName] = useState('');
   const [showNewProjectModal, setShowNewProjectModal] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [confirmDeleteProjectId, setConfirmDeleteProjectId] = useState<string | null>(null);
   const initializedRef = useRef(false);
 
   // Check authentication
@@ -138,7 +142,7 @@ export default function StudioDashboard() {
       }
     } catch (error) {
       console.error('Error creating project:', error);
-      alert('创建项目失败，请重试');
+      setErrorMessage('Failed to create project. Please try again.');
     } finally {
       setCreating(false);
       setShowNewProjectModal(false);
@@ -146,9 +150,14 @@ export default function StudioDashboard() {
     }
   };
 
-  const handleDeleteProject = async (projectId: string, e: React.MouseEvent) => {
+  const handleDeleteProject = (projectId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!confirm('Are you sure you want to delete this project? This action cannot be undone.')) return;
+    setConfirmDeleteProjectId(projectId);
+  };
+
+  const confirmDeleteProject = async () => {
+    const projectId = confirmDeleteProjectId;
+    if (!projectId) return;
 
     try {
       if (devMode) {
@@ -165,7 +174,9 @@ export default function StudioDashboard() {
       }
     } catch (error) {
       console.error('Error deleting project:', error);
-      alert('Failed to delete project. Please try again.');
+      setErrorMessage('Failed to delete project. Please try again.');
+    } finally {
+      setConfirmDeleteProjectId(null);
     }
   };
 
@@ -386,6 +397,24 @@ export default function StudioDashboard() {
           }}
         />
       )}
+
+      <ErrorModal
+        isOpen={!!errorMessage}
+        onClose={() => setErrorMessage('')}
+        title="Something went wrong"
+        message={errorMessage || 'Unknown error'}
+      />
+
+      <ConfirmModal
+        isOpen={!!confirmDeleteProjectId}
+        onClose={() => setConfirmDeleteProjectId(null)}
+        onConfirm={() => void confirmDeleteProject()}
+        title="Delete project"
+        message="Are you sure you want to delete this project? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        confirmVariant="danger"
+      />
     </div>
   );
 }
