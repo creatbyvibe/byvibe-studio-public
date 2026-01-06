@@ -100,7 +100,7 @@ export default function HeroSection() {
         <div className="absolute top-1/3 right-1/4 w-[600px] h-[600px] bg-gradient-radial from-red-500/15 via-pink-500/10 to-transparent blur-[120px] opacity-15"></div>
       </div>
       
-      <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 lg:gap-20 items-center relative z-0">
+      <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 lg:gap-20 items-center lg:items-start relative z-0">
         {/* Left Column - Strict Left Alignment */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
@@ -165,7 +165,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="relative"
+          className="relative flex justify-center lg:justify-end lg:pt-2"
         >
           {/* Glow Effect Behind Video */}
           <div className="absolute inset-0 -z-10 bg-blue-500/20 blur-3xl rounded-full opacity-30"></div>

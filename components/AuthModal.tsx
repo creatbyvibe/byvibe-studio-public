@@ -69,6 +69,8 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
           email,
           password,
           options: {
+            // 确保邮箱验证回跳到本站（否则依赖 Supabase Dashboard 的 Site URL 配置）
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
             data: {
               name: name || email.split('@')[0],
             },

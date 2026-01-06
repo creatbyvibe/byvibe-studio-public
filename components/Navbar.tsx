@@ -116,6 +116,24 @@ export default function Navbar({ onViewChange, onWaitlistClick }: NavbarProps) {
                   <p className="text-xs text-gray-500 truncate">{user.email}</p>
                 </div>
                 <button
+                  onClick={() => {
+                    setShowUserMenu(false);
+                    router.push('/studio');
+                  }}
+                  className="w-full flex items-center gap-2 px-4 py-2 text-xs text-gray-400 hover:text-white hover:bg-black transition-colors"
+                >
+                  <span>Studio</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setShowUserMenu(false);
+                    router.push('/profile');
+                  }}
+                  className="w-full flex items-center gap-2 px-4 py-2 text-xs text-gray-400 hover:text-white hover:bg-black transition-colors"
+                >
+                  <span>Profile</span>
+                </button>
+                <button
                   onClick={handleSignOut}
                   className="w-full flex items-center gap-2 px-4 py-2 text-xs text-gray-400 hover:text-white hover:bg-black transition-colors"
                 >
@@ -126,12 +144,20 @@ export default function Navbar({ onViewChange, onWaitlistClick }: NavbarProps) {
             )}
           </div>
         ) : (
-          <button
-            onClick={onWaitlistClick}
-            className="text-xs md:text-sm px-6 py-2 rounded-full btn-highlight transition-all transform hover:scale-105"
-          >
-            Join Waitlist
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => router.push('/auth')}
+              className="text-xs md:text-sm px-4 py-2 rounded-full bg-surface border border-border text-white hover:bg-surface/80 transition-colors"
+            >
+              Sign In / Sign Up
+            </button>
+            <button
+              onClick={onWaitlistClick}
+              className="text-xs md:text-sm px-6 py-2 rounded-full btn-highlight transition-all transform hover:scale-105"
+            >
+              Join Waitlist
+            </button>
+          </div>
         )}
       </div>
     </motion.nav>

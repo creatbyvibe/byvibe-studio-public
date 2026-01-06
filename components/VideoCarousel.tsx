@@ -151,12 +151,12 @@ export default function VideoCarousel() {
 
   return (
     <div 
-      className="relative mt-8 lg:mt-0 flex items-center justify-center"
+      className="relative mt-10 lg:mt-0 flex items-center justify-center lg:justify-end w-full"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       ref={containerRef}
     >
-      <div className="relative w-full max-w-sm h-[360px] sm:h-[420px] md:h-[520px] lg:h-[580px] bg-surface border border-border rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 group">
+      <div className="relative w-full max-w-[420px] sm:max-w-[480px] lg:max-w-[520px] aspect-[4/5] bg-surface border border-border rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 group">
         <motion.div
           className="w-full h-full carousel-track flex flex-col"
           animate={{ y: `-${currentIndex * 100}%` }}

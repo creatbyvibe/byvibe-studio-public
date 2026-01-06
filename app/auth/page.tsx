@@ -101,6 +101,8 @@ export default function AuthPage() {
           email,
           password,
           options: {
+            // 确保邮箱验证回跳到本站
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
             data: {
               name: name || email.split('@')[0],
             },
