@@ -1,5 +1,6 @@
 'use client';
 
+// Cloudflare Pages 要求动态路由导出 edge runtime（即使客户端组件也会在 Edge 上运行）
 export const runtime = 'edge';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
@@ -222,6 +223,26 @@ export default function StudioWorkspace() {
     );
   }
 
+  // 双重检查：防止竞态条件导致 project 在渲染时变为 null
+  if (!project) {
+    return (
+      <div className="min-h-screen flex flex-col bg-background">
+        <Navbar onViewChange={() => {}} onWaitlistClick={() => {}} />
+        <main className="flex-1 pt-24 pb-12">
+          <div className="max-w-3xl mx-auto px-4 md:px-6">
+            <div className="rounded-xl border border-border bg-surface/40 p-6">
+              <div className="text-white font-semibold mb-1">Loading project...</div>
+              <div className="text-sm text-text-muted">
+                Please wait while we load your project.
+              </div>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col relative overflow-x-hidden">
       <div className="fixed inset-0 z-0 bg-grid pointer-events-none"></div>
@@ -240,7 +261,7 @@ export default function StudioWorkspace() {
                 <ArrowLeft className="w-5 h-5 text-text-muted" />
               </button>
               <div>
-                <h1 className="text-xl font-bold text-white">{project.name}</h1>
+                <h1 className="text-xl font-bold text-white">{project.name || 'Untitled Project'}</h1>
                 {project.description && (
                   <p className="text-sm text-text-muted">{project.description}</p>
                 )}
