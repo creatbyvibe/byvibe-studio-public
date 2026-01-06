@@ -28,18 +28,7 @@ export async function GET(request: NextRequest) {
       ErrorHandler.logError(projectError, 'ProfileStats.projects');
     }
 
-    // Get artifacts count
-    const { count: artifactCount, error: artifactError } = await supabase
-      .from('artifacts')
-      .select('*', { count: 'exact', head: true })
-      .in('project_id', 
-        supabase
-          .from('projects')
-          .select('id')
-          .eq('user_id', user.id)
-      );
-
-    // Simplified: get artifacts for user's projects
+    // Get artifacts count (fetch project ids first; .in expects an array)
     const { data: projects } = await supabase
       .from('projects')
       .select('id')
