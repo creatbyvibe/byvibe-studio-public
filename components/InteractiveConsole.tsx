@@ -112,7 +112,7 @@ export default function InteractiveConsole() {
   return (
     <section 
       ref={sectionRef}
-      className="py-12 md:py-20 px-4 md:px-6 bg-surface border-b border-border relative overflow-hidden"
+      className="py-16 md:py-24 px-4 md:px-6 bg-surface border-b border-border relative overflow-hidden"
     >
       {/* Subtle Grid Background */}
       <div className="absolute inset-0 bg-grid-subtle pointer-events-none opacity-30"></div>
@@ -135,11 +135,11 @@ export default function InteractiveConsole() {
             <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded text-xs font-mono text-blue-400 uppercase tracking-widest">
               FROM VIBE TO ARCHITECTURE
             </div>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight font-display">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight font-display tracking-tighter">
               Beyond Code.<br className="block" />
               Engineered Realities.
             </h2>
-            <p className="text-base md:text-lg text-text-muted leading-relaxed">
+            <p className="text-base md:text-lg text-text-muted leading-relaxed font-light tracking-tight">
               Stop passive watching. ByVibe transforms abstract prompts into rigorous PRDs, risk assessments, and executable roadmaps. Give your 'vibe' an industrial-grade foundation.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm font-mono text-text-muted">

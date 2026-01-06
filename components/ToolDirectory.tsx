@@ -67,10 +67,10 @@ export default function ToolDirectory() {
               <Sparkles className="w-3 h-3" />
               {toolsData.length} AI Tools Integrated
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 font-display">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 font-display tracking-tighter">
               AI Integrations Library
             </h1>
-            <p className="text-lg md:text-xl text-text-muted max-w-2xl mx-auto mb-6">
+            <p className="text-lg md:text-xl text-text-muted max-w-2xl mx-auto mb-6 font-light tracking-tight">
               Curated AI toolchain. ByVibe generates optimized payloads for every tool here, ensuring seamless integration and maximum productivity.
             </p>
             <div className="flex flex-wrap justify-center gap-4 text-sm text-text-dim">
@@ -92,12 +92,12 @@ export default function ToolDirectory() {
       </section>
 
       {/* Main Directory */}
-      <section className="py-12 md:py-16 px-4 md:px-6 border-b border-border bg-background">
+      <section className="py-16 md:py-24 px-4 md:px-6 border-b border-border bg-background">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">AI Integrations Library</h2>
-              <p className="text-text-muted text-sm">
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 font-display tracking-tighter">AI Integrations Library</h2>
+              <p className="text-text-muted text-sm font-light tracking-tight">
                 Curated AI toolchain. ByVibe generates optimized payloads for every tool here.
               </p>
               <div className="mt-2 flex items-center gap-4 text-xs text-text-dim">

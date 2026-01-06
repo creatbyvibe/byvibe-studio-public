@@ -129,7 +129,7 @@ export default function VideoCarousel() {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <div className="relative w-full max-w-sm h-[400px] sm:h-[450px] md:h-[550px] lg:h-[600px] bg-surface border border-border rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 group">
+      <div className="relative w-full max-w-sm h-[360px] sm:h-[420px] md:h-[520px] lg:h-[580px] bg-surface border border-border rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 group">
         <motion.div
           className="w-full h-full carousel-track flex flex-col"
           animate={{ y: `-${currentIndex * 100}%` }}

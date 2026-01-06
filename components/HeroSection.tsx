@@ -93,7 +93,7 @@ function StartBuildingLink() {
 
 export default function HeroSection() {
   return (
-    <div className="relative z-10 pt-12 md:pt-20 pb-12 md:pb-16 px-4 md:px-6 border-b border-border bg-background">
+    <div className="relative z-10 pt-16 md:pt-24 pb-16 md:pb-20 px-4 md:px-6 border-b border-border bg-background">
       {/* Ambient Glow Effect */}
       <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
         <div className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-blue-500/20 via-purple-500/15 to-transparent blur-[120px] opacity-20"></div>
@@ -123,7 +123,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.5 }}
-            className="text-product-slogan md:text-product-slogan-md lg:text-product-slogan-lg xl:text-product-slogan-xl font-bold text-white leading-tight font-display"
+            className="text-product-slogan md:text-product-slogan-md lg:text-product-slogan-lg xl:text-product-slogan-xl font-bold text-white leading-tight font-display tracking-tighter"
           >
             The<br className="block" />
             Engineering<br className="block" />
@@ -135,7 +135,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="text-base md:text-lg text-gray-400 leading-relaxed font-light"
+            className="text-base md:text-lg text-gray-400 leading-relaxed font-light tracking-tight"
           >
             An orchestration layer for <strong className="text-white">Vibe Coding</strong>.<br className="hidden md:block" />
             <span className="md:inline hidden"> </span>

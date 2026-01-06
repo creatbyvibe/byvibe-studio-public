@@ -25,15 +25,15 @@ const complianceItems = [
 
 export default function ComplianceSection() {
   return (
-    <section id="compliance" className="py-12 md:py-20 px-4 md:px-6 bg-surface border-b border-border">
+    <section id="compliance" className="py-16 md:py-24 px-4 md:px-6 bg-surface border-b border-border">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
           <div>
             <span className="text-[10px] font-mono text-blue-400 uppercase tracking-widest mb-3 block">
               Global Standards
             </span>
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3 leading-tight font-display">AI Governance & Legislation</h2>
-            <p className="text-text-muted text-sm md:text-base mt-2 max-w-lg leading-relaxed">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3 leading-tight font-display tracking-tighter">AI Governance & Legislation</h2>
+            <p className="text-text-muted text-sm md:text-base mt-2 max-w-lg leading-relaxed font-light tracking-tight">
               ByVibe architecture is built to align with emerging global AI safety standards.
             </p>
           </div>
@@ -57,8 +57,8 @@ export default function ComplianceSection() {
                   {item.region}
                 </span>
               </div>
-              <h3 className="text-white font-bold mb-2 group-hover:text-blue-400 transition-colors">{item.title}</h3>
-              <p className="text-xs text-text-muted leading-relaxed">{item.description}</p>
+              <h3 className="text-white font-bold mb-2 group-hover:text-blue-400 transition-colors tracking-tight">{item.title}</h3>
+              <p className="text-xs text-text-muted leading-relaxed font-light tracking-tight">{item.description}</p>
               <p className="text-[10px] text-blue-400 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
                 View Details →
               </p>
