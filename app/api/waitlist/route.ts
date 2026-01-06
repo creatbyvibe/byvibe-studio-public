@@ -17,6 +17,24 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Check if Supabase is configured
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.error('Supabase environment variables are missing:', {
+        hasUrl: !!supabaseUrl,
+        hasKey: !!supabaseAnonKey,
+      });
+      return NextResponse.json(
+        { 
+          error: 'Service is not fully configured. Please contact support or check your environment variables.',
+          details: 'Supabase environment variables are missing'
+        },
+        { status: 503 } // Service Unavailable
+      );
+    }
+
     // Create Supabase client
     let supabase;
     try {
@@ -24,7 +42,10 @@ export async function POST(request: NextRequest) {
     } catch (supabaseError: any) {
       console.error('Supabase client creation error:', supabaseError);
       return NextResponse.json(
-        { error: 'Service configuration error. Please contact support.' },
+        { 
+          error: 'Service configuration error. Please contact support.',
+          details: supabaseError.message
+        },
         { status: 500 }
       );
     }
