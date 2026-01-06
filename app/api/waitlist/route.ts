@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     // Create Supabase client
     let supabase;
     try {
-      supabase = createServerClient();
+      supabase = createServerClient(request).supabase;
     } catch (supabaseError: any) {
       console.error('Supabase client creation error:', supabaseError);
       return NextResponse.json(
@@ -206,7 +206,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const supabase = createServerClient()
+    const supabase = createServerClient(request).supabase
     const { data, error } = await supabase
       .from('waitlist')
       .select('email')

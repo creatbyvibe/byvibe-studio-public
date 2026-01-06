@@ -13,7 +13,8 @@ export interface AuthContext {
     email: string;
     [key: string]: unknown;
   };
-  supabase: ReturnType<typeof createServerClient>;
+  supabase: ReturnType<typeof createServerClient>['supabase'];
+  applyCookies: ReturnType<typeof createServerClient>['applyCookies'];
 }
 
 export interface AuthMiddlewareOptions {
@@ -26,16 +27,16 @@ export interface AuthMiddlewareOptions {
  */
 export async function getAuthUser(
   request: NextRequest
-): Promise<{ user: AuthContext['user'] | null; supabase: ReturnType<typeof createServerClient> }> {
+): Promise<{ user: AuthContext['user'] | null; supabase: AuthContext['supabase']; applyCookies: AuthContext['applyCookies'] }> {
   try {
-    const supabase = createServerClient();
+    const { supabase, applyCookies } = createServerClient(request);
     const {
       data: { user },
       error,
     } = await supabase.auth.getUser();
 
     if (error || !user) {
-      return { user: null, supabase };
+      return { user: null, supabase, applyCookies };
     }
 
     return {
@@ -45,10 +46,13 @@ export async function getAuthUser(
         email: user.email || '',
       },
       supabase,
+      applyCookies,
     };
   } catch (error) {
     ErrorHandler.logError(error, 'getAuthUser');
-    return { user: null, supabase: createServerClient() };
+    // fallback: still return a client so callers can proceed with consistent shape
+    const { supabase, applyCookies } = createServerClient(request);
+    return { user: null, supabase, applyCookies };
   }
 }
 
@@ -64,7 +68,7 @@ export function withAuth(
     const { requireAuth = true, requireEmailVerified = false } = options;
 
     // Get authenticated user
-    const { user, supabase } = await getAuthUser(request);
+    const { user, supabase, applyCookies } = await getAuthUser(request);
 
     // Check if authentication is required
     if (requireAuth && !user) {
@@ -97,15 +101,20 @@ export function withAuth(
     const authContext: AuthContext = {
       user: user!,
       supabase,
+      applyCookies,
     };
 
     // Call the handler with auth context
     try {
-      return await handler(request, authContext);
+      const response = await handler(request, authContext);
+      applyCookies(response);
+      return response;
     } catch (error) {
       ErrorHandler.logError(error, 'withAuth.handler');
       const appError = ErrorHandler.handleFetchError(error, 'API');
-      return NextResponse.json(appError, { status: appError.statusCode || 500 });
+      const response = NextResponse.json(appError, { status: appError.statusCode || 500 });
+      applyCookies(response);
+      return response;
     }
   };
 }
@@ -114,17 +123,21 @@ export function withAuth(
  * Optional auth - get user if available, but don't require it
  */
 export function withOptionalAuth(
-  handler: (request: NextRequest, context: { user: AuthContext['user'] | null; supabase: ReturnType<typeof createServerClient> }) => Promise<NextResponse>
+  handler: (request: NextRequest, context: { user: AuthContext['user'] | null; supabase: AuthContext['supabase']; applyCookies: AuthContext['applyCookies'] }) => Promise<NextResponse>
 ) {
   return async (request: NextRequest): Promise<NextResponse> => {
-    const { user, supabase } = await getAuthUser(request);
+    const { user, supabase, applyCookies } = await getAuthUser(request);
 
     try {
-      return await handler(request, { user, supabase });
+      const response = await handler(request, { user, supabase, applyCookies });
+      applyCookies(response);
+      return response;
     } catch (error) {
       ErrorHandler.logError(error, 'withOptionalAuth.handler');
       const appError = ErrorHandler.handleFetchError(error, 'API');
-      return NextResponse.json(appError, { status: appError.statusCode || 500 });
+      const response = NextResponse.json(appError, { status: appError.statusCode || 500 });
+      applyCookies(response);
+      return response;
     }
   };
 }

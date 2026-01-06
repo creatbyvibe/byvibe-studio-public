@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = createServerClient();
+    const { supabase, applyCookies } = createServerClient(request);
 
     // Resend verification email
     const { error: resendError } = await supabase.auth.resend({
@@ -31,32 +31,40 @@ export async function POST(request: NextRequest) {
       
       // Check for specific error types
       if (resendError.message?.includes('rate limit')) {
-        return NextResponse.json(
+        const response = NextResponse.json(
           { error: 'Too many requests. Please wait a few minutes before requesting another email.' },
           { status: 429 }
         );
+        applyCookies(response);
+        return response;
       }
 
       if (resendError.message?.includes('already confirmed')) {
-        return NextResponse.json(
+        const response = NextResponse.json(
           { error: 'This email has already been verified. You can sign in now.' },
           { status: 400 }
         );
+        applyCookies(response);
+        return response;
       }
 
-      return NextResponse.json(
+      const response = NextResponse.json(
         { error: resendError.message || 'Failed to resend verification email' },
         { status: 500 }
       );
+      applyCookies(response);
+      return response;
     }
 
-    return NextResponse.json(
+    const response = NextResponse.json(
       { 
         success: true, 
         message: 'Verification email sent successfully. Please check your inbox.' 
       },
       { status: 200 }
     );
+    applyCookies(response);
+    return response;
   } catch (error) {
     ErrorHandler.logError(error, 'ResendVerification');
     return NextResponse.json(
