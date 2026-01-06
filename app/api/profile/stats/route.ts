@@ -6,7 +6,7 @@ export const runtime = 'edge';
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createServerClient();
+    const { supabase, applyCookies } = createServerClient(request);
     
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
       .eq('user_id', user.id)
       .eq('status', 'completed');
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       projectCount: projectCount || 0,
       artifactCount: artifactCountValue,
       daysSinceSignup,
@@ -92,6 +92,8 @@ export async function GET(request: NextRequest) {
         completed: completedCount || 0,
       },
     }, { status: 200 });
+    applyCookies(response);
+    return response;
   } catch (error) {
     ErrorHandler.logError(error, 'ProfileStats');
     return NextResponse.json(

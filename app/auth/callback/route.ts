@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
   // Handle password reset (type=recovery)
   if (type === 'recovery' && (token || code)) {
     try {
-      const supabase = createServerClient();
+      const { supabase, applyCookies } = createServerClient(request);
       
       let verifyData;
       let verifyError;
@@ -38,9 +38,11 @@ export async function GET(request: NextRequest) {
         
         if (!verifyError && verifyData?.session) {
           // Session established, redirect to reset password page
-          return NextResponse.redirect(
+          const response = NextResponse.redirect(
             new URL(`/auth/reset-password?code=${code}&type=recovery`, requestUrl.origin)
           );
+          applyCookies(response);
+          return response;
         }
       } 
       // Fallback to token-based verification (older format)
@@ -84,7 +86,7 @@ export async function GET(request: NextRequest) {
   // Supabase sends verification links with either 'token' or 'code' parameter
   if (type === 'signup' && (token || code)) {
     try {
-      const supabase = createServerClient();
+      const { supabase, applyCookies } = createServerClient(request);
       
       let verifyData;
       let verifyError;
@@ -125,9 +127,11 @@ export async function GET(request: NextRequest) {
 
       if (verifyData?.user) {
         // Email verified successfully
-        return NextResponse.redirect(
+        const response = NextResponse.redirect(
           new URL('/auth/verify?success=true&type=signup&email=' + encodeURIComponent(verifyData.user.email || ''), requestUrl.origin)
         );
+        applyCookies(response);
+        return response;
       }
 
       return NextResponse.redirect(
@@ -150,7 +154,7 @@ export async function GET(request: NextRequest) {
 
   try {
     // Exchange code for session (Supabase handles this automatically for Google/GitHub)
-    const supabase = createServerClient();
+    const { supabase, applyCookies } = createServerClient(request);
     const { data, error: authError } = await supabase.auth.exchangeCodeForSession(code);
 
     if (authError) {
@@ -163,7 +167,9 @@ export async function GET(request: NextRequest) {
     if (data?.user) {
       // Success - redirect to home or return URL
       const returnUrl = requestUrl.searchParams.get('return_url') || '/';
-      return NextResponse.redirect(new URL(returnUrl, requestUrl.origin));
+      const response = NextResponse.redirect(new URL(returnUrl, requestUrl.origin));
+      applyCookies(response);
+      return response;
     }
 
     // No user data - redirect to auth page
