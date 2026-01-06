@@ -40,6 +40,7 @@ export default function StudioWorkspace() {
   const [currentPhase, setCurrentPhase] = useState<ProjectPhase>('scope');
   const [loading, setLoading] = useState(true);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  // 用包含“登录态”的 key 作为初始化标记，避免 user 从 null -> 有值后被误判“已初始化”
   const initializedRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -49,13 +50,16 @@ export default function StudioWorkspace() {
   }, [user?.id, authLoading, devMode]);
 
   useEffect(() => {
+    const authKey = devMode ? `dev:${devUser.id}` : (user?.id ? `authed:${String(user.id).slice(0, 8)}` : 'anon');
+    const initKey = `${projectId}:${authKey}`;
+
     // #region agent log
     fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H5',location:'app/studio/[id]/page.tsx:useEffect:enter',message:'workspace effect enter',data:{projectId:projectId||'',initialized:String(initializedRef.current||''),devMode,authLoading,hasUser:!!user,userId:user?.id?String(user.id).slice(0,8):''},timestamp:Date.now()})}).catch(()=>{});
     // #endregion agent log
 
     // 如果 projectId 变化，重置初始化标记
-    if (initializedRef.current !== projectId) {
-      initializedRef.current = projectId;
+    if (initializedRef.current !== initKey) {
+      initializedRef.current = initKey;
 
       // #region agent log
       fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H2',location:'app/studio/[id]/page.tsx:useEffect:init',message:'workspace init effect',data:{projectId:projectId||'',devMode,authLoading,hasUser:!!user,userId:user?.id?String(user.id).slice(0,8):''},timestamp:Date.now()})}).catch(()=>{});
