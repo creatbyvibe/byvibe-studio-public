@@ -129,6 +129,10 @@ export default function StudioDashboard() {
 
         if (error) throw error;
 
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'studio-black-20260106',hypothesisId:'H4',location:'app/studio/page.tsx:createProject:ok',message:'created project, navigating',data:{hasId:!!data?.id},timestamp:Date.now()})}).catch(()=>{});
+        // #endregion agent log
+
         // Navigate to the new project workspace
         router.push(`/studio/${data.id}`);
       }
