@@ -6,6 +6,10 @@ export const runtime = 'edge';
 
 export async function POST(request: NextRequest) {
   try {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'waitlist-20260106',hypothesisId:'A',location:'app/api/waitlist/route.ts:POST:entry',message:'waitlist POST entry',data:{hasSupabaseUrl:!!process.env.NEXT_PUBLIC_SUPABASE_URL,hasSupabaseAnonKey:!!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,hasResendApiKey:!!process.env.RESEND_API_KEY,hasAdminEmail:!!(process.env.ADMIN_EMAIL||process.env.NOTIFICATION_EMAIL),hasOrigin:!!request.headers.get('origin'),hasHost:!!request.headers.get('host')},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion agent log
+
     const body = await request.json()
     const { email, name } = body
 
@@ -16,6 +20,13 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
+
+    const emailNormalized = String(email).toLowerCase().trim()
+    const nameNormalized = typeof name === 'string' ? name.trim() : ''
+
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'waitlist-20260106',hypothesisId:'A',location:'app/api/waitlist/route.ts:POST:parsed',message:'waitlist request parsed',data:{hasName:!!nameNormalized,emailLen:emailNormalized.length},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion agent log
 
     // Check if Supabase is configured
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -51,16 +62,40 @@ export async function POST(request: NextRequest) {
     }
 
     // 插入到 waitlist 表
-    const { data, error } = await supabase
-      .from('waitlist')
-      .insert([
-        {
-          email: email.toLowerCase().trim(),
-          name: name?.trim() || null,
-          created_at: new Date().toISOString(),
-        },
-      ])
-      .select()
+    const rowBase: Record<string, unknown> = {
+      email: emailNormalized,
+      created_at: new Date().toISOString(),
+    }
+    const rowWithOptionalName =
+      nameNormalized.length > 0 ? { ...rowBase, name: nameNormalized } : rowBase
+
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'waitlist-20260106',hypothesisId:'A',location:'app/api/waitlist/route.ts:POST:insert:attempt1',message:'waitlist insert attempt1',data:{payloadKeys:Object.keys(rowWithOptionalName)},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion agent log
+
+    let { data, error } = await supabase.from('waitlist').insert([rowWithOptionalName]).select()
+
+    // 兼容旧版/自建 waitlist 表：可能没有 name/created_at 字段
+    if (error) {
+      const msg = (error as any)?.message || ''
+      const code = (error as any)?.code || ''
+      const looksLikeMissingColumn =
+        code === '42703' || msg.includes('column') || msg.includes('does not exist') || msg.includes('PGRST')
+
+      if (looksLikeMissingColumn) {
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'waitlist-20260106',hypothesisId:'C',location:'app/api/waitlist/route.ts:POST:insert:retry',message:'waitlist insert retry due to possible schema mismatch',data:{errorCode:code,hasMessage:!!msg},timestamp:Date.now()})}).catch(()=>{});
+        // #endregion agent log
+
+        // retry 1: drop name
+        ;({ data, error } = await supabase.from('waitlist').insert([{ ...rowBase }]).select())
+
+        // retry 2: drop created_at as well (if table has default)
+        if (error) {
+          ;({ data, error } = await supabase.from('waitlist').insert([{ email: emailNormalized }]).select())
+        }
+      }
+    }
 
     if (error) {
       // If duplicate email error
@@ -68,6 +103,25 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
           { error: 'This email is already on the waitlist' },
           { status: 409 }
+        )
+      }
+
+      // RLS policy / permission issues are common for public waitlist
+      const msg = (error as any)?.message || ''
+      if (
+        msg.includes('row-level security') ||
+        msg.includes('permission denied') ||
+        msg.includes('not allowed') ||
+        msg.includes('insufficient_privilege')
+      ) {
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'waitlist-20260106',hypothesisId:'B',location:'app/api/waitlist/route.ts:POST:insert:rls',message:'waitlist insert blocked by RLS/permissions',data:{errorCode:(error as any)?.code||'',hasMessage:!!msg},timestamp:Date.now()})}).catch(()=>{});
+        // #endregion agent log
+        return NextResponse.json(
+          {
+            error: 'Waitlist insert is blocked by database security policy (RLS). Please add an INSERT policy for the waitlist table.',
+          },
+          { status: 403 }
         )
       }
 
@@ -79,9 +133,9 @@ export async function POST(request: NextRequest) {
     }
 
     // 获取 origin（支持 Edge Runtime）
-    const origin = request.headers.get('origin') || 
-                  request.headers.get('host') ? `https://${request.headers.get('host')}` : 
-                  'https://byvibe-studio-public.pages.dev';
+    const origin =
+      request.headers.get('origin') ??
+      (request.headers.get('host') ? `https://${request.headers.get('host')}` : 'https://byvibe-studio-public.pages.dev')
     
     // 发送欢迎邮件（异步，不阻塞响应）
     try {
@@ -145,7 +199,7 @@ export async function POST(request: NextRequest) {
       {
         success: true,
         message: 'Successfully joined waitlist! We\'ve sent a welcome email to your inbox.',
-        data: data[0],
+        data: Array.isArray(data) ? data[0] : data,
       },
       { status: 201 }
     )
