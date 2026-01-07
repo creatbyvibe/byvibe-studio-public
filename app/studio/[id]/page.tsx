@@ -2,7 +2,7 @@
 
 export const runtime = 'edge';
 
-import { useState, useEffect, useRef, useCallback, startTransition } from 'react';
+import { useState, useEffect, useRef, useCallback, startTransition, useMemo } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft, Lock, Unlock } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -219,10 +219,31 @@ export default function StudioWorkspace() {
     }
   }, [projectId]);
 
-  const getArtifactForPhase = (phase: ProjectPhase): Artifact | undefined => {
-    if (workspaceState.status !== 'ready') return undefined;
-    return workspaceState.artifacts.find(a => a.phase === phase);
-  };
+  // 使用useMemo缓存artifacts，避免每次渲染时重新查找
+  const artifactsByPhase = useMemo(() => {
+    if (workspaceState.status !== 'ready') {
+      return {
+        scope: undefined,
+        stack: undefined,
+        design: undefined,
+        build: undefined,
+      } as Record<ProjectPhase, Artifact | undefined>;
+    }
+    const map: Record<ProjectPhase, Artifact | undefined> = {
+      scope: undefined,
+      stack: undefined,
+      design: undefined,
+      build: undefined,
+    };
+    workspaceState.artifacts.forEach(artifact => {
+      map[artifact.phase] = artifact;
+    });
+    return map;
+  }, [workspaceState.status === 'ready' ? workspaceState.artifacts : []]);
+
+  const getArtifactForPhase = useCallback((phase: ProjectPhase): Artifact | undefined => {
+    return artifactsByPhase[phase];
+  }, [artifactsByPhase]);
 
   // Loading状态
   if (workspaceState.status === 'loading' || (!devMode && authLoading)) {
