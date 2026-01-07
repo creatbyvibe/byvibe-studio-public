@@ -2,7 +2,7 @@
 
 export const runtime = 'edge';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, startTransition } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft, Lock, Unlock } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -82,13 +82,16 @@ export default function StudioWorkspace() {
       return;
     }
 
-    // 如果未登录且不是开发模式，显示未授权
+    // 如果未登录且不是开发模式，显示未授权 - 使用setTimeout确保不在渲染期间更新状态
     if (!devMode && !authLoading && !user) {
       // #region agent log
       fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'workspace-load-20260106',hypothesisId:'H4',location:'app/studio/[id]/page.tsx:useEffect:unauthorized',message:'setting unauthorized',data:{currentLoadKey},timestamp:Date.now()})}).catch(()=>{});
       // #endregion agent log
-      setWorkspaceState({ status: 'unauthorized' });
-      setShowAuthModal(true);
+      // 使用setTimeout确保状态更新在下一个事件循环，避免在渲染期间更新
+      setTimeout(() => {
+        setWorkspaceState({ status: 'unauthorized' });
+        setShowAuthModal(true);
+      }, 0);
       hasLoadedRef.current = true;
       loadKeyRef.current = currentLoadKey;
       return;
@@ -102,7 +105,10 @@ export default function StudioWorkspace() {
     fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'workspace-load-20260106',hypothesisId:'H5',location:'app/studio/[id]/page.tsx:useEffect:startLoad',message:'starting data load',data:{currentLoadKey,devMode,hasUser:!!user},timestamp:Date.now()})}).catch(()=>{});
     // #endregion agent log
     
-    setWorkspaceState({ status: 'loading' });
+    // 使用setTimeout确保状态更新在下一个事件循环
+    setTimeout(() => {
+      setWorkspaceState({ status: 'loading' });
+    }, 0);
 
     // 加载数据
     const loadWorkspace = async () => {
