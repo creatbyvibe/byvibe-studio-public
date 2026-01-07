@@ -127,10 +127,12 @@ export default function StudioWorkspace() {
           // #region agent log
           fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'workspace-load-20260106',hypothesisId:'H6',location:'app/studio/[id]/page.tsx:loadWorkspace:devMode',message:'setting dev mode ready state',data:{projectId},timestamp:Date.now()})}).catch(()=>{});
           // #endregion agent log
-          setWorkspaceState({
-            status: 'ready',
-            project: mockProject,
-            artifacts: [],
+          startTransition(() => {
+            setWorkspaceState({
+              status: 'ready',
+              project: mockProject,
+              artifacts: [],
+            });
           });
           return;
         }
@@ -162,10 +164,12 @@ export default function StudioWorkspace() {
           // #region agent log
           fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'workspace-load-20260106',hypothesisId:'H7',location:'app/studio/[id]/page.tsx:loadWorkspace:success',message:'setting ready state',data:{projectId,hasProject:!!projectResult.data,artifactsCount:artifactsResult.data?.length||0},timestamp:Date.now()})}).catch(()=>{});
           // #endregion agent log
-          setWorkspaceState({
-            status: 'ready',
-            project: projectResult.data,
-            artifacts: artifactsResult.data || [],
+          startTransition(() => {
+            setWorkspaceState({
+              status: 'ready',
+              project: projectResult.data,
+              artifacts: artifactsResult.data || [],
+            });
           });
         }
       } catch (err: any) {
@@ -173,9 +177,11 @@ export default function StudioWorkspace() {
         // #region agent log
         fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'workspace-load-20260106',hypothesisId:'H8',location:'app/studio/[id]/page.tsx:loadWorkspace:error',message:'setting error state',data:{projectId,errorName:err?.name||'',errorMessage:err?.message?.slice(0,100)||''},timestamp:Date.now()})}).catch(()=>{});
         // #endregion agent log
-        setWorkspaceState({
-          status: 'error',
-          error: err.message || 'Failed to load workspace',
+        startTransition(() => {
+          setWorkspaceState({
+            status: 'error',
+            error: err.message || 'Failed to load workspace',
+          });
         });
       }
     };
