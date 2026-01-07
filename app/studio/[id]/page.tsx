@@ -2,7 +2,7 @@
 
 export const runtime = 'edge';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft, Lock, Unlock } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -177,9 +177,9 @@ export default function StudioWorkspace() {
     loadWorkspace();
   }, [projectId, devMode, user?.id, authLoading, devUser.id]);
 
-  // 刷新artifacts
-  const refreshArtifacts = async () => {
-    if (workspaceState.status !== 'ready' || !projectId) return;
+  // 刷新artifacts - 使用useCallback避免不必要的重新渲染
+  const refreshArtifacts = useCallback(async () => {
+    if (!projectId) return;
 
     try {
       const { data, error } = await supabase
@@ -190,14 +190,20 @@ export default function StudioWorkspace() {
 
       if (error) throw error;
 
-      setWorkspaceState({
-        ...workspaceState,
-        artifacts: data || [],
+      // 使用函数式更新，确保基于最新状态
+      setWorkspaceState((prevState) => {
+        if (prevState.status === 'ready') {
+          return {
+            ...prevState,
+            artifacts: data || [],
+          };
+        }
+        return prevState;
       });
     } catch (err) {
       console.error('Error refreshing artifacts:', err);
     }
-  };
+  }, [projectId]);
 
   const getArtifactForPhase = (phase: ProjectPhase): Artifact | undefined => {
     if (workspaceState.status !== 'ready') return undefined;
