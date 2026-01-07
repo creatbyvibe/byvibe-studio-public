@@ -204,15 +204,17 @@ export default function StudioWorkspace() {
 
       if (error) throw error;
 
-      // 使用函数式更新，确保基于最新状态
-      setWorkspaceState((prevState) => {
-        if (prevState.status === 'ready') {
-          return {
-            ...prevState,
-            artifacts: data || [],
-          };
-        }
-        return prevState;
+      // 使用startTransition和函数式更新，确保不在渲染期间更新状态
+      startTransition(() => {
+        setWorkspaceState((prevState) => {
+          if (prevState.status === 'ready') {
+            return {
+              ...prevState,
+              artifacts: data || [],
+            };
+          }
+          return prevState;
+        });
       });
     } catch (err) {
       console.error('Error refreshing artifacts:', err);
