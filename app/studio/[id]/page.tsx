@@ -175,7 +175,9 @@ export default function StudioWorkspace() {
     };
 
     loadWorkspace();
-  }, [projectId, devMode, user?.id, authLoading, devUser.id]);
+    // devUser.id is a constant, no need to include in dependencies
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId, devMode, user?.id, authLoading]);
 
   // 刷新artifacts - 使用useCallback避免不必要的重新渲染
   const refreshArtifacts = useCallback(async () => {
