@@ -51,11 +51,13 @@ export default function DesignPhase({ projectId, artifact, scopeContext, stackCo
   const [confirmModal, setConfirmModal] = useState<{ isOpen: boolean }>({ isOpen: false });
 
   useEffect(() => {
+    // 使用artifact?.id和artifact?.content作为依赖项，而不是整个artifact对象
     if (artifact?.content) {
       const parsed = artifact.content as unknown as DesignContent;
       setContent(parsed);
     }
-  }, [artifact]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [artifact?.id, artifact?.content]);
 
   // Render Mermaid diagram
   useEffect(() => {

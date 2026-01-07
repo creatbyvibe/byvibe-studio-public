@@ -56,6 +56,7 @@ export default function ScopePhase({ projectId, artifact, onArtifactUpdate }: Sc
   const [confirmModal, setConfirmModal] = useState<{ isOpen: boolean }>({ isOpen: false });
 
   useEffect(() => {
+    // 使用artifact?.id作为依赖项，而不是整个artifact对象，避免对象引用变化导致的问题
     if (artifact?.content) {
       const parsed = artifact.content as unknown as ScopeContent;
       setContent(parsed);
@@ -63,7 +64,8 @@ export default function ScopePhase({ projectId, artifact, onArtifactUpdate }: Sc
       // If no artifact, use default test content
       setContent(defaultContent);
     }
-  }, [artifact]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [artifact?.id, artifact?.content]);
 
   const handleLock = async () => {
     if (!artifact) {

@@ -51,6 +51,7 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
   const [confirmModal, setConfirmModal] = useState<{ isOpen: boolean }>({ isOpen: false });
 
   useEffect(() => {
+    // 使用artifact?.id和artifact?.content作为依赖项，而不是整个artifact对象
     if (artifact?.content) {
       const parsed = artifact.content as unknown as BuildContent;
       setContent(parsed);
@@ -66,7 +67,8 @@ export default function BuildPhase({ projectId, artifact, scopeContext, stackCon
         setExpandedPaths(paths);
       }
     }
-  }, [artifact]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [artifact?.id, artifact?.content]);
 
   // Keep edit buffer in sync with selected file
   useEffect(() => {

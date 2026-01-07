@@ -72,6 +72,7 @@ export default function StackPhase({ projectId, artifact, scopeContext, onArtifa
   const [confirmModal, setConfirmModal] = useState<{ isOpen: boolean }>({ isOpen: false });
 
   useEffect(() => {
+    // 使用artifact?.id和artifact?.content作为依赖项，而不是整个artifact对象
     if (artifact?.content) {
       const parsed = artifact.content as unknown as StackContent;
       setContent(parsed);
@@ -79,7 +80,8 @@ export default function StackPhase({ projectId, artifact, scopeContext, onArtifa
       // If no artifact, use default test content
       setContent(defaultContent);
     }
-  }, [artifact]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [artifact?.id, artifact?.content]);
 
   useEffect(() => {
     // Auto-validate when content changes (debounced)
