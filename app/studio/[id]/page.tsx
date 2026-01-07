@@ -239,7 +239,7 @@ export default function StudioWorkspace() {
       map[artifact.phase] = artifact;
     });
     return map;
-  }, [workspaceState.status === 'ready' ? workspaceState.artifacts : []]);
+  }, [workspaceState]);
 
   const getArtifactForPhase = useCallback((phase: ProjectPhase): Artifact | undefined => {
     return artifactsByPhase[phase];
