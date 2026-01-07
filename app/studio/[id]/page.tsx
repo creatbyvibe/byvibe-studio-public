@@ -87,11 +87,11 @@ export default function StudioWorkspace() {
       // #region agent log
       fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'workspace-load-20260106',hypothesisId:'H4',location:'app/studio/[id]/page.tsx:useEffect:unauthorized',message:'setting unauthorized',data:{currentLoadKey},timestamp:Date.now()})}).catch(()=>{});
       // #endregion agent log
-      // 使用setTimeout确保状态更新在下一个事件循环，避免在渲染期间更新
-      setTimeout(() => {
+      // 使用startTransition确保状态更新不在渲染期间执行
+      startTransition(() => {
         setWorkspaceState({ status: 'unauthorized' });
         setShowAuthModal(true);
-      }, 0);
+      });
       hasLoadedRef.current = true;
       loadKeyRef.current = currentLoadKey;
       return;
@@ -105,10 +105,10 @@ export default function StudioWorkspace() {
     fetch('http://127.0.0.1:7242/ingest/938b3518-4852-4c89-8195-34f66fcdebec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:'debug-session',runId:'workspace-load-20260106',hypothesisId:'H5',location:'app/studio/[id]/page.tsx:useEffect:startLoad',message:'starting data load',data:{currentLoadKey,devMode,hasUser:!!user},timestamp:Date.now()})}).catch(()=>{});
     // #endregion agent log
     
-    // 使用setTimeout确保状态更新在下一个事件循环
-    setTimeout(() => {
+    // 使用startTransition确保状态更新不在渲染期间执行
+    startTransition(() => {
       setWorkspaceState({ status: 'loading' });
-    }, 0);
+    });
 
     // 加载数据
     const loadWorkspace = async () => {
